@@ -61,7 +61,8 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener
                 .setDeniedMessage("If you reject permission, you can not use this App\n\nPlease turn on permissions at [Setting] > [Permission]")
                 .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.INTERNET)
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.VIBRATE)
                 .check();
     }
 

@@ -1,15 +1,20 @@
 package io.fusionbit.vcarry;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import extra.Log;
 import firebase.TransportRequestHandler;
 
 /**
@@ -37,10 +42,11 @@ public class TransportRequestHandlerService extends Service implements Transport
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {
-
-            transportRequestHandler = new TransportRequestHandler(this);
-
-            addNotification();
+            if (transportRequestHandler == null)
+            {
+                transportRequestHandler = new TransportRequestHandler(this);
+                addNotification();
+            }
         }
 
         return START_STICKY;
@@ -75,7 +81,8 @@ public class TransportRequestHandlerService extends Service implements Transport
     @Override
     public void OnReceiveNewTransportRequest()
     {
-
+        Log.i(TAG, "New Request arrived!!!!");
+        showAlert();
     }
 
     @Override
@@ -98,5 +105,34 @@ public class TransportRequestHandlerService extends Service implements Transport
             return TransportRequestHandlerService.this;
         }
     }
+
+
+    private void showAlert()
+    {
+
+        Intent intent = new Intent(this, ActivityHome.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        // build notification
+        // the addAction re-use the same intent to keep the example short
+        Notification n = new Notification.Builder(this)
+                .setContentTitle("New mail from " + "test@gmail.com")
+                .setContentText("Subject")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true)
+                .setVibrate(new long[]{100, 100})
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .addAction(R.mipmap.ic_launcher, "Accept", pIntent)
+                .addAction(R.mipmap.ic_launcher, "Ignore", pIntent).build();
+
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
+
+    }
+
 
 }
