@@ -1,11 +1,12 @@
 package io.fusionbit.vcarry;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,21 +20,46 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import extra.CircleTransform;
+import extra.Log;
 import fragment.FragmentMap;
 
 public class ActivityHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
+    private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
 
     private FragmentMap fragmentMap;
 
     private FragmentManager fragmentManager;
 
     private FrameLayout flMapView;
+
+    //is activity connected to service
+    boolean mServiceBound = false;
+
+    //main STICKY service running in foreground (also shows up in notifications)
+    TransportRequestHandlerService mService;
+
+    private ServiceConnection mServiceConnection = new ServiceConnection()
+    {
+        public void onServiceConnected(ComponentName className, IBinder service)
+        {
+            Log.i(TAG, "ACTIVITY CONNECTED TO SERVICE");
+            mServiceBound = true;
+            //get service instance here
+            mService = ((TransportRequestHandlerService.TransportRequestServiceBinder) service).getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className)
+        {
+            Log.i(TAG, "ACTIVITY DISCONNECTED FROM SERVICE");
+            mServiceBound = false;
+            mService = null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,6 +68,13 @@ public class ActivityHome extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //start bound service now
+        Intent TransportRequestHandlerService = new Intent(this, TransportRequestHandlerService.class);
+        startService(TransportRequestHandlerService);
+
+        //bind activity to service
+        bindService(TransportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
 
         if (getSupportActionBar() != null)
         {

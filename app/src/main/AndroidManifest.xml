@@ -18,6 +18,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <service
+            android:name=".TransportRequestHandlerService"
+            android:enabled="true"
+            android:exported="false">
+        </service>
+
         <receiver android:name="extra.NetworkConnectionDetector">
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>

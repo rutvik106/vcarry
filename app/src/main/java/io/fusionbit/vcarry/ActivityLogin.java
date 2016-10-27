@@ -1,5 +1,7 @@
 package io.fusionbit.vcarry;
 
+import android.*;
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,12 +17,14 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
 
 import extra.Log;
 
-public class ActivityLogin extends VCarryActivity
+public class ActivityLogin extends VCarryActivity implements PermissionListener
 {
 
     private static final String TAG = App.APP_TAG + ActivityLogin.class.getSimpleName();
@@ -46,61 +50,19 @@ public class ActivityLogin extends VCarryActivity
 
         Log.i(TAG, "OnCreate");
 
-        intent = new Intent(ActivityLogin.this, ActivityHome.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        checkForPermissions();
 
-        findViewById(R.id.btn_googleSignIn).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
+    }
 
-                if (isConnected)
-                {
-                    tryLogin();
-                } else
-                {
-                    Toast.makeText(ActivityLogin.this, "check internet connection", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-
-        //check internet connectivity
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected())
-        {
-            isConnected = true;
-        } else
-        {
-            isConnected = false;
-        }
-
-        //listen to network changes
-        networkChangeReceiver = new BroadcastReceiver()
-        {
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                if (intent.getBooleanExtra("is_active", false))
-                {
-                    isConnected = true;
-                } else
-                {
-                    isConnected = false;
-                }
-            }
-        };
-
-        mFirebaseAuth = FirebaseAuth.getInstance();
-
-        if (mFirebaseAuth.getCurrentUser() != null)
-        {
-            startActivity(intent);
-        }
-
+    private void checkForPermissions()
+    {
+        new TedPermission(this)
+                .setPermissionListener(this)
+                .setDeniedMessage("If you reject permission, you can not use this App\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.INTERNET)
+                .check();
     }
 
 
@@ -196,4 +158,71 @@ public class ActivityLogin extends VCarryActivity
         return selectedProviders.toArray(new String[selectedProviders.size()]);
     }
 
+    @Override
+    public void onPermissionGranted()
+    {
+
+        intent = new Intent(ActivityLogin.this, ActivityHome.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        findViewById(R.id.btn_googleSignIn).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+
+                if (isConnected)
+                {
+                    tryLogin();
+                } else
+                {
+                    Toast.makeText(ActivityLogin.this, "check internet connection", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+
+        //check internet connectivity
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnected())
+        {
+            isConnected = true;
+        } else
+        {
+            isConnected = false;
+        }
+
+        //listen to network changes
+        networkChangeReceiver = new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                if (intent.getBooleanExtra("is_active", false))
+                {
+                    isConnected = true;
+                } else
+                {
+                    isConnected = false;
+                }
+            }
+        };
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        if (mFirebaseAuth.getCurrentUser() != null)
+        {
+            startActivity(intent);
+        }
+
+
+    }
+
+    @Override
+    public void onPermissionDenied(ArrayList<String> deniedPermissions)
+    {
+        finish();
+    }
 }
