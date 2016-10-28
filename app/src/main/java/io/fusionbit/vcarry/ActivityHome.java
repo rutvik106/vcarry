@@ -205,4 +205,17 @@ public class ActivityHome extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        if (mServiceBound)
+        {
+            unbindService(mServiceConnection);
+            mServiceBound = false;
+        }
+    }
+
 }

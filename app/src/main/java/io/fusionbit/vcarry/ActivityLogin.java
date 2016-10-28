@@ -62,6 +62,7 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener
                 .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.INTERNET,
+                        Manifest.permission.SYSTEM_ALERT_WINDOW,
                         Manifest.permission.VIBRATE)
                 .check();
     }

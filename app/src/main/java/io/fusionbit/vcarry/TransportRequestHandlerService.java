@@ -9,10 +9,11 @@ import android.media.RingtoneManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.AlertDialog;
+import android.view.WindowManager;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 
 import extra.Log;
 import firebase.TransportRequestHandler;
@@ -31,6 +32,9 @@ public class TransportRequestHandlerService extends Service implements Transport
     private static final int NOTIFICATION_ID = 246;
 
     private TransportRequestHandler transportRequestHandler;
+
+    private int childCount = 0;
+
 
     public TransportRequestHandlerService()
     {
@@ -58,7 +62,7 @@ public class TransportRequestHandlerService extends Service implements Transport
         Notification.Builder m_notificationBuilder = new Notification.Builder(this)
                 .setContentTitle("V-Carry")
                 .setContentText("Listening for Transport Request...")
-                .setSmallIcon(R.mipmap.ic_launcher);
+                .setSmallIcon(R.drawable.logo_small);
 
         // create the pending intent and add to the notification
         Intent intent = new Intent(this, ActivityHome.class);
@@ -79,16 +83,19 @@ public class TransportRequestHandlerService extends Service implements Transport
     }
 
     @Override
-    public void OnReceiveNewTransportRequest()
+    public void OnReceiveNewTransportRequest(DataSnapshot dataSnapshot)
     {
         Log.i(TAG, "New Request arrived!!!!");
+
+        //showNotification();
         showAlert();
+
     }
 
     @Override
     public void OnRequestChanged()
     {
-
+        Log.i(TAG, "Request changed!!!!");
     }
 
     @Override
@@ -106,8 +113,14 @@ public class TransportRequestHandlerService extends Service implements Transport
         }
     }
 
-
     private void showAlert()
+    {
+        Intent i = new Intent(this, ActivityTransportRequest.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+
+    private void showNotification()
     {
 
         Intent intent = new Intent(this, ActivityHome.class);
@@ -116,15 +129,15 @@ public class TransportRequestHandlerService extends Service implements Transport
         // build notification
         // the addAction re-use the same intent to keep the example short
         Notification n = new Notification.Builder(this)
-                .setContentTitle("New mail from " + "test@gmail.com")
-                .setContentText("Subject")
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Transport Request")
+                .setContentText("New Transport request form V-Carry")
+                .setSmallIcon(R.drawable.logo_small)
                 .setContentIntent(pIntent)
                 .setAutoCancel(true)
                 .setVibrate(new long[]{100, 100})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .addAction(R.mipmap.ic_launcher, "Accept", pIntent)
-                .addAction(R.mipmap.ic_launcher, "Ignore", pIntent).build();
+                .addAction(R.drawable.ic_done_black_24dp, "Accept", pIntent)
+                .addAction(R.drawable.ic_clear_black_24dp, "Ignore", pIntent).build();
 
 
         NotificationManager notificationManager =
