@@ -58,12 +58,15 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener
     {
         new TedPermission(this)
                 .setPermissionListener(this)
-                .setDeniedMessage("If you reject permission, you can not use this App\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setDeniedMessage("If you reject any permission, you can not use this App\n\nPlease turn on permissions at [Setting] > [Permission]")
                 .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION,
                         Manifest.permission.INTERNET,
                         Manifest.permission.SYSTEM_ALERT_WINDOW,
-                        Manifest.permission.VIBRATE)
+                        Manifest.permission.VIBRATE,
+                        Manifest.permission.WAKE_LOCK,
+                        Manifest.permission.DISABLE_KEYGUARD,
+                        Manifest.permission.RECEIVE_BOOT_COMPLETED)
                 .check();
     }
 
@@ -146,7 +149,7 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener
     @DrawableRes
     private int getSelectedLogo()
     {
-        return R.mipmap.ic_launcher;
+        return R.drawable.logo;
     }
 
     //set login methods/providers (GOOGLE/FACEBOOK)

@@ -5,6 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.os.Binder;
 import android.os.IBinder;
@@ -56,6 +59,12 @@ public class TransportRequestHandlerService extends Service implements Transport
         return START_STICKY;
     }
 
+    @Override
+    public void onCreate()
+    {
+        registerReceiver(new TransportRequestResponseReceiver(),
+                new IntentFilter(Constants.TRANSPORT_REQUEST_RESPONSE));
+    }
 
     private void addNotification()
     {
@@ -87,8 +96,8 @@ public class TransportRequestHandlerService extends Service implements Transport
     {
         Log.i(TAG, "New Request arrived!!!!");
 
-        //showNotification();
-        showAlert();
+        showNotification(dataSnapshot.getKey());
+        showAlert(dataSnapshot.getKey());
 
     }
 
@@ -113,37 +122,51 @@ public class TransportRequestHandlerService extends Service implements Transport
         }
     }
 
-    private void showAlert()
+    private void showAlert(String requestId)
     {
         Intent i = new Intent(this, ActivityTransportRequest.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.putExtra("REQUEST_ID", requestId);
         startActivity(i);
     }
 
-    private void showNotification()
+    private void showNotification(String requestId)
     {
+        final int mRequestId = Integer
+                .valueOf(requestId.substring(requestId.length() - 4, requestId.length()));
 
-        Intent intent = new Intent(this, ActivityHome.class);
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        Intent accept = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
+        accept.putExtra(Constants.T_RESPONSE, Constants.ACCEPT);
+        accept.putExtra(Constants.TRANSPORT_REQUEST_ID, requestId);
+
+        PendingIntent pAccept = PendingIntent
+                .getBroadcast(this, mRequestId, accept, 0);
+
+        Intent reject = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
+        reject.putExtra(Constants.T_RESPONSE, Constants.REJECT);
+        reject.putExtra(Constants.TRANSPORT_REQUEST_ID, requestId);
+
+        PendingIntent pReject = PendingIntent
+                .getBroadcast(this, mRequestId, reject, 0);
 
         // build notification
         // the addAction re-use the same intent to keep the example short
         Notification n = new Notification.Builder(this)
                 .setContentTitle("Transport Request")
                 .setContentText("New Transport request form V-Carry")
-                .setSmallIcon(R.drawable.logo_small)
-                .setContentIntent(pIntent)
+                .setSmallIcon(R.drawable.ic_local_shipping_black_24dp)
+                //.setContentIntent(pIntent)
                 .setAutoCancel(true)
                 .setVibrate(new long[]{100, 100})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .addAction(R.drawable.ic_done_black_24dp, "Accept", pIntent)
-                .addAction(R.drawable.ic_clear_black_24dp, "Ignore", pIntent).build();
+                .addAction(R.drawable.ic_done_black_24dp, "Accept", pAccept)
+                .addAction(R.drawable.ic_clear_black_24dp, "Reject", pReject).build();
 
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0, n);
+        notificationManager.notify(mRequestId, n);
 
     }
 

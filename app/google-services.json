@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "665896886652",
-    "firebase_url": "https://vcarry-3b34f.firebaseio.com",
-    "project_id": "vcarry-3b34f",
-    "storage_bucket": "vcarry-3b34f.appspot.com"
+    "project_number": "581157640018",
+    "firebase_url": "https://v-carry.firebaseio.com",
+    "project_id": "v-carry",
+    "storage_bucket": "v-carry.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:665896886652:android:0a46d21b0917e8f0",
+        "mobilesdk_app_id": "1:581157640018:android:0a46d21b0917e8f0",
         "android_client_info": {
           "package_name": "io.fusionbit.vcarry"
         }
       },
       "oauth_client": [
         {
-          "client_id": "665896886652-mi9t26fo3l0f230nuklj1bglpbiqaqbr.apps.googleusercontent.com",
+          "client_id": "581157640018-sjc2sff92oe593fuqksj2hhj79ljq9md.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "io.fusionbit.vcarry",
@@ -23,13 +23,21 @@
           }
         },
         {
-          "client_id": "665896886652-ahd11vbfum71cvc35lldb64rniiedenb.apps.googleusercontent.com",
+          "client_id": "581157640018-jj9uo8e1ft178f62qvgkquteohjq2bsb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.fusionbit.vcarry",
+            "certificate_hash": "CD5303081001141E7FC32F7EED220626792908EA"
+          }
+        },
+        {
+          "client_id": "581157640018-jldvo1uvn7n4aik44305mv4kve12rrhv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBz73rYl4H96hZ76ovXqDaBbDOYxaUe7tc"
+          "current_key": "AIzaSyC259XvhHKKQTbaAE1plcvnQGBbai8QV4o"
         }
       ],
       "services": {
@@ -40,7 +48,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "665896886652-ahd11vbfum71cvc35lldb64rniiedenb.apps.googleusercontent.com",
+              "client_id": "581157640018-jldvo1uvn7n4aik44305mv4kve12rrhv.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

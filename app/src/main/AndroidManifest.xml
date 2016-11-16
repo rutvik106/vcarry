@@ -12,6 +12,11 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <uses-feature android:name="android.hardware.location.gps"/>
 
     <application
         android:name=".App"
@@ -30,6 +35,12 @@
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".OnBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
@@ -68,7 +79,8 @@
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".ActivityTransportRequest"
+        <activity
+            android:name=".ActivityTransportRequest"
             android:theme="@style/Base.V7.Theme.AppCompat.Dialog">
         </activity>
     </application>
