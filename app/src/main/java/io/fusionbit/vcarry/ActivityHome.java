@@ -1,13 +1,14 @@
 package io.fusionbit.vcarry;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,23 +25,22 @@ import com.squareup.picasso.Picasso;
 import extra.CircleTransform;
 import extra.Log;
 import fragment.FragmentMap;
+import fragment.FragmentTrips;
+
+import static io.fusionbit.vcarry.Constants.WAS_LANGUAGE_CHANGED;
 
 public class ActivityHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
     private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
 
-    private FragmentMap fragmentMap;
-
-    private FragmentManager fragmentManager;
-
-    private FrameLayout flMapView;
-
     //is activity connected to service
     boolean mServiceBound = false;
 
     //main STICKY service running in foreground (also shows up in notifications)
     TransportRequestHandlerService mService;
+
+    FragmentTransaction ft;
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -76,6 +75,7 @@ public class ActivityHome extends AppCompatActivity
         //bind activity to service
         bindService(TransportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
 
+
         if (getSupportActionBar() != null)
         {
             getSupportActionBar().setTitle("V-Carry");
@@ -92,18 +92,6 @@ public class ActivityHome extends AppCompatActivity
             }
         });*/
 
-
-        flMapView = (FrameLayout) findViewById(R.id.fl_mapView);
-
-        fragmentMap = FragmentMap.newInstance(1, this);
-
-        fragmentManager = getSupportFragmentManager();
-
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        fragmentTransaction
-                .add(R.id.fl_mapView, fragmentMap)
-                .commitAllowingStateLoss();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -128,6 +116,10 @@ public class ActivityHome extends AppCompatActivity
 
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_subTitle))
                     .setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+
+            ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fl_mapView, FragmentMap.newInstance(0, this));
+            ft.commit();
 
         } else
         {
@@ -168,6 +160,7 @@ public class ActivityHome extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings)
         {
+            startActivityForResult(new Intent(this, ActivitySettings.class), Constants.CHANGE_LANGUAGE);
             return true;
         }
 
@@ -178,27 +171,35 @@ public class ActivityHome extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item)
     {
+        Fragment fragment = null;
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera)
+        if (id == R.id.nav_home)
         {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery)
+            fragment = FragmentMap.newInstance(0, this);
+        } else if (id == R.id.nav_trips)
+        {
+            fragment = FragmentTrips.newInstance(1, this);
+        } else if (id == R.id.nav_accountBalance)
         {
 
-        } else if (id == R.id.nav_slideshow)
-        {
-
-        } else if (id == R.id.nav_manage)
+        } else if (id == R.id.nav_tripsOnOffer)
         {
 
         } else if (id == R.id.nav_share)
         {
 
-        } else if (id == R.id.nav_send)
+        } else if (id == R.id.nav_sendFeedback)
         {
 
+        }
+
+        if (fragment != null)
+        {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fl_mapView, fragment);
+            ft.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -215,6 +216,28 @@ public class ActivityHome extends AppCompatActivity
         {
             unbindService(mServiceConnection);
             mServiceBound = false;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (resultCode == Activity.RESULT_OK)
+        {
+            switch (requestCode)
+            {
+
+
+                case Constants.CHANGE_LANGUAGE:
+                    boolean wasChanged = data.getExtras().getBoolean(WAS_LANGUAGE_CHANGED, false);
+                    if (wasChanged)
+                    {
+                        this.recreate();
+                    }
+                    break;
+
+
+            }
         }
     }
 

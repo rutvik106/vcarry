@@ -6,14 +6,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.view.WindowManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -75,7 +71,7 @@ public class TransportRequestHandlerService extends Service implements Transport
 
         // create the pending intent and add to the notification
         Intent intent = new Intent(this, ActivityHome.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         m_notificationBuilder.setContentIntent(pendingIntent);
 
         // send the notification
@@ -133,7 +129,7 @@ public class TransportRequestHandlerService extends Service implements Transport
     private void showNotification(String requestId)
     {
         final int mRequestId = Integer
-                .valueOf(requestId.substring(requestId.length() - 4, requestId.length()));
+                .valueOf(requestId);
 
         Intent accept = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
         accept.putExtra(Constants.T_RESPONSE, Constants.ACCEPT);

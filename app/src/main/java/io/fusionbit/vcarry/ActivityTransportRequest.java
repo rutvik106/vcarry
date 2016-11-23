@@ -1,20 +1,28 @@
 package io.fusionbit.vcarry;
 
 import android.app.NotificationManager;
-import android.os.PowerManager;
-import android.support.v7.app.AppCompatActivity;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import firebase.TransportRequestHandler;
 
-public class ActivityTransportRequest extends AppCompatActivity
+public class ActivityTransportRequest extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
 {
 
     private String requestId;
 
     NotificationManager notificationManager;
+
+    FusedLocation fusedLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -63,14 +71,15 @@ public class ActivityTransportRequest extends AppCompatActivity
 
     private void acceptRequest()
     {
-        TransportRequestHandler.acceptRequest(requestId);
-        notificationManager.cancel(Integer.valueOf(requestId.substring(requestId.length() - 4, requestId.length())));
+        fusedLocation = new FusedLocation(this, this, this);
+
+        notificationManager.cancel(Integer.valueOf(requestId));
         finish();
     }
 
     private void rejectRequest()
     {
-        notificationManager.cancel(Integer.valueOf(requestId.substring(requestId.length() - 4, requestId.length())));
+        notificationManager.cancel(Integer.valueOf(requestId));
         finish();
     }
 
@@ -78,5 +87,33 @@ public class ActivityTransportRequest extends AppCompatActivity
     public void onBackPressed()
     {
         super.onBackPressed();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle)
+    {
+        fusedLocation.startGettingLocation(new FusedLocation.GetLocation()
+        {
+            @Override
+            public void onLocationChanged(Location location)
+            {
+                TransportRequestHandler.acceptRequest(requestId, location.getLatitude() + "," + location.getLongitude()
+                        , null);
+
+                fusedLocation.stopGettingLocation();
+            }
+        });
+    }
+
+    @Override
+    public void onConnectionSuspended(int i)
+    {
+        TransportRequestHandler.acceptRequest(requestId, null, null);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
+    {
+        TransportRequestHandler.acceptRequest(requestId, null, null);
     }
 }

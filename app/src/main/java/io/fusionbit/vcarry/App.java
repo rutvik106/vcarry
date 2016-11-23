@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
+import extra.LocaleHelper;
 import extra.Log;
 
 /**
@@ -21,6 +22,9 @@ public class App extends MultiDexApplication
     public void onCreate()
     {
         super.onCreate();
+
+        LocaleHelper.onCreate(this,LocaleHelper.getLanguage(this));
+
         Log.i(TAG, "Application Created!!!");
     }
 

@@ -18,14 +18,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="Transport Request"
+            android:text="@string/transport_request"
             android:textSize="22sp"/>
 
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New Transport Request from V-Carry"
+            android:text="@string/new_request"
             android:textSize="18sp"/>
 
 
@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="reject"/>
+                android:text="@string/reject"/>
 
         </LinearLayout>
 

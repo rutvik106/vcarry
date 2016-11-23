@@ -1,7 +1,5 @@
 package firebase;
 
-import android.app.NotificationManager;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -10,6 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +47,7 @@ public class TransportRequestHandler
                         requestCount++;
                         if (requestCount > totalRequest)
                         {
+                            totalRequest++;
                             transportRequestListener.OnReceiveNewTransportRequest(dataSnapshot);
                         }
                     }
@@ -87,13 +87,17 @@ public class TransportRequestHandler
 
     }
 
-    public static void acceptRequest(final String requestId)
+    public static void acceptRequest(final String requestId, String latLng, String locationName)
     {
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
 
         Map data = new HashMap<>();
-        data.put("name", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        data.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        data.put("name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        data.put("time", Calendar.getInstance().getTimeInMillis());
+        data.put("location", latLng);
+        data.put("trip-id", requestId);
         dbRef.child("accepted").child(requestId).updateChildren(data, new DatabaseReference.CompletionListener()
         {
             @Override
@@ -110,7 +114,6 @@ public class TransportRequestHandler
                 }
             }
         });
-
     }
 
     public static void rejectRequest()
