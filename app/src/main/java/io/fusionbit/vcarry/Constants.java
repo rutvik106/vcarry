@@ -7,6 +7,8 @@ package io.fusionbit.vcarry;
 public class Constants
 {
 
+    public static final int NOTIFICATION_ID = 246;
+
     public static final int CHANGE_LANGUAGE = 123;
 
     public static final String TRANSPORT_REQUEST_RESPONSE = "TRANSPORT_REQUEST_RESPONSE";

@@ -9,13 +9,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.database.DataSnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import firebase.TransportRequestHandler;
 
-public class ActivityTransportRequest extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+public class ActivityTransportRequest extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, TransportRequestHandler.RequestDetailsCallback
 {
 
     private String requestId;
@@ -23,6 +28,8 @@ public class ActivityTransportRequest extends AppCompatActivity implements Googl
     NotificationManager notificationManager;
 
     FusedLocation fusedLocation;
+
+    TextView tvFrom, tvTo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -65,6 +72,20 @@ public class ActivityTransportRequest extends AppCompatActivity implements Googl
                 rejectRequest();
             }
         });
+
+        tvFrom = (TextView) findViewById(R.id.tv_from);
+        tvTo = (TextView) findViewById(R.id.tv_to);
+
+
+        getRequestDetails();
+
+
+    }
+
+    private void getRequestDetails()
+    {
+
+        TransportRequestHandler.getRequestDetails(requestId, this);
 
     }
 
@@ -115,5 +136,14 @@ public class ActivityTransportRequest extends AppCompatActivity implements Googl
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
     {
         TransportRequestHandler.acceptRequest(requestId, null, null);
+    }
+
+    @Override
+    public void OnGetRequestDetails(DataSnapshot dataSnapshot)
+    {
+        Map details = new HashMap();
+        details = (Map) dataSnapshot.getValue();
+        tvFrom.setText(getResources().getString(R.string.request_from) + ": " + details.get("from").toString());
+        tvTo.setText(getResources().getString(R.string.request_to) + ": " + details.get("to").toString());
     }
 }

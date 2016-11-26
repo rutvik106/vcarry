@@ -48,4 +48,7 @@
     <string name="accept">સ્વીકારો</string>
     <string name="reject">અસ્વીકારો</string>
 
+    <string name="request_from">પ્રારંભ સ્થળ</string>
+    <string name="request_to">ગંતવ્ય</string>
+
 </resources>

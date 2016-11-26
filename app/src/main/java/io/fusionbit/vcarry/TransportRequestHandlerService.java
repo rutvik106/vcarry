@@ -17,6 +17,8 @@ import com.google.firebase.database.DataSnapshot;
 import extra.Log;
 import firebase.TransportRequestHandler;
 
+import static io.fusionbit.vcarry.Constants.NOTIFICATION_ID;
+
 /**
  * Created by rutvik on 10/27/2016 at 2:54 PM.
  */
@@ -27,8 +29,6 @@ public class TransportRequestHandlerService extends Service implements Transport
             App.APP_TAG + TransportRequestHandlerService.class.getSimpleName();
 
     IBinder transportRequestServiceBinder = new TransportRequestServiceBinder();
-
-    private static final int NOTIFICATION_ID = 246;
 
     private TransportRequestHandler transportRequestHandler;
 

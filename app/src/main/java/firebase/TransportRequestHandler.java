@@ -29,7 +29,6 @@ public class TransportRequestHandler
     public TransportRequestHandler(final TransportRequestListener transportRequestListener)
     {
 
-
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
 
@@ -87,33 +86,67 @@ public class TransportRequestHandler
 
     }
 
+    public static void getRequestDetails(final String requestId, final RequestDetailsCallback callback)
+    {
+        final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+        dbRef.getRoot();
+
+        dbRef.child("request").child(requestId).addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                callback.OnGetRequestDetails(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+
+            }
+        });
+
+    }
+
     public static void acceptRequest(final String requestId, String latLng, String locationName)
     {
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
 
-        Map data = new HashMap<>();
+        final Map data = new HashMap<>();
+
         data.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
         data.put("name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         data.put("time", Calendar.getInstance().getTimeInMillis());
         data.put("location", latLng);
-        data.put("trip-id", requestId);
-        dbRef.child("accepted").child(requestId).updateChildren(data, new DatabaseReference.CompletionListener()
+        data.put("trip_id", requestId);
+
+
+        dbRef.child("request").child(requestId).removeValue(new DatabaseReference.CompletionListener()
         {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference)
             {
                 if (databaseError == null)
                 {
-                    Log.i(App.APP_TAG, "REQUEST ACCEPTED");
-
                     dbRef.getRoot();
 
-                    dbRef.child("request").child(requestId).removeValue();
+                    dbRef.child("accepted").child(requestId).updateChildren(data, new DatabaseReference.CompletionListener()
+                    {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference)
+                        {
+                            if (databaseError == null)
+                            {
+                                Log.i(App.APP_TAG, "REQUEST ACCEPTED");
+                            }
+                        }
+                    });
 
                 }
             }
         });
+
     }
 
     public static void rejectRequest()
@@ -130,6 +163,11 @@ public class TransportRequestHandler
 
         void OnRequestRemoved();
 
+    }
+
+    public interface RequestDetailsCallback
+    {
+        void OnGetRequestDetails(DataSnapshot dataSnapshot);
     }
 
 }

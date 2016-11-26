@@ -5,6 +5,8 @@
     android:id="@+id/activity_transport_request"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:padding="10dp"
     tools:context="io.fusionbit.vcarry.ActivityTransportRequest">
 
 
@@ -18,36 +20,56 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:text="@string/transport_request"
-            android:textSize="22sp"/>
+            android:textSize="21sp"/>
 
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/new_request"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tv_from"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/request_from"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tv_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/request_to"
+            android:textSize="16sp"/>
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:weightSum="2">
 
             <Button
                 android:id="@+id/btn_accept"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/accept"/>
+                android:text="@string/accept"
+                android:textSize="15sp"/>
 
             <Button
                 android:id="@+id/btn_reject"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/reject"/>
+                android:text="@string/reject"
+                android:textSize="15sp"/>
 
         </LinearLayout>
 
