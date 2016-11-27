@@ -7,6 +7,10 @@ package io.fusionbit.vcarry;
 public class Constants
 {
 
+    public static final String API_BASE_URL = "http://tapandtype.com/vcarry/webservice/";
+
+    public static final String CONTENT_TYPE_JSON = "application/json";
+
     public static final int NOTIFICATION_ID = 246;
 
     public static final int CHANGE_LANGUAGE = 123;

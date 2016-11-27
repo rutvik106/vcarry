@@ -46,4 +46,6 @@
     <string name="request_from">From</string>
     <string name="request_to">To</string>
 
+    <string name="time">Time</string>
+
 </resources>

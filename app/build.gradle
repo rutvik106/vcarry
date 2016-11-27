@@ -52,6 +52,12 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile 'gun0912.ted:tedpermission:1.0.2'
+
+    // retrofit, gson
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+
 }
 
 

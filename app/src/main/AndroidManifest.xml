@@ -72,19 +72,22 @@
 
         <activity
             android:name=".ActivityLogin"
-            android:label="Login">
+            android:label="Login"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".ActivityHome"
             android:label="@string/title_activity_home"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
             android:name=".ActivityTransportRequest"
             android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Base.V7.Theme.AppCompat.Dialog">
         </activity>
 
