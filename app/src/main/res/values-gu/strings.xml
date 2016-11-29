@@ -53,4 +53,8 @@
 
     <string name="time">સમય</string>
 
+    <string name="fare">ભાડું</string>
+
+    <string name="rs">\u20B9</string>
+
 </resources>

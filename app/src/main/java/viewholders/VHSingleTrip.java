@@ -1,13 +1,17 @@
 package viewholders;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import apimodels.TripsByDriverMail;
+import io.fusionbit.vcarry.ActivityTripDetails;
+import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.R;
 
 /**
@@ -23,7 +27,9 @@ public class VHSingleTrip extends RecyclerView.ViewHolder
 
     TextView tvTripFrom, tvTripTo, tvTripTime;
 
-    public VHSingleTrip(Context context, View itemView)
+    LinearLayout llContainer;
+
+    public VHSingleTrip(final Context context, View itemView)
     {
         super(itemView);
         this.context = context;
@@ -31,6 +37,19 @@ public class VHSingleTrip extends RecyclerView.ViewHolder
         tvTripFrom = (TextView) itemView.findViewById(R.id.tv_tripFrom);
         tvTripTo = (TextView) itemView.findViewById(R.id.tv_tripTo);
         tvTripTime = (TextView) itemView.findViewById(R.id.tv_tripTime);
+
+        llContainer = (LinearLayout) itemView.findViewById(R.id.ll_singleTripContainer);
+
+        llContainer.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Intent i = new Intent(context, ActivityTripDetails.class);
+                i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, model.getTripId());
+                context.startActivity(i);
+            }
+        });
 
     }
 

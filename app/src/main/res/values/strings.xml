@@ -48,4 +48,8 @@
 
     <string name="time">Time</string>
 
+    <string name="fare">Trip Fare</string>
+
+    <string name="rs">\u20B9</string>
+
 </resources>

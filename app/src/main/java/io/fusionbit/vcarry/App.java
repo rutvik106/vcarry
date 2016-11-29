@@ -6,6 +6,7 @@ import android.support.multidex.MultiDexApplication;
 
 import extra.LocaleHelper;
 import extra.Log;
+import io.realm.Realm;
 
 /**
  * Created by rutvik on 10/26/2016 at 9:41 AM.
@@ -23,7 +24,9 @@ public class App extends MultiDexApplication
     {
         super.onCreate();
 
-        LocaleHelper.onCreate(this,LocaleHelper.getLanguage(this));
+        LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
+
+        Realm.init(this);
 
         Log.i(TAG, "Application Created!!!");
     }

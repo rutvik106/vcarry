@@ -4,8 +4,10 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import apimodels.TripsByDriverMail;
 import viewholders.VHSingleTrip;
@@ -17,20 +19,26 @@ import viewholders.VHSingleTrip;
 public class TripsAdapter extends RecyclerView.Adapter
 {
 
-    final List<TripsByDriverMail> tripsByDriverMailList;
+    final Map<String, TripsByDriverMail> tripsByDriverMailList;
+    final List<String> tripIdList;
 
     final Context context;
 
     public TripsAdapter(final Context context)
     {
         this.context = context;
-        tripsByDriverMailList = new LinkedList<>();
+        tripsByDriverMailList = new LinkedHashMap<>();
+        tripIdList = new LinkedList<>();
     }
 
     public void addTrip(TripsByDriverMail tripsByDriverMail)
     {
-        tripsByDriverMailList.add(tripsByDriverMail);
-        notifyItemInserted(tripsByDriverMailList.size());
+        if (!tripIdList.contains(tripsByDriverMail.getTripId()))
+        {
+            tripIdList.add(tripsByDriverMail.getTripId());
+            tripsByDriverMailList.put(tripsByDriverMail.getTripId(), tripsByDriverMail);
+            notifyItemInserted(tripsByDriverMailList.size());
+        }
     }
 
     @Override
@@ -42,7 +50,7 @@ public class TripsAdapter extends RecyclerView.Adapter
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position)
     {
-        VHSingleTrip.bind((VHSingleTrip) holder, tripsByDriverMailList.get(position));
+        VHSingleTrip.bind((VHSingleTrip) holder, tripsByDriverMailList.get(tripIdList.get(position)));
     }
 
     @Override

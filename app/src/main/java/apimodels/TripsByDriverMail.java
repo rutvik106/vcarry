@@ -2,11 +2,14 @@ package apimodels;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by rutvik on 11/27/2016 at 3:54 PM.
  */
 
-public class TripsByDriverMail
+public class TripsByDriverMail extends RealmObject
 {
 
 
@@ -34,6 +37,7 @@ public class TripsByDriverMail
      * customer_name : Jeet Patel
      */
 
+    @PrimaryKey
     @SerializedName("trip_id")
     private String tripId;
     @SerializedName("trip_datetime")

@@ -7,7 +7,7 @@ package io.fusionbit.vcarry;
 public class Constants
 {
 
-    public static final String API_BASE_URL = "http://tapandtype.com/vcarry/webservice/";
+    public static final String API_BASE_URL = "http://tapandtype.com/vcarry/webservice/";//"http://192.168.0.104/vcarry/webservice/"; //"http://tapandtype.com/vcarry/webservice/";
 
     public static final String CONTENT_TYPE_JSON = "application/json";
 
@@ -26,6 +26,8 @@ public class Constants
     public static final String TRANSPORT_REQUEST_ID = "TRANSPORT_REQUEST_ID";
 
     public static final String WAS_LANGUAGE_CHANGED = "WAS_LANGUAGE_CHANGED";
+
+    public static final String INTENT_EXTRA_TRIP_ID = "TRIP_ID";
 
 
 }

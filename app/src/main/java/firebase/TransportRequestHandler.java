@@ -120,6 +120,7 @@ public class TransportRequestHandler
         data.put("time", Calendar.getInstance().getTimeInMillis());
         data.put("location", latLng);
         data.put("trip_id", requestId);
+        data.put("confirm", 0);
 
 
         dbRef.child("request").child(requestId).removeValue(new DatabaseReference.CompletionListener()

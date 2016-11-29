@@ -19,6 +19,9 @@ import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripsByDriverMail;
 import io.fusionbit.vcarry.R;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -34,6 +37,10 @@ public class FragmentTrips extends Fragment
     RecyclerView rvTrips;
 
     TripsAdapter adapter;
+
+    Realm realm;
+
+    RealmResults<TripsByDriverMail> trips;
 
     public static FragmentTrips newInstance(int index, Context context)
     {
@@ -67,6 +74,28 @@ public class FragmentTrips extends Fragment
 
     private void getTrips()
     {
+        realm = Realm.getDefaultInstance();
+
+        trips = realm.where(TripsByDriverMail.class).findAll();
+
+        for (TripsByDriverMail t : trips)
+        {
+            adapter.addTrip(t);
+        }
+
+        trips.addChangeListener(new RealmChangeListener<RealmResults<TripsByDriverMail>>()
+                                {
+                                    @Override
+                                    public void onChange(RealmResults<TripsByDriverMail> results)
+                                    {
+                                        for (TripsByDriverMail trip : results)
+                                        {
+                                            adapter.addTrip(trip);
+                                        }
+                                    }
+                                }
+
+        );
 
         API.getInstance().getTripsByDriverMail(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                 new RetrofitCallbacks<List<TripsByDriverMail>>()
@@ -78,11 +107,13 @@ public class FragmentTrips extends Fragment
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
-                            for (TripsByDriverMail trip : response.body())
+                            realm.beginTransaction();
+                            for (final TripsByDriverMail trip : response.body())
                             {
-                                adapter.addTrip(trip);
+                                realm.copyToRealmOrUpdate(trip);
                             }
-                            adapter.notifyDataSetChanged();
+
+                            realm.commitTransaction();
                         }
                     }
                 });
