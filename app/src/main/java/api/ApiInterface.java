@@ -2,6 +2,7 @@ package api;
 
 import java.util.List;
 
+import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -20,7 +21,7 @@ public interface ApiInterface
                                                         @Query("driver_email") String driverEmail);
 
     @GET("webservice.php")
-    Call<ResponseBody> getTripDetailsByTripId(@Query("method") String method,
-                                              @Query("trip_id") String tripId);
+    Call<TripDetails> getTripDetailsByTripId(@Query("method") String method,
+                                             @Query("trip_id") String tripId);
 
 }

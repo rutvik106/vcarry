@@ -7,6 +7,8 @@ import android.support.multidex.MultiDexApplication;
 import extra.LocaleHelper;
 import extra.Log;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmObject;
 
 /**
  * Created by rutvik on 10/26/2016 at 9:41 AM.
@@ -27,6 +29,13 @@ public class App extends MultiDexApplication
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
 
         Realm.init(this);
+
+        RealmConfiguration config = new RealmConfiguration
+                .Builder()
+                .deleteRealmIfMigrationNeeded()
+                .build();
+
+        Realm.setDefaultConfiguration(config);
 
         Log.i(TAG, "Application Created!!!");
     }

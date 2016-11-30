@@ -40,7 +40,7 @@ public class FragmentTrips extends Fragment
 
     Realm realm;
 
-    RealmResults<TripsByDriverMail> trips;
+    RealmResults<TripsByDriverMail> tripResults;
 
     public static FragmentTrips newInstance(int index, Context context)
     {
@@ -76,14 +76,14 @@ public class FragmentTrips extends Fragment
     {
         realm = Realm.getDefaultInstance();
 
-        trips = realm.where(TripsByDriverMail.class).findAll();
+        tripResults = realm.where(TripsByDriverMail.class).findAll();
 
-        for (TripsByDriverMail t : trips)
+        for (TripsByDriverMail t : tripResults)
         {
             adapter.addTrip(t);
         }
 
-        trips.addChangeListener(new RealmChangeListener<RealmResults<TripsByDriverMail>>()
+        tripResults.addChangeListener(new RealmChangeListener<RealmResults<TripsByDriverMail>>()
                                 {
                                     @Override
                                     public void onChange(RealmResults<TripsByDriverMail> results)

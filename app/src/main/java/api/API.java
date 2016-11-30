@@ -2,6 +2,7 @@ package api;
 
 import java.util.List;
 
+import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
 import io.fusionbit.vcarry.App;
 import okhttp3.ResponseBody;
@@ -44,9 +45,9 @@ public class API
     }
 
     public void getTripDetailsByTripId(final String tripId,
-                                       final RetrofitCallbacks<ResponseBody> callback)
+                                       final RetrofitCallbacks<TripDetails> callback)
     {
-        Call<ResponseBody> call = apiService.getTripDetailsByTripId("get_trip_details_by_trip_id",
+        Call<TripDetails> call = apiService.getTripDetailsByTripId("get_trip_details_by_trip_id",
                 tripId);
 
         call.enqueue(callback);

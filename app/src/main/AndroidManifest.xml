@@ -90,7 +90,8 @@
             android:name=".ActivitySettings"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ActivityTripDetails">
+        <activity android:name=".ActivityTripDetails"
+            android:theme="@style/TripDetails">
         </activity>
     </application>
 
