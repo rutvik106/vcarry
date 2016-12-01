@@ -62,4 +62,10 @@
 
     <string name="trip_details">Trip Details</string>
 
+    <string name="are_you_sure_start_trip">Are you sure you want to start this Trip?</string>
+
+    <string name="cancel">Cancel</string>
+
+    <string name="start">START</string>
+
 </resources>

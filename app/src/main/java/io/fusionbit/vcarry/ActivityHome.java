@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,10 +25,17 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import extra.CircleTransform;
+import extra.LocaleHelper;
 import extra.Log;
+import fragment.FragmentAccBalance;
 import fragment.FragmentMap;
 import fragment.FragmentTrips;
+import fragment.FragmentTripsOnOffer;
 
 import static io.fusionbit.vcarry.Constants.WAS_LANGUAGE_CHANGED;
 
@@ -40,7 +50,14 @@ public class ActivityHome extends AppCompatActivity
     //main STICKY service running in foreground (also shows up in notifications)
     TransportRequestHandlerService mService;
 
-    FragmentTransaction ft;
+    FragmentManager fragmentManager;
+
+    FragmentMap fragmentMap;
+    FragmentTrips fragmentTrips;
+    FragmentAccBalance fragmentAccBalance;
+    FragmentTripsOnOffer fragmentTripsOnOffer;
+
+    List<Fragment> fragmentList = new ArrayList<>();
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -64,6 +81,7 @@ public class ActivityHome extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "HOME ACTIVITY ON CREATE");
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -117,15 +135,38 @@ public class ActivityHome extends AppCompatActivity
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_subTitle))
                     .setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
-            ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fl_mapView, FragmentMap.newInstance(0, this));
-            ft.commit();
+            fragmentMap = FragmentMap.newInstance(0, this);
+            fragmentTrips = FragmentTrips.newInstance(1, this);
+            fragmentAccBalance = FragmentAccBalance.newInstance(2, this);
+            fragmentTripsOnOffer = FragmentTripsOnOffer.newInstance(3, this);
+
+            fragmentList.add(fragmentMap);
+            fragmentList.add(fragmentTrips);
+            fragmentList.add(fragmentAccBalance);
+            fragmentList.add(fragmentTripsOnOffer);
+
+            fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .add(R.id.fl_mapView, fragmentMap)
+                    .add(R.id.fl_mapView, fragmentTrips)
+                    .add(R.id.fl_mapView, fragmentAccBalance)
+                    .add(R.id.fl_mapView, fragmentTripsOnOffer)
+                    .commitAllowingStateLoss();
+
+            showFragment(fragmentMap);
 
         } else
         {
             finish();
         }
 
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        Log.i(TAG, "HOME ACTIVITY ON START");
     }
 
     @Override
@@ -171,35 +212,27 @@ public class ActivityHome extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item)
     {
-        Fragment fragment = null;
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_home)
         {
-            fragment = FragmentMap.newInstance(0, this);
+            showFragment(fragmentMap);
         } else if (id == R.id.nav_trips)
         {
-            fragment = FragmentTrips.newInstance(1, this);
+            showFragment(fragmentTrips);
         } else if (id == R.id.nav_accountBalance)
         {
-
+            showFragment(fragmentAccBalance);
         } else if (id == R.id.nav_tripsOnOffer)
         {
-
+            showFragment(fragmentTripsOnOffer);
         } else if (id == R.id.nav_share)
         {
 
         } else if (id == R.id.nav_sendFeedback)
         {
 
-        }
-
-        if (fragment != null)
-        {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fl_mapView, fragment);
-            ft.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -232,7 +265,9 @@ public class ActivityHome extends AppCompatActivity
                     boolean wasChanged = data.getExtras().getBoolean(WAS_LANGUAGE_CHANGED, false);
                     if (wasChanged)
                     {
-                        this.recreate();
+                        Intent refresh = new Intent(this, ActivityHome.class);
+                        refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(refresh);
                     }
                     break;
 
@@ -240,5 +275,22 @@ public class ActivityHome extends AppCompatActivity
             }
         }
     }
+
+    private void showFragment(Fragment fragmentToShow)
+    {
+        FragmentTransaction t = fragmentManager.beginTransaction();
+        for (Fragment fragment : fragmentList)
+        {
+            if (!fragment.equals(fragmentToShow))
+            {
+                t.hide(fragment);
+            } else
+            {
+                t.show(fragment);
+            }
+        }
+        t.commitAllowingStateLoss();
+    }
+
 
 }

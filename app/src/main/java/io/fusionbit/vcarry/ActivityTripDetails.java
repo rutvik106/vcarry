@@ -1,9 +1,17 @@
 package io.fusionbit.vcarry;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 import api.API;
 import api.RetrofitCallbacks;
@@ -11,6 +19,7 @@ import apimodels.TripDetails;
 import extra.Log;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -51,6 +60,7 @@ public class ActivityTripDetails extends AppCompatActivity
 
         btnStartTrip = (Button) findViewById(R.id.btn_startTrip);
 
+
         tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
 
         if (!tripId.isEmpty())
@@ -82,7 +92,6 @@ public class ActivityTripDetails extends AppCompatActivity
         API.getInstance().getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripDetails>()
         {
 
-
             @Override
             public void onResponse(Call<TripDetails> call, Response<TripDetails> response)
             {
@@ -108,8 +117,86 @@ public class ActivityTripDetails extends AppCompatActivity
         tvTripStatus.setText(tripDetails.getStatus());
         tvTripLocation.setText(tripDetails.getFromShippingLocation());
         tvTripDestination.setText(tripDetails.getToShippingLocation());
-        tvTripCustomerName.setText(tripDetails.getCustomerId());
+        tvTripCustomerName.setText(tripDetails.getCustomerName());
         tvTripDetailTime.setText(tripDetails.getTripDatetime());
+
+        final int tripStatus = Integer.valueOf(tripDetails.getTripStatus());
+        final int tripStatusStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
+
+        if (tripStatus < tripStatusStarted)
+        {
+            btnStartTrip.setVisibility(View.VISIBLE);
+            btnStartTrip.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    new AlertDialog.Builder(ActivityTripDetails.this)
+                            .setTitle(getResources().getString(R.string.start_trip))
+                            .setMessage(getResources().getString(R.string.are_you_sure_start_trip))
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setPositiveButton(getResources().getString(R.string.start),
+                                    new DialogInterface.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i)
+                                        {
+                                            startTrip();
+                                        }
+                                    })
+                            .setNegativeButton(getResources().getString(R.string.cancel), null)
+                            .show();
+                }
+            });
+        }
+
     }
 
+    public void startTrip()
+    {
+        final boolean isDriverOnTrip = PreferenceManager.getDefaultSharedPreferences(ActivityTripDetails.this)
+                .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
+
+        if (!isDriverOnTrip)
+        {
+            API.getInstance().updateTripStatus(Constants.TRIP_STATUS_TRIP_STARTED,
+                    tripId, new RetrofitCallbacks<ResponseBody>()
+                    {
+
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                        {
+                            super.onResponse(call, response);
+                            if (response.isSuccessful())
+                            {
+                                PreferenceManager.getDefaultSharedPreferences(ActivityTripDetails.this)
+                                        .edit()
+                                        .putString(Constants.CURRENT_TRIP_ID, tripId)
+                                        .putBoolean(Constants.IS_DRIVER_ON_TRIP, true)
+                                        .apply();
+
+                                btnStartTrip.setVisibility(View.GONE);
+
+                                stopService(new Intent(ActivityTripDetails.this,
+                                        TransportRequestHandlerService.class));
+
+                                startService(new Intent(ActivityTripDetails.this,
+                                        TransportRequestHandlerService.class));
+
+                                try
+                                {
+                                    System.out.println(response.body().string());
+                                } catch (IOException e)
+                                {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+
+        } else
+        {
+            Toast.makeText(this, "Please complete current Trip", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

@@ -14,27 +14,28 @@ public class TripDetails extends RealmObject
 
 
     /**
-     * trip_id : 6
-     * trip_datetime : 2016-11-23 14:14:11
-     * from_shipping_location_id : 16
-     * to_shipping_location_id : 15
-     * from_shipping_location : shankar chemicals
+     * trip_id : 24
+     * trip_datetime : 2016-11-30 15:09:40
+     * from_shipping_location_id : 15
+     * to_shipping_location_id : 16
+     * from_shipping_location : Jeet Patel
      * from_city_id : 2
-     * from_area_id : 569
-     * to_shipping_location : Jeet Patel
+     * from_area_id : 566
+     * to_shipping_location : shankar chemicals
      * to_city_id : 2
-     * to_area_id : 566
+     * to_area_id : 569
      * vehicle_type_id : 2
      * driver_id : 2
-     * driver_name : Jeet Patel
-     * fare : 200
+     * driver_name : jj
+     * fare : 250
      * created_by : 27
      * last_modified_by : 27
-     * date_added : 2016-11-23 14:14:36
-     * date_modified : 2016-11-23 14:14:36
-     * trip_status : 1
+     * date_added : 2016-11-30 15:09:49
+     * date_modified : 2016-11-30 15:10:14
+     * trip_status : 2
      * customer_id : 1663
-     * status : New
+     * status : Driver Allocated
+     * customer_name : Jeet Patel
      */
 
     @PrimaryKey
@@ -80,6 +81,8 @@ public class TripDetails extends RealmObject
     private String customerId;
     @SerializedName("status")
     private String status;
+    @SerializedName("customer_name")
+    private String customerName;
 
     public String getTripId()
     {
@@ -289,5 +292,15 @@ public class TripDetails extends RealmObject
     public void setStatus(String status)
     {
         this.status = status;
+    }
+
+    public String getCustomerName()
+    {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName)
+    {
+        this.customerName = customerName;
     }
 }

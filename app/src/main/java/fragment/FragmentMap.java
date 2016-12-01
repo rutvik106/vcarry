@@ -1,42 +1,45 @@
 package fragment;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.Toast;
-import com.google.android.gms.maps.CameraUpdate;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import api.API;
+import api.RetrofitCallbacks;
+import apimodels.TripDetails;
 import io.fusionbit.vcarry.App;
+import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.MapWrapperLayout;
 import io.fusionbit.vcarry.R;
+import io.fusionbit.vcarry.TransportRequestHandlerService;
+import io.realm.Realm;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static java.lang.Math.asin;
 import static java.lang.Math.atan2;
@@ -71,6 +74,12 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
     private LatLng currentLatLng;
 
+    LinearLayout llDashboardContainer;
+
+    TextView tvDashCustomerName, tvDashCustomerContact, tvDashTripTo, tvDashTripFrom;
+
+    Button btnDashStopTrip;
+
     public static FragmentMap newInstance(int index, Context context)
     {
         FragmentMap fragmentMap = new FragmentMap();
@@ -95,9 +104,18 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         mapFragment = (SyncedMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.frag_map);
 
+        llDashboardContainer = (LinearLayout) view.findViewById(R.id.ll_dashboardContainer);
+
+        tvDashCustomerContact = (TextView) view.findViewById(R.id.tv_dashCustomerContact);
+        tvDashCustomerName = (TextView) view.findViewById(R.id.tv_dashCustomerName);
+        tvDashTripFrom = (TextView) view.findViewById(R.id.tv_dashTripFrom);
+        tvDashTripTo = (TextView) view.findViewById(R.id.tv_dashTripTo);
+
+        btnDashStopTrip = (Button) view.findViewById(R.id.btn_dashStopTrip);
 
         loadMapNow();
 
+        checkIfDriverOnTrip();
 
         return view;
     }
@@ -263,22 +281,102 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
     public static int getPixelsFromDp(Context context, float dp)
     {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
+        try
+        {
+            final float scale = context.getResources().getDisplayMetrics().density;
+            return (int) (dp * scale + 0.5f);
+        } catch (NullPointerException e)
+        {
+            e.printStackTrace();
+
+        }
+        return 0;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    public void checkIfDriverOnTrip()
     {
-        if (resultCode == Activity.RESULT_OK)
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        final boolean isOnTrip = pref
+                .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
+
+        if (isOnTrip)
         {
-            switch (requestCode)
+            final String tripId = pref.getString(Constants.CURRENT_TRIP_ID, "");
+
+            if (!tripId.isEmpty())
             {
 
+                final TripDetails tripDetails = Realm.getDefaultInstance()
+                        .where(TripDetails.class).equalTo("tripId", tripId).findFirst();
 
+                if (tripDetails != null)
+                {
+                    llDashboardContainer.setVisibility(View.VISIBLE);
+                    tvDashCustomerContact.setText(tripDetails.getCustomerId());
+                    tvDashTripTo.setText(tripDetails.getToShippingLocation());
+                    tvDashTripFrom.setText(tripDetails.getFromShippingLocation());
+                    tvDashCustomerName.setText(tripDetails.getCustomerName());
+
+                    btnDashStopTrip.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View view)
+                        {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle("Stop Trip")
+                                    .setMessage("Are you sure you want to stop this Trip?")
+                                    .setPositiveButton("STOP", new DialogInterface.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i)
+                                        {
+                                            stopTrip(tripId, pref);
+                                        }
+                                    }).setNegativeButton("CANCEL", null)
+                                    .show();
+
+
+                        }
+                    });
+
+                }
 
             }
         }
+
+    }
+
+
+    private void stopTrip(final String tripId, final SharedPreferences pref)
+    {
+        API.getInstance().updateTripStatus(Constants.TRIP_STATUS_FINISHED, tripId, new RetrofitCallbacks<ResponseBody>()
+        {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+            {
+                super.onResponse(call, response);
+
+                if (response.isSuccessful())
+                {
+
+                    llDashboardContainer.setVisibility(View.GONE);
+                    pref.edit().putBoolean(Constants.IS_DRIVER_ON_TRIP, false)
+                            .putString(Constants.CURRENT_TRIP_ID, "")
+                            .apply();
+
+                    context.stopService(new Intent(getActivity(),
+                            TransportRequestHandlerService.class));
+
+                    context.startActivity(new Intent(getActivity(),
+                            TransportRequestHandlerService.class));
+
+                }
+
+            }
+
+        });
     }
 
 }

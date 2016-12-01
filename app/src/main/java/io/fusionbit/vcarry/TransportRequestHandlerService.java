@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.media.RingtoneManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +35,7 @@ public class TransportRequestHandlerService extends Service implements Transport
 
     private int childCount = 0;
 
+    private TransportRequestResponseReceiver transportRequestResponseReceiver;
 
     public TransportRequestHandlerService()
     {
@@ -43,12 +45,22 @@ public class TransportRequestHandlerService extends Service implements Transport
     public int onStartCommand(Intent intent, int flags, int startId)
     {
 
+        final String tripId = intent.getStringExtra(Constants.CURRENT_TRIP_ID);
+        if (tripId != null)
+        {
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putString(Constants.CURRENT_TRIP_ID, tripId)
+                    .apply();
+        }
+
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {
             if (transportRequestHandler == null)
             {
-                transportRequestHandler = new TransportRequestHandler(this);
                 addNotification();
+                addTripNotification();
             }
         }
 
@@ -58,16 +70,34 @@ public class TransportRequestHandlerService extends Service implements Transport
     @Override
     public void onCreate()
     {
-        registerReceiver(new TransportRequestResponseReceiver(),
+        transportRequestResponseReceiver = new TransportRequestResponseReceiver();
+        registerReceiver(transportRequestResponseReceiver,
                 new IntentFilter(Constants.TRANSPORT_REQUEST_RESPONSE));
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        unregisterReceiver(transportRequestResponseReceiver);
+        super.onDestroy();
     }
 
     private void addNotification()
     {
+        final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
+        if (isOnTrip)
+        {
+            return;
+        }
+
+        transportRequestHandler = new TransportRequestHandler(this);
+
         Notification.Builder m_notificationBuilder = new Notification.Builder(this)
                 .setContentTitle("V-Carry")
                 .setContentText("Listening for Transport Request...")
                 .setSmallIcon(R.drawable.logo_small);
+
 
         // create the pending intent and add to the notification
         Intent intent = new Intent(this, ActivityHome.class);
@@ -77,6 +107,35 @@ public class TransportRequestHandlerService extends Service implements Transport
         // send the notification
         startForeground(NOTIFICATION_ID, m_notificationBuilder.build());
 
+    }
+
+    private void addTripNotification()
+    {
+
+        final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
+        if (isOnTrip)
+        {
+
+            final String tripId = PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString(Constants.CURRENT_TRIP_ID, "");
+
+            Notification.Builder m_notificationBuilder = new Notification.Builder(this)
+                    .setContentTitle("V-Carry")
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setTicker("Trip has been started")
+                    .setContentText("You are on a trip")
+                    .setSmallIcon(R.drawable.logo_small);
+
+            // create the pending intent and add to the notification
+            Intent intent = new Intent(this, ActivityHome.class);
+            intent.putExtra(Constants.CURRENT_TRIP_ID, tripId);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            m_notificationBuilder.setContentIntent(pendingIntent);
+
+            // send the notification
+            startForeground(NOTIFICATION_ID, m_notificationBuilder.build());
+        }
     }
 
 

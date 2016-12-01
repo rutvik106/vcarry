@@ -77,6 +77,7 @@
             android:name=".ActivityHome"
             android:label="@string/title_activity_home"
             android:launchMode="singleTask"
+            android:configChanges="locale"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -91,7 +92,8 @@
             android:screenOrientation="portrait">
         </activity>
         <activity android:name=".ActivityTripDetails"
-            android:theme="@style/TripDetails">
+            android:theme="@style/TripDetails"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

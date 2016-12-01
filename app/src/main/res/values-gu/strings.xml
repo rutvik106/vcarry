@@ -67,4 +67,10 @@
 
     <string name="trip_details">ટ્રીપ ની વિગત</string>
 
+    <string name="are_you_sure_start_trip">તમે આ ટ્રીપ શરૂ કરવા માંગો છો શું તમને ખાતરી છે?</string>
+
+    <string name="cancel">ના</string>
+
+    <string name="start">શરૂ કરો</string>
+
 </resources>

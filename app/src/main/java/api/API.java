@@ -53,4 +53,12 @@ public class API
         call.enqueue(callback);
     }
 
+    public void updateTripStatus(final String statusId, final String tripId,
+                                 final RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call = apiService.updateTripStatus("edit_trip_status", statusId, tripId);
+
+        call.enqueue(callback);
+    }
+
 }

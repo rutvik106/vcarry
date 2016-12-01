@@ -31,7 +31,7 @@ public class RetrofitCallbacks<T> implements Callback<T>
             System.out.println(response.errorBody().toString());
         } else if (response.code() == HttpURLConnection.HTTP_OK)
         {
-            System.out.println(response.body().toString());
+            //System.out.println(response.body().toString());
         }
     }
 

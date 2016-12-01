@@ -7,7 +7,7 @@ package io.fusionbit.vcarry;
 public class Constants
 {
 
-    public static final String API_BASE_URL = "http://tapandtype.com/vcarry/webservice/";//"http://192.168.0.104/vcarry/webservice/"; //"http://tapandtype.com/vcarry/webservice/";
+    public static final String API_BASE_URL = "http://tapandtype.com/vcarry/webservice/"; //"http://192.168.0.104/vcarry/webservice/"; //"http://tapandtype.com/vcarry/webservice/";
 
     public static final String CONTENT_TYPE_JSON = "application/json";
 
@@ -29,5 +29,16 @@ public class Constants
 
     public static final String INTENT_EXTRA_TRIP_ID = "TRIP_ID";
 
+    public static final String TRIP_STATUS_NEW = "1";
+    public static final String TRIP_STATUS_DRIVER_ALLOCATED = "2";
+    public static final String TRIP_STATUS_LOADING = "3";
+    public static final String TRIP_STATUS_TRIP_STARTED = "4";
+    public static final String TRIP_STATUS_UNLOADING = "5";
+    public static final String TRIP_STATUS_FINISHED = "6";
+    public static final String TRIP_STATUS_CANCELLED = "7";
+
+    public static final String IS_DRIVER_ON_TRIP = "IS_DRIVER_ON_TRIP";
+
+    public static final String CURRENT_TRIP_ID = "CURRENT_TRIP_ID";
 
 }

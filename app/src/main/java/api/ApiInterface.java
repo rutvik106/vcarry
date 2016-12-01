@@ -24,4 +24,9 @@ public interface ApiInterface
     Call<TripDetails> getTripDetailsByTripId(@Query("method") String method,
                                              @Query("trip_id") String tripId);
 
+    @GET("webservice.php")
+    Call<ResponseBody> updateTripStatus(@Query("method") String method,
+                                        @Query("status_id") String statusId,
+                                        @Query("trip_id") String tripId);
+
 }
