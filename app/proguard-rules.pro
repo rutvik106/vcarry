@@ -15,3 +15,44 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keep class com.firebase.** { *; }
+-keep class org.apache.** { *; }
+-keepnames class com.fasterxml.jackson.** { *; }
+-keepnames class javax.servlet.** { *; }
+-keepnames class org.ietf.jgss.** { *; }
+-dontwarn org.apache.**
+-dontwarn org.w3c.dom.**
+
+-keep class com.google.** {*;}
+
+-keep class retrofit.** { *; }
+-keep class package.with.model.classes.** { *; }
+-keepclassmembernames interface * {
+    @retrofit.http.* <methods>;
+}
+
+-dontwarn okio.**
+-dontwarn retrofit2.Platform$Java8
+
+-useuniqueclassmembernames
+
+-allowaccessmodification
+
+-keepattributes SourceFile,LineNumberTable,InnerClasses,EnclosingMethod
+-dontwarn com.squareup.picasso.**
+-keepclasseswithmembernames class * {
+    native <methods>;
+    void listener_*(...);
+    public void * (android.view.View);
+}
+
+-dontwarn android.support.**
+#-keep class android.support.v4.** { *; }
+#-keep interface android.support.v4.app.** { *; }
+-keepattributes *Annotation*
+
+-keepclassmembers class ** {
+    @com.squareup.otto.Subscribe public *;
+    @com.squareup.otto.Produce public *;
+}

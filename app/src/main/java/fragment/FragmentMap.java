@@ -112,6 +112,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         tvDashTripTo = (TextView) view.findViewById(R.id.tv_dashTripTo);
 
         btnDashStopTrip = (Button) view.findViewById(R.id.btn_dashStopTrip);
+        btnDashStopTrip.setText(getResources().getString(R.string.stop_trip));
 
         loadMapNow();
 
@@ -325,16 +326,16 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         public void onClick(View view)
                         {
                             new AlertDialog.Builder(getActivity())
-                                    .setTitle("Stop Trip")
-                                    .setMessage("Are you sure you want to stop this Trip?")
-                                    .setPositiveButton("STOP", new DialogInterface.OnClickListener()
+                                    .setTitle(getResources().getString(R.string.stop_trip))
+                                    .setMessage(getResources().getString(R.string.are_you_sure_stop_trip))
+                                    .setPositiveButton(getResources().getString(R.string.stop), new DialogInterface.OnClickListener()
                                     {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i)
                                         {
                                             stopTrip(tripId, pref);
                                         }
-                                    }).setNegativeButton("CANCEL", null)
+                                    }).setNegativeButton(getResources().getString(R.string.cancel), null)
                                     .show();
 
 

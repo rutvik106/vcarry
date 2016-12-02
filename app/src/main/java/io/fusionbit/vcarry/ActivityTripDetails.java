@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -47,7 +48,8 @@ public class ActivityTripDetails extends AppCompatActivity
 
         if (getSupportActionBar() != null)
         {
-            getSupportActionBar().setTitle("Trip Details");
+            getSupportActionBar().setTitle(getResources().getString(R.string.trip_details));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
 
@@ -152,6 +154,15 @@ public class ActivityTripDetails extends AppCompatActivity
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if(item.getItemId()==android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void startTrip()
     {
         final boolean isDriverOnTrip = PreferenceManager.getDefaultSharedPreferences(ActivityTripDetails.this)
@@ -196,7 +207,7 @@ public class ActivityTripDetails extends AppCompatActivity
 
         } else
         {
-            Toast.makeText(this, "Please complete current Trip", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.are_you_sure_start_trip), Toast.LENGTH_SHORT).show();
         }
     }
 }

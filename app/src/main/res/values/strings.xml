@@ -67,5 +67,12 @@
     <string name="cancel">Cancel</string>
 
     <string name="start">START</string>
+    <string name="stop">START</string>
+
+    <string name="please_complete_current_trip">Please complete current Trip</string>
+
+    <string name="stop_trip">STOP TRIP</string>
+
+    <string name="are_you_sure_stop_trip">Are you sure you want to stop this Trip?</string>
 
 </resources>

@@ -1,18 +1,17 @@
 package io.fusionbit.vcarry;
 
-import android.*;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.MainThread;
 import android.support.annotation.StyleRes;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 
 import extra.Log;
 
-public class ActivityLogin extends VCarryActivity implements PermissionListener
+public class ActivityLogin extends VCarryActivity implements PermissionListener, View.OnClickListener
 {
 
     private static final String TAG = App.APP_TAG + ActivityLogin.class.getSimpleName();
@@ -42,6 +41,8 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener
 
     BroadcastReceiver networkChangeReceiver;
 
+    Button btnTryLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -49,6 +50,8 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener
         setContentView(R.layout.activity_login);
 
         Log.i(TAG, "OnCreate");
+
+        Toast.makeText(this, "HELLO", Toast.LENGTH_SHORT).show();
 
         checkForPermissions();
 
@@ -167,25 +170,13 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener
     public void onPermissionGranted()
     {
 
+        Toast.makeText(this, "PERMISSION GRANTED", Toast.LENGTH_SHORT).show();
+        
         intent = new Intent(ActivityLogin.this, ActivityHome.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        findViewById(R.id.btn_googleSignIn).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-
-                if (isConnected)
-                {
-                    tryLogin();
-                } else
-                {
-                    Toast.makeText(ActivityLogin.this, "check internet connection", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
+        btnTryLogin = (Button) findViewById(R.id.btn_googleSignIn);
+        btnTryLogin.setOnClickListener(this);
 
 
         //check internet connectivity
@@ -229,5 +220,19 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener
     public void onPermissionDenied(ArrayList<String> deniedPermissions)
     {
         finish();
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        Toast.makeText(ActivityLogin.this, "CLICKED!!!", Toast.LENGTH_SHORT).show();
+        if (isConnected)
+        {
+            tryLogin();
+        } else
+        {
+            Toast.makeText(ActivityLogin.this, "check internet connection", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

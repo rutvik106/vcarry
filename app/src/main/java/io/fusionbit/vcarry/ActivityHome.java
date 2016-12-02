@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
@@ -27,7 +25,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import extra.CircleTransform;
 import extra.LocaleHelper;
@@ -83,6 +80,9 @@ public class ActivityHome extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Log.i(TAG, "HOME ACTIVITY ON CREATE");
         setContentView(R.layout.activity_home);
+
+        LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -217,6 +217,7 @@ public class ActivityHome extends AppCompatActivity
 
         if (id == R.id.nav_home)
         {
+            fragmentMap.checkIfDriverOnTrip();
             showFragment(fragmentMap);
         } else if (id == R.id.nav_trips)
         {
@@ -266,7 +267,7 @@ public class ActivityHome extends AppCompatActivity
                     if (wasChanged)
                     {
                         Intent refresh = new Intent(this, ActivityHome.class);
-                        refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(refresh);
                     }
                     break;

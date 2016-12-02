@@ -37,10 +37,10 @@
     <string name="vehicle">વાહન</string>
     <string name="request_trip">ટ્રીપ ની વિનંતી કરો</string>
 
-    <string name="select_start_location">પ્રારંભ સ્થળ</string>
+    <!--<string name="select_start_location">પ્રારંભ સ્થળ</string>
     <string name="select_destination">ગંતવ્ય</string>
 
-    <string name="select_this_location">પસંદ કરો</string>
+    <string name="select_this_location">પસંદ કરો</string>-->
 
     <string name="transport_request">ટ્રાન્સપોર્ટ રિકવેસ્ટ</string>
     <string name="new_request">ન્યૂ ટ્રાન્સપોર્ટ રિકવેસ્ટ ફ્રોમ V-Carry</string>
@@ -72,5 +72,12 @@
     <string name="cancel">ના</string>
 
     <string name="start">શરૂ કરો</string>
+    <string name="stop">સમાપ્ત કરો</string>
+
+    <string name="please_complete_current_trip">હાલની ટ્રીપ પૂર્ણ કરવા વિનંતી</string>
+
+    <string name="stop_trip">ટ્રીપ સમાપ્ત કરો</string>
+
+    <string name="are_you_sure_stop_trip">તમે આ ટ્રીપ સમાપ્ત કરવા માંગો છો શું તમને ખાતરી છે?</string>
 
 </resources>
