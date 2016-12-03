@@ -6,17 +6,26 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.media.RingtoneManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 
+import java.util.Calendar;
+
 import extra.Log;
 import firebase.TransportRequestHandler;
+import models.TripDistanceDetails;
 
 import static io.fusionbit.vcarry.Constants.NOTIFICATION_ID;
 
@@ -24,7 +33,7 @@ import static io.fusionbit.vcarry.Constants.NOTIFICATION_ID;
  * Created by rutvik on 10/27/2016 at 2:54 PM.
  */
 
-public class TransportRequestHandlerService extends Service implements TransportRequestHandler.TransportRequestListener
+public class TransportRequestHandlerService extends Service implements TransportRequestHandler.TransportRequestListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, FusedLocation.GetLocation
 {
     private static final String TAG =
             App.APP_TAG + TransportRequestHandlerService.class.getSimpleName();
@@ -36,6 +45,10 @@ public class TransportRequestHandlerService extends Service implements Transport
     private int childCount = 0;
 
     private TransportRequestResponseReceiver transportRequestResponseReceiver;
+
+    FusedLocation mFusedLocation;
+
+    TripDistanceDetails tripDistanceDetails;
 
     public TransportRequestHandlerService()
     {
@@ -61,6 +74,7 @@ public class TransportRequestHandlerService extends Service implements Transport
             {
                 addNotification();
                 addTripNotification();
+                startCalculatingDistanceIfDriverOnTrip();
             }
         }
 
@@ -168,7 +182,6 @@ public class TransportRequestHandlerService extends Service implements Transport
 
     }
 
-
     public class TransportRequestServiceBinder extends Binder
     {
         public TransportRequestHandlerService getService()
@@ -225,5 +238,57 @@ public class TransportRequestHandlerService extends Service implements Transport
 
     }
 
+
+    public void startCalculatingDistanceIfDriverOnTrip()
+    {
+        final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
+        if (isOnTrip)
+        {
+            if (mFusedLocation == null)
+            {
+                final String tripId = PreferenceManager.getDefaultSharedPreferences(this)
+                        .getString(Constants.CURRENT_TRIP_ID, "");
+
+                tripDistanceDetails = new TripDistanceDetails(tripId, Calendar.getInstance().getTimeInMillis());
+                mFusedLocation = new FusedLocation(this, this, this);
+            }
+        } else
+        {
+            if (mFusedLocation != null)
+            {
+                mFusedLocation.stopGettingLocation();
+                Toast.makeText(this, "TOTAL DISTANCE in m: " + tripDistanceDetails.getDistanceTravelled(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
+    {
+        Toast.makeText(this, "Fused Location API Connection Failed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle)
+    {
+        Toast.makeText(this, "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();
+
+        mFusedLocation.startGettingLocation(this);
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i)
+    {
+        Toast.makeText(this, "Fused Location API Connection Suspended", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLocationChanged(Location location)
+    {
+        tripDistanceDetails.addLocationData(location.getTime(), location.getLatitude(), location.getLongitude());
+    }
 
 }
