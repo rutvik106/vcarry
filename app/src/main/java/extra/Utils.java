@@ -8,6 +8,12 @@ import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.view.WindowManager;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Created by rutvik on 12/3/2016 at 8:09 AM.
  */
@@ -56,6 +62,33 @@ public class Utils
             // Showing Alert Message
             alertDialog.show().getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
+    }
+
+    public static String convertDateToRequireFormat(final String date)
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        try
+        {
+            Date d = sdf.parse(date);
+            sdf.applyPattern("d-E, h:mm a");
+            System.out.println("CONVERTED DATE: " + sdf.format(d));
+            return sdf.format(d);
+        } catch (ParseException ex)
+        {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getDateFromMills(long milliSeconds)
+    {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat("h:mm a", Locale.getDefault());
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
     }
 
 }

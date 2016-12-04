@@ -3,7 +3,6 @@ package fragment;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -35,7 +34,6 @@ import io.fusionbit.vcarry.App;
 import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.MapWrapperLayout;
 import io.fusionbit.vcarry.R;
-import io.fusionbit.vcarry.TransportRequestHandlerService;
 import io.realm.Realm;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -80,10 +78,13 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
     Button btnDashStopTrip;
 
-    public static FragmentMap newInstance(int index, Context context)
+    OnTripStopListener onTripStopListener;
+
+    public static FragmentMap newInstance(int index, Context context, OnTripStopListener onTripStopListener)
     {
         FragmentMap fragmentMap = new FragmentMap();
         fragmentMap.context = context;
+        fragmentMap.onTripStopListener = onTripStopListener;
         Bundle b = new Bundle();
         b.putInt("index", index);
         fragmentMap.setArguments(b);
@@ -333,7 +334,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i)
                                         {
-                                            stopTrip(tripId, pref);
+                                            stopTrip(tripId);
                                         }
                                     }).setNegativeButton(getResources().getString(R.string.cancel), null)
                                     .show();
@@ -350,7 +351,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
 
-    private void stopTrip(final String tripId, final SharedPreferences pref)
+    private void stopTrip(final String tripId)
     {
         API.getInstance().updateTripStatus(Constants.TRIP_STATUS_FINISHED, tripId, new RetrofitCallbacks<ResponseBody>()
         {
@@ -363,21 +364,19 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                 {
 
                     llDashboardContainer.setVisibility(View.GONE);
-                    pref.edit().putBoolean(Constants.IS_DRIVER_ON_TRIP, false)
-                            .putString(Constants.CURRENT_TRIP_ID, "")
-                            .apply();
 
-                    context.stopService(new Intent(getActivity(),
-                            TransportRequestHandlerService.class));
-
-                    context.startActivity(new Intent(getActivity(),
-                            TransportRequestHandlerService.class));
+                    onTripStopListener.onStripStop(tripId);
 
                 }
 
             }
 
         });
+    }
+
+    public interface OnTripStopListener
+    {
+        void onStripStop(String tripId);
     }
 
 }

@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import java.util.Calendar;
 
 import extra.Log;
 import firebase.TransportRequestHandler;
+import io.realm.Realm;
 import models.TripDistanceDetails;
 
 import static io.fusionbit.vcarry.Constants.NOTIFICATION_ID;
@@ -50,6 +52,8 @@ public class TransportRequestHandlerService extends Service implements Transport
 
     TripDistanceDetails tripDistanceDetails;
 
+    ResultReceiver resultReceiver;
+
     public TransportRequestHandlerService()
     {
     }
@@ -57,24 +61,13 @@ public class TransportRequestHandlerService extends Service implements Transport
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-
-        final String tripId = intent.getStringExtra(Constants.CURRENT_TRIP_ID);
-        if (tripId != null)
-        {
-            PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit()
-                    .putString(Constants.CURRENT_TRIP_ID, tripId)
-                    .apply();
-        }
-
-
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {
             if (transportRequestHandler == null)
             {
+                transportRequestHandler = new TransportRequestHandler(this);
                 addNotification();
-                addTripNotification();
-                startCalculatingDistanceIfDriverOnTrip();
+                resultReceiver = intent.getParcelableExtra(Constants.SERVICE_RESULT_RECEIVER);
             }
         }
 
@@ -104,8 +97,6 @@ public class TransportRequestHandlerService extends Service implements Transport
         {
             return;
         }
-
-        transportRequestHandler = new TransportRequestHandler(this);
 
         Notification.Builder m_notificationBuilder = new Notification.Builder(this)
                 .setContentTitle("V-Carry")
@@ -137,9 +128,8 @@ public class TransportRequestHandlerService extends Service implements Transport
             Notification.Builder m_notificationBuilder = new Notification.Builder(this)
                     .setContentTitle("V-Carry")
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                    .setTicker("Trip has been started")
-                    .setContentText("You are on a trip")
-                    .setSmallIcon(R.drawable.logo_small);
+                    .setContentText(getResources().getString(R.string.trip_details))
+                    .setSmallIcon(R.drawable.ic_local_shipping_black_24dp);
 
             // create the pending intent and add to the notification
             Intent intent = new Intent(this, ActivityHome.class);
@@ -158,6 +148,29 @@ public class TransportRequestHandlerService extends Service implements Transport
     public IBinder onBind(Intent intent)
     {
         return transportRequestServiceBinder;
+    }
+
+    public void startTrip(String tripId)
+    {
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(Constants.CURRENT_TRIP_ID, tripId)
+                .putBoolean(Constants.IS_DRIVER_ON_TRIP, true)
+                .apply();
+
+        addTripNotification();
+        startCalculatingDistanceIfDriverOnTrip();
+    }
+
+    public void stopTrip()
+    {
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putBoolean(Constants.IS_DRIVER_ON_TRIP, false)
+                .putString(Constants.CURRENT_TRIP_ID, "")
+                .apply();
+        addNotification();
+        startCalculatingDistanceIfDriverOnTrip();
     }
 
     @Override
@@ -243,13 +256,14 @@ public class TransportRequestHandlerService extends Service implements Transport
     {
         final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
+
+        final String tripId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.CURRENT_TRIP_ID, "");
+
         if (isOnTrip)
         {
             if (mFusedLocation == null)
             {
-                final String tripId = PreferenceManager.getDefaultSharedPreferences(this)
-                        .getString(Constants.CURRENT_TRIP_ID, "");
-
                 tripDistanceDetails = new TripDistanceDetails(tripId, Calendar.getInstance().getTimeInMillis());
                 mFusedLocation = new FusedLocation(this, this, this);
             }
@@ -258,7 +272,34 @@ public class TransportRequestHandlerService extends Service implements Transport
             if (mFusedLocation != null)
             {
                 mFusedLocation.stopGettingLocation();
+
+                tripDistanceDetails.stopTrip(Calendar.getInstance().getTimeInMillis());
+
+                final Realm realm = Realm.getDefaultInstance();
+
+                realm.executeTransactionAsync(new Realm.Transaction()
+                {
+                    @Override
+                    public void execute(Realm realm)
+                    {
+                        realm.copyToRealm(tripDistanceDetails);
+                    }
+                }, new Realm.Transaction.OnSuccess()
+                {
+                    @Override
+                    public void onSuccess()
+                    {
+                        Log.i(TAG, "TRANSACTION SUCCESSFUL");
+                        Bundle b = new Bundle();
+                        b.putString(Constants.CURRENT_TRIP_ID, tripId);
+                        resultReceiver.send(Constants.ON_TRIP_STOPPED, b);
+                    }
+                });
+
+
                 Toast.makeText(this, "TOTAL DISTANCE in m: " + tripDistanceDetails.getDistanceTravelled(), Toast.LENGTH_SHORT).show();
+
+
             }
         }
     }
@@ -288,6 +329,14 @@ public class TransportRequestHandlerService extends Service implements Transport
     @Override
     public void onLocationChanged(Location location)
     {
+        Log.i(TAG, "******LOCATION CHANGED******");
+        Log.i(TAG, "LAT: " + location.getLatitude());
+        Log.i(TAG, "LNG: " + location.getLongitude());
+        Log.i(TAG, "PROVIDER: " + location.getProvider());
+        Log.i(TAG, "ACCURACY: " + location.getAccuracy());
+        Log.i(TAG, "TIME in Sec: " + location.getTime() / 1000);
+        Log.i(TAG, "SPEED: " + location.getSpeed());
+        Log.i(TAG, "******************************");
         tripDistanceDetails.addLocationData(location.getTime(), location.getLatitude(), location.getLongitude());
     }
 

@@ -41,4 +41,8 @@ public class Constants
 
     public static final String CURRENT_TRIP_ID = "CURRENT_TRIP_ID";
 
+    public static final String SERVICE_RESULT_RECEIVER = "SERVICE_RESULT_RECEIVER";
+
+    public static final int ON_TRIP_STOPPED = 3333;
+
 }

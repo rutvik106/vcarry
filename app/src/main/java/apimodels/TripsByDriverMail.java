@@ -2,6 +2,7 @@ package apimodels;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.fusionbit.vcarry.Constants;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -9,7 +10,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by rutvik on 11/27/2016 at 3:54 PM.
  */
 
-public class TripsByDriverMail extends RealmObject
+public class TripsByDriverMail extends RealmObject implements Comparable<TripsByDriverMail>
 {
 
 
@@ -290,4 +291,30 @@ public class TripsByDriverMail extends RealmObject
     {
         this.customerName = customerName;
     }
+
+    @Override
+    public int compareTo(TripsByDriverMail tripDetails)
+    {
+        int status = Integer.valueOf(tripDetails.getTripStatus());
+        if (status <= Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED))
+        {
+            return 1;
+        } else
+        {
+            return -1;
+        }
+    }
+
+    /*@Override
+    public boolean equals(Object c)
+    {
+        if (!(c instanceof TripsByDriverMail))
+        {
+            return false;
+        }
+
+        TripsByDriverMail that = (TripsByDriverMail) c;
+        return this.getTripId().equals(that.getTripId());
+    }*/
+
 }

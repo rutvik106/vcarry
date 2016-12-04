@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,7 +30,7 @@ import retrofit2.Response;
  * Created by rutvik on 11/17/2016 at 10:49 PM.
  */
 
-public class FragmentTrips extends Fragment
+public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
 
     Context context;
@@ -41,6 +42,8 @@ public class FragmentTrips extends Fragment
     Realm realm;
 
     RealmResults<TripsByDriverMail> tripResults;
+
+    private SwipeRefreshLayout srlRefreshTrips;
 
     public static FragmentTrips newInstance(int index, Context context)
     {
@@ -59,6 +62,10 @@ public class FragmentTrips extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_trips, container, false);
 
+        srlRefreshTrips = (SwipeRefreshLayout) view.findViewById(R.id.srl_refreshTrips);
+
+        srlRefreshTrips.setOnRefreshListener(this);
+
         rvTrips = (RecyclerView) view.findViewById(R.id.rv_trips);
         rvTrips.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvTrips.setHasFixedSize(true);
@@ -72,7 +79,7 @@ public class FragmentTrips extends Fragment
         return view;
     }
 
-    private void getTrips()
+    public void getTrips()
     {
         realm = Realm.getDefaultInstance();
 
@@ -82,20 +89,23 @@ public class FragmentTrips extends Fragment
         {
             adapter.addTrip(t);
         }
+        adapter.notifyDataSetChanged();
 
-        tripResults.addChangeListener(new RealmChangeListener<RealmResults<TripsByDriverMail>>()
-                                {
-                                    @Override
-                                    public void onChange(RealmResults<TripsByDriverMail> results)
-                                    {
-                                        for (TripsByDriverMail trip : results)
-                                        {
-                                            adapter.addTrip(trip);
-                                        }
-                                    }
-                                }
+        tripResults
+                .addChangeListener(new RealmChangeListener<RealmResults<TripsByDriverMail>>()
+                                   {
+                                       @Override
+                                       public void onChange(RealmResults<TripsByDriverMail> results)
+                                       {
+                                           for (TripsByDriverMail trip : results)
+                                           {
+                                               adapter.addTrip(trip);
+                                           }
+                                           adapter.notifyDataSetChanged();
+                                       }
+                                   }
 
-        );
+                );
 
         API.getInstance().getTripsByDriverMail(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                 new RetrofitCallbacks<List<TripsByDriverMail>>()
@@ -114,9 +124,21 @@ public class FragmentTrips extends Fragment
                             }
 
                             realm.commitTransaction();
+
+                            if (srlRefreshTrips.isRefreshing())
+                            {
+                                srlRefreshTrips.setRefreshing(false);
+                            }
+
                         }
                     }
                 });
 
+    }
+
+    @Override
+    public void onRefresh()
+    {
+        getTrips();
     }
 }

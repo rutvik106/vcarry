@@ -1,8 +1,11 @@
 package io.fusionbit.vcarry;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -36,9 +39,31 @@ public class ActivityTripDetails extends AppCompatActivity
 
     Button btnStartTrip;
 
-    Realm realm;
-
     TripDetails tripDetails;
+
+    //is activity connected to service
+    boolean mServiceBound = false;
+
+    //main STICKY service running in foreground (also shows up in notifications)
+    TransportRequestHandlerService mService;
+
+    private ServiceConnection mServiceConnection = new ServiceConnection()
+    {
+        public void onServiceConnected(ComponentName className, IBinder service)
+        {
+            Log.i(TAG, "ACTIVITY CONNECTED TO SERVICE");
+            mServiceBound = true;
+            //get service instance here
+            mService = ((TransportRequestHandlerService.TransportRequestServiceBinder) service).getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className)
+        {
+            Log.i(TAG, "ACTIVITY DISCONNECTED FROM SERVICE");
+            mServiceBound = false;
+            mService = null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -72,11 +97,25 @@ public class ActivityTripDetails extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        //start bound service now
+        Intent TransportRequestHandlerService = new Intent(this, TransportRequestHandlerService.class);
+        startService(TransportRequestHandlerService);
+
+        //bind activity to service
+        bindService(TransportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
+    }
+
     private void getTripDetails()
     {
-        realm = Realm.getDefaultInstance();
+
+        final Realm realm = Realm.getDefaultInstance();
 
         tripDetails = realm.where(TripDetails.class).equalTo("tripId", tripId).findFirst();
+        realm.close();
 
         if (tripDetails != null)
         {
@@ -150,6 +189,9 @@ public class ActivityTripDetails extends AppCompatActivity
                             .show();
                 }
             });
+        } else
+        {
+            btnStartTrip.setVisibility(View.GONE);
         }
 
     }
@@ -157,7 +199,8 @@ public class ActivityTripDetails extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if(item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home)
+        {
             finish();
         }
         return super.onOptionsItemSelected(item);
@@ -180,19 +223,15 @@ public class ActivityTripDetails extends AppCompatActivity
                             super.onResponse(call, response);
                             if (response.isSuccessful())
                             {
-                                PreferenceManager.getDefaultSharedPreferences(ActivityTripDetails.this)
-                                        .edit()
-                                        .putString(Constants.CURRENT_TRIP_ID, tripId)
-                                        .putBoolean(Constants.IS_DRIVER_ON_TRIP, true)
-                                        .apply();
 
                                 btnStartTrip.setVisibility(View.GONE);
 
-                                stopService(new Intent(ActivityTripDetails.this,
-                                        TransportRequestHandlerService.class));
+                                getTripDetails();
 
-                                startService(new Intent(ActivityTripDetails.this,
-                                        TransportRequestHandlerService.class));
+                                if (mService != null)
+                                {
+                                    mService.startTrip(tripId);
+                                }
 
                                 try
                                 {
@@ -208,6 +247,17 @@ public class ActivityTripDetails extends AppCompatActivity
         } else
         {
             Toast.makeText(this, getResources().getString(R.string.are_you_sure_start_trip), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        if (mServiceBound)
+        {
+            unbindService(mServiceConnection);
+            mServiceBound = false;
         }
     }
 }

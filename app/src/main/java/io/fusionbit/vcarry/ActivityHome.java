@@ -5,7 +5,9 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.ResultReceiver;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,8 +19,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
@@ -30,14 +34,16 @@ import extra.CircleTransform;
 import extra.LocaleHelper;
 import extra.Log;
 import fragment.FragmentAccBalance;
+import fragment.FragmentCompletedTripDetails;
 import fragment.FragmentMap;
 import fragment.FragmentTrips;
 import fragment.FragmentTripsOnOffer;
 
+import static io.fusionbit.vcarry.Constants.ON_TRIP_STOPPED;
 import static io.fusionbit.vcarry.Constants.WAS_LANGUAGE_CHANGED;
 
 public class ActivityHome extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentMap.OnTripStopListener
 {
     private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
 
@@ -54,7 +60,15 @@ public class ActivityHome extends AppCompatActivity
     FragmentAccBalance fragmentAccBalance;
     FragmentTripsOnOffer fragmentTripsOnOffer;
 
+    FragmentCompletedTripDetails fragmentCompletedTripDetails;
+
+    boolean doubleBackToExitPressedOnce = false;
+
     List<Fragment> fragmentList = new ArrayList<>();
+
+    private boolean isShowingCompletedTripDetails = false;
+
+    ServiceResultReceiver serviceResultReceiver;
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -86,18 +100,7 @@ public class ActivityHome extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //start bound service now
-        Intent TransportRequestHandlerService = new Intent(this, TransportRequestHandlerService.class);
-        startService(TransportRequestHandlerService);
-
-        //bind activity to service
-        bindService(TransportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
-
-
-        if (getSupportActionBar() != null)
-        {
-            getSupportActionBar().setTitle("V-Carry");
-        }
+        setActionBarTitle("V-Carry");
 
 /*        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
@@ -135,7 +138,7 @@ public class ActivityHome extends AppCompatActivity
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_subTitle))
                     .setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
-            fragmentMap = FragmentMap.newInstance(0, this);
+            fragmentMap = FragmentMap.newInstance(0, this, this);
             fragmentTrips = FragmentTrips.newInstance(1, this);
             fragmentAccBalance = FragmentAccBalance.newInstance(2, this);
             fragmentTripsOnOffer = FragmentTripsOnOffer.newInstance(3, this);
@@ -167,6 +170,20 @@ public class ActivityHome extends AppCompatActivity
     {
         super.onStart();
         Log.i(TAG, "HOME ACTIVITY ON START");
+
+        if (serviceResultReceiver == null)
+        {
+            serviceResultReceiver = new ServiceResultReceiver(null);
+        }
+
+        //start bound service now
+        Intent transportRequestHandlerService = new Intent(this, TransportRequestHandlerService.class);
+        transportRequestHandlerService.putExtra(Constants.SERVICE_RESULT_RECEIVER, serviceResultReceiver);
+        startService(transportRequestHandlerService);
+
+        //bind activity to service
+        bindService(transportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
+
     }
 
     @Override
@@ -176,9 +193,27 @@ public class ActivityHome extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START))
         {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (isShowingCompletedTripDetails)
+        {
+            hideCompletedTripDetails();
         } else
         {
-            super.onBackPressed();
+            if (doubleBackToExitPressedOnce)
+            {
+                super.onBackPressed();
+            }
+
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
         }
     }
 
@@ -219,9 +254,12 @@ public class ActivityHome extends AppCompatActivity
         {
             fragmentMap.checkIfDriverOnTrip();
             showFragment(fragmentMap);
+            setActionBarTitle("V-Carry");
         } else if (id == R.id.nav_trips)
         {
+            fragmentTrips.getTrips();
             showFragment(fragmentTrips);
+            setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
         } else if (id == R.id.nav_accountBalance)
         {
             showFragment(fragmentAccBalance);
@@ -250,6 +288,46 @@ public class ActivityHome extends AppCompatActivity
         {
             unbindService(mServiceConnection);
             mServiceBound = false;
+        }
+    }
+
+    private void showCompletedTripDetails(final String tripId)
+    {
+        if (!isShowingCompletedTripDetails)
+        {
+            isShowingCompletedTripDetails = true;
+            findViewById(R.id.fl_completedTripDetails).setVisibility(View.VISIBLE);
+            fragmentCompletedTripDetails = new FragmentCompletedTripDetails();
+            fragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+                    .add(R.id.fl_completedTripDetails, fragmentCompletedTripDetails)
+                    .show(fragmentCompletedTripDetails)
+                    .commitAllowingStateLoss();
+
+            fragmentCompletedTripDetails.showCompletedTripDetails(tripId);
+        }
+    }
+
+    private void hideCompletedTripDetails()
+    {
+        if (isShowingCompletedTripDetails)
+        {
+            isShowingCompletedTripDetails = false;
+            fragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
+                    .hide(fragmentCompletedTripDetails)
+                    .commitAllowingStateLoss();
+
+            fragmentCompletedTripDetails = null;
+
+            new Handler().postDelayed(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    findViewById(R.id.fl_completedTripDetails).setVisibility(View.GONE);
+                }
+            }, 1000);
         }
     }
 
@@ -293,5 +371,49 @@ public class ActivityHome extends AppCompatActivity
         t.commitAllowingStateLoss();
     }
 
+
+    @Override
+    public void onStripStop(String tripId)
+    {
+        if (mService != null)
+        {
+            mService.stopTrip();
+        }
+    }
+
+    private void setActionBarTitle(final String title)
+    {
+        if (getSupportActionBar() != null)
+        {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
+    public class ServiceResultReceiver extends ResultReceiver
+    {
+        public ServiceResultReceiver(Handler handler)
+        {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData)
+        {
+            switch (resultCode)
+            {
+
+                case ON_TRIP_STOPPED:
+                    final String tripId = resultData.getString(Constants.CURRENT_TRIP_ID);
+                    if (tripId != null)
+                    {
+                        showCompletedTripDetails(tripId);
+                    }
+                    break;
+
+                default:
+                    super.onReceiveResult(resultCode, resultData);
+            }
+        }
+    }
 
 }

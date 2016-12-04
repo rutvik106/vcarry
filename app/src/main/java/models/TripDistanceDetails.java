@@ -1,9 +1,5 @@
 package models;
 
-import android.location.Location;
-
-import java.util.List;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -51,7 +47,12 @@ public class TripDistanceDetails extends RealmObject
         return tripStartTime;
     }
 
-    private List<LatLngData> getLatLngDataList()
+    public long getTripStopTime()
+    {
+        return tripStopTime;
+    }
+
+    private RealmList<LatLngData> getLatLngDataList()
     {
         return latLngDataList;
     }
@@ -61,9 +62,9 @@ public class TripDistanceDetails extends RealmObject
         tripStopTime = timestamp;
     }
 
-    public float getDistanceTravelled()
+    public double getDistanceTravelled()
     {
-        float distanceTravelled = 0.0f;
+        double distanceTravelled = 0;
         int totalIterationCount = 0;
 
         if (getLatLngDataList().size() % 2 == 0)
@@ -78,6 +79,8 @@ public class TripDistanceDetails extends RealmObject
         {
             final int start = i * 2;
             final int end = (i * 2) + 1;
+
+
             distanceTravelled = distanceTravelled +
                     getDistanceInMeters(getLatLngDataList().get(start).getLat(),
                             getLatLngDataList().get(start).getLng(),
@@ -85,20 +88,29 @@ public class TripDistanceDetails extends RealmObject
                             getLatLngDataList().get(end).getLng());
         }
 
-        return distanceTravelled;
+        distanceTravelled = distanceTravelled / 1000;
+
+        double roundOff = Math.round(distanceTravelled * 100.0) / 100.0;
+
+        return roundOff;
 
     }
 
-    private float getDistanceInMeters(double startLat, double startLng, double endLat, double endLng)
+    private double getDistanceInMeters(double startLat, double startLng, double endLat, double endLng)
     {
-        double lat1 = startLat / 1e6;
-        double lng1 = startLng / 1e6;
-        double lat2 = endLat / 1e6;
-        double lng2 = endLng / 1e6;
+        float pk = (float) (180.f / Math.PI);
 
-        float[] dist = new float[1];
-        Location.distanceBetween(lat1, lng1, lat2, lng2, dist);
-        return dist[0]; //* 0.000621371192f;
+        double a1 = startLat / pk;
+        double a2 = startLng / pk;
+        double b1 = endLat / pk;
+        double b2 = endLng / pk;
+
+        double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
+        double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
+        double t3 = Math.sin(a1) * Math.sin(b1);
+        double tt = Math.acos(t1 + t2 + t3);
+
+        return 6366000 * tt;
     }
 
 }

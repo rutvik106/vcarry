@@ -10,34 +10,111 @@
 
     <LinearLayout
         android:id="@+id/ll_singleTripContainer"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:padding="5dp">
 
         <TextView
-            android:id="@+id/tv_tripFrom"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_currentTripStatus"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="@string/from"/>
+            android:gravity="right"
+            android:paddingRight="5dp"
+            android:text="@string/time"
+            android:textColor="#666666"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/tv_tripTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="@string/to"/>
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/time"
+            android:textColor="#999999"
+            android:textSize="12sp"/>
 
         <TextView
             android:id="@+id/tv_tripTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="@string/time"/>
+            android:text="Tue, 2 4:24 PM"
+            android:textColor="#333333"
+            android:textSize="18sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="left"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/from"
+                android:textColor="#999999"
+                android:textSize="12sp"/>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="left"
+                android:paddingRight="5dp"
+                android:paddingTop="5dp"
+                android:text="@string/to"
+                android:textColor="#999999"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:weightSum="5">
+
+            <TextView
+                android:id="@+id/tv_tripFrom"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textColor="#555555"
+                android:textSize="16sp"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_arrow_forward_black_24dp"/>
+
+            <TextView
+                android:id="@+id/tv_tripTo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="left"
+                android:textColor="#555555"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

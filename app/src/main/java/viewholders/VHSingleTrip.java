@@ -2,6 +2,7 @@ package viewholders;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import apimodels.TripsByDriverMail;
+import extra.Utils;
 import io.fusionbit.vcarry.ActivityTripDetails;
 import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.R;
@@ -25,7 +27,7 @@ public class VHSingleTrip extends RecyclerView.ViewHolder
 
     TripsByDriverMail model;
 
-    TextView tvTripFrom, tvTripTo, tvTripTime;
+    TextView tvTripFrom, tvTripTo, tvTripTime, tvCurrentTripStatus;
 
     LinearLayout llContainer;
 
@@ -37,6 +39,7 @@ public class VHSingleTrip extends RecyclerView.ViewHolder
         tvTripFrom = (TextView) itemView.findViewById(R.id.tv_tripFrom);
         tvTripTo = (TextView) itemView.findViewById(R.id.tv_tripTo);
         tvTripTime = (TextView) itemView.findViewById(R.id.tv_tripTime);
+        tvCurrentTripStatus = (TextView) itemView.findViewById(R.id.tv_currentTripStatus);
 
         llContainer = (LinearLayout) itemView.findViewById(R.id.ll_singleTripContainer);
 
@@ -62,15 +65,25 @@ public class VHSingleTrip extends RecyclerView.ViewHolder
     public static void bind(final VHSingleTrip vh, final TripsByDriverMail model)
     {
         vh.model = model;
+        vh.tvTripFrom.setText(model.getFromShippingLocation());
+        vh.tvTripTo.setText(model.getToShippingLocation());
+        vh.tvTripTime.setText(Utils.convertDateToRequireFormat(model.getTripDatetime()));
+        vh.tvCurrentTripStatus.setText(model.getStatus());
 
-        vh.tvTripFrom.setText(vh.context.getResources().getString(R.string.from) + ": " + model
-                .getFromShippingLocation());
+        final int tripStatus = Integer.valueOf(model.getTripStatus());
+        final int tripStatusStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
+        final int tripStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
 
-        vh.tvTripTo.setText(vh.context.getResources().getString(R.string.to) + ": " + model
-                .getToShippingLocation());
-
-        vh.tvTripTime.setText(vh.context.getResources().getString(R.string.time) + ": " + model
-                .getTripDatetime());
+        if (tripStatus < tripStatusStarted)
+        {
+            vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#66bb6a"));
+        } else if (tripStatus == tripStarted)
+        {
+            vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#ffa726"));
+        } else
+        {
+            vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#666666"));
+        }
     }
 
 

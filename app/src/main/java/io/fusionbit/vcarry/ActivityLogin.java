@@ -51,8 +51,6 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
 
         Log.i(TAG, "OnCreate");
 
-        Toast.makeText(this, "HELLO", Toast.LENGTH_SHORT).show();
-
         checkForPermissions();
 
     }
@@ -170,8 +168,6 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
     public void onPermissionGranted()
     {
 
-        Toast.makeText(this, "PERMISSION GRANTED", Toast.LENGTH_SHORT).show();
-        
         intent = new Intent(ActivityLogin.this, ActivityHome.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
