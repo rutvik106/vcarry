@@ -78,6 +78,10 @@ public class ActivityHome extends AppCompatActivity
             mServiceBound = true;
             //get service instance here
             mService = ((TransportRequestHandlerService.TransportRequestServiceBinder) service).getService();
+            if(mService!=null){
+                serviceResultReceiver = new ServiceResultReceiver(null);
+                mService.setResultReceiver(serviceResultReceiver);
+            }
         }
 
         public void onServiceDisconnected(ComponentName className)
@@ -170,11 +174,6 @@ public class ActivityHome extends AppCompatActivity
     {
         super.onStart();
         Log.i(TAG, "HOME ACTIVITY ON START");
-
-        if (serviceResultReceiver == null)
-        {
-            serviceResultReceiver = new ServiceResultReceiver(null);
-        }
 
         //start bound service now
         Intent transportRequestHandlerService = new Intent(this, TransportRequestHandlerService.class);
@@ -297,14 +296,12 @@ public class ActivityHome extends AppCompatActivity
         {
             isShowingCompletedTripDetails = true;
             findViewById(R.id.fl_completedTripDetails).setVisibility(View.VISIBLE);
-            fragmentCompletedTripDetails = new FragmentCompletedTripDetails();
+            fragmentCompletedTripDetails = FragmentCompletedTripDetails.newInstance(this, tripId);
             fragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
                     .add(R.id.fl_completedTripDetails, fragmentCompletedTripDetails)
                     .show(fragmentCompletedTripDetails)
                     .commitAllowingStateLoss();
-
-            fragmentCompletedTripDetails.showCompletedTripDetails(tripId);
         }
     }
 

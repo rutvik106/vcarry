@@ -81,5 +81,7 @@
     <string name="are_you_sure_stop_trip">તમે આ ટ્રીપ સમાપ્ત કરવા માંગો છો શું તમને ખાતરી છે?</string>
 
     <string name="you_are_on_a_trip">તમે ટ્રીપ પર છે</string>
+    <string name="trip_location">સ્થળ</string>
+    <string name="trip_distance">ટ્રીપ અંતર</string>
 
 </resources>

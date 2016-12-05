@@ -67,11 +67,19 @@ public class TransportRequestHandlerService extends Service implements Transport
             {
                 transportRequestHandler = new TransportRequestHandler(this);
                 addNotification();
-                resultReceiver = intent.getParcelableExtra(Constants.SERVICE_RESULT_RECEIVER);
+                /**if (intent != null)
+                {
+                    resultReceiver = intent.getParcelableExtra(Constants.SERVICE_RESULT_RECEIVER);
+                }*/
             }
         }
 
         return START_STICKY;
+    }
+
+    public void setResultReceiver(ResultReceiver resultReceiver)
+    {
+        this.resultReceiver = resultReceiver;
     }
 
     @Override
@@ -158,6 +166,8 @@ public class TransportRequestHandlerService extends Service implements Transport
                 .putBoolean(Constants.IS_DRIVER_ON_TRIP, true)
                 .apply();
 
+        tripDistanceDetails = new TripDistanceDetails(tripId, Calendar.getInstance().getTimeInMillis());
+
         addTripNotification();
         startCalculatingDistanceIfDriverOnTrip();
     }
@@ -167,7 +177,6 @@ public class TransportRequestHandlerService extends Service implements Transport
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
                 .putBoolean(Constants.IS_DRIVER_ON_TRIP, false)
-                .putString(Constants.CURRENT_TRIP_ID, "")
                 .apply();
         addNotification();
         startCalculatingDistanceIfDriverOnTrip();
@@ -264,7 +273,6 @@ public class TransportRequestHandlerService extends Service implements Transport
         {
             if (mFusedLocation == null)
             {
-                tripDistanceDetails = new TripDistanceDetails(tripId, Calendar.getInstance().getTimeInMillis());
                 mFusedLocation = new FusedLocation(this, this, this);
             }
         } else

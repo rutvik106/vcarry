@@ -12,20 +12,20 @@ public class TripDistanceDetails extends RealmObject
 {
 
     @PrimaryKey
-    private String tripId;
+    String tripId;
 
-    private long tripStartTime;
+    long tripStartTime;
 
-    private long tripStopTime;
+    long tripStopTime;
 
-    private RealmList<LatLngData> latLngDataList;
+    RealmList<LatLngData> latLngDataList;
 
     public TripDistanceDetails()
     {
 
     }
 
-    public TripDistanceDetails(final String tripId, final long tripStartTime)
+    public TripDistanceDetails(String tripId, long tripStartTime)
     {
         this.tripId = tripId;
         this.tripStartTime = tripStartTime;

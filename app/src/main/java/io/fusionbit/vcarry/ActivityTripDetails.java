@@ -166,29 +166,35 @@ public class ActivityTripDetails extends AppCompatActivity
 
         if (tripStatus < tripStatusStarted)
         {
-            btnStartTrip.setVisibility(View.VISIBLE);
-            btnStartTrip.setOnClickListener(new View.OnClickListener()
+            final boolean isDriverOnTrip = PreferenceManager.getDefaultSharedPreferences(ActivityTripDetails.this)
+                    .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
+            if (!isDriverOnTrip)
             {
-                @Override
-                public void onClick(View view)
+                btnStartTrip.setVisibility(View.VISIBLE);
+                btnStartTrip.setOnClickListener(new View.OnClickListener()
                 {
-                    new AlertDialog.Builder(ActivityTripDetails.this)
-                            .setTitle(getResources().getString(R.string.start_trip))
-                            .setMessage(getResources().getString(R.string.are_you_sure_start_trip))
-                            .setIcon(android.R.drawable.ic_dialog_info)
-                            .setPositiveButton(getResources().getString(R.string.start),
-                                    new DialogInterface.OnClickListener()
-                                    {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i)
+                    @Override
+                    public void onClick(View view)
+                    {
+                        new AlertDialog.Builder(ActivityTripDetails.this)
+                                .setTitle(getResources().getString(R.string.start_trip))
+                                .setMessage(getResources().getString(R.string.are_you_sure_start_trip))
+                                .setIcon(android.R.drawable.ic_dialog_info)
+                                .setPositiveButton(getResources().getString(R.string.start),
+                                        new DialogInterface.OnClickListener()
                                         {
-                                            startTrip();
-                                        }
-                                    })
-                            .setNegativeButton(getResources().getString(R.string.cancel), null)
-                            .show();
-                }
-            });
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i)
+                                            {
+                                                startTrip();
+                                            }
+                                        })
+                                .setNegativeButton(getResources().getString(R.string.cancel), null)
+                                .show();
+                    }
+                });
+            }
+
         } else
         {
             btnStartTrip.setVisibility(View.GONE);
@@ -208,6 +214,8 @@ public class ActivityTripDetails extends AppCompatActivity
 
     public void startTrip()
     {
+        btnStartTrip.setVisibility(View.GONE);
+
         final boolean isDriverOnTrip = PreferenceManager.getDefaultSharedPreferences(ActivityTripDetails.this)
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
 
@@ -224,8 +232,6 @@ public class ActivityTripDetails extends AppCompatActivity
                             if (response.isSuccessful())
                             {
 
-                                btnStartTrip.setVisibility(View.GONE);
-
                                 getTripDetails();
 
                                 if (mService != null)
@@ -241,12 +247,22 @@ public class ActivityTripDetails extends AppCompatActivity
                                     e.printStackTrace();
                                 }
                             }
+
+                        }
+
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t)
+                        {
+                            super.onFailure(call, t);
+                            btnStartTrip.setVisibility(View.VISIBLE);
+                            Toast.makeText(mService, "something went wrong please try again later", Toast.LENGTH_SHORT).show();
                         }
                     });
 
         } else
         {
-            Toast.makeText(this, getResources().getString(R.string.are_you_sure_start_trip), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.please_complete_current_trip), Toast.LENGTH_SHORT).show();
         }
     }
 

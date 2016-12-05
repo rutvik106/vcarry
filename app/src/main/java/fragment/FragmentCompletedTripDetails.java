@@ -27,18 +27,18 @@ public class FragmentCompletedTripDetails extends Fragment
 
     Context context;
 
+    String tripId;
+
     TextView tvCompletedTripStartTime, tvCompletedTripEndTime, tvCompletedTripDistance,
             tvCompletedTripFare, tvCompletedTripCustomerName, tvCompletedTripFrom,
             tvCompletedTripTo;
 
-    public static FragmentAccBalance newInstance(int index, Context context)
+    public static FragmentCompletedTripDetails newInstance(Context context, final String tripId)
     {
-        FragmentAccBalance fragmentAccBalance = new FragmentAccBalance();
-        fragmentAccBalance.context = context;
-        Bundle b = new Bundle();
-        b.putInt("index", index);
-        fragmentAccBalance.setArguments(b);
-        return fragmentAccBalance;
+        FragmentCompletedTripDetails fragmentCompletedTripDetails = new FragmentCompletedTripDetails();
+        fragmentCompletedTripDetails.context = context;
+        fragmentCompletedTripDetails.tripId = tripId;
+        return fragmentCompletedTripDetails;
     }
 
     @Nullable
@@ -55,11 +55,14 @@ public class FragmentCompletedTripDetails extends Fragment
         tvCompletedTripFrom = (TextView) view.findViewById(R.id.tv_completedTripFrom);
         tvCompletedTripTo = (TextView) view.findViewById(R.id.tv_completedTripTo);
 
+        showCompletedTripDetails(tripId);
+
         return view;
     }
 
     public void showCompletedTripDetails(String tripId)
     {
+
         TripDetails tripDetails = null;
         TripDistanceDetails tripDistanceDetails = null;
 
@@ -94,6 +97,15 @@ public class FragmentCompletedTripDetails extends Fragment
 
     private void bindDataToUi(final TripDetails tripDetails, final TripDistanceDetails tripDistanceDetails)
     {
+        Log.i(TAG, "tripDetails id: " + tripDetails.getTripId());
+        Log.i(TAG, "tripDistanceDetails id: " + tripDistanceDetails.getTripId());
+
+        Log.i(TAG, "tripDetails fare: " + tripDetails.getFare());
+        Log.i(TAG, "tripDistanceDetails stop time: " + tripDistanceDetails.getTripStopTime());
+
+        Log.i(TAG, "tripDetails customer name: " + tripDetails.getCustomerName());
+        Log.i(TAG, "tripDistanceDetails distance travelled: " + tripDistanceDetails.getDistanceTravelled());
+
         tvCompletedTripStartTime
                 .setText(Utils.getDateFromMills(tripDistanceDetails.getTripStartTime()));
 
