@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.database.DatabaseError;
 
 import firebase.TransportRequestHandler;
 
@@ -21,7 +22,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 
 public class TransportRequestResponseReceiver extends BroadcastReceiver
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, TransportRequestHandler.TripAcceptedCallback
 {
 
     FusedLocation fusedLocation;
@@ -57,7 +58,7 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
                     TransportRequestHandler
                             .acceptRequest(requestId,
                                     location.getLatitude() + "," + location.getLongitude()
-                                    , null);
+                                    , TransportRequestResponseReceiver.this);
                 } else if (response.equals(Constants.REJECT))
                 {
                     TransportRequestHandler.rejectRequest();
@@ -97,4 +98,15 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
         notificationManager.cancel(Integer.valueOf(requestId));
     }
 
+    @Override
+    public void tripAcceptedSuccessfully(String tripId)
+    {
+
+    }
+
+    @Override
+    public void failedToAcceptTrip(DatabaseError databaseError)
+    {
+
+    }
 }

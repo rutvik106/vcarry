@@ -12,8 +12,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import extra.Log;
-import io.fusionbit.vcarry.App;
+import io.fusionbit.vcarry.Constants;
 
 /**
  * Created by rutvik on 10/27/2016 at 1:03 PM.
@@ -108,7 +107,57 @@ public class TransportRequestHandler
 
     }
 
-    public static void acceptRequest(final String requestId, String latLng, String locationName)
+    public static void startListeningForTripConfirmation(final String tripId, final ConfirmationListener confirmationListener)
+    {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+        dbRef.getRoot();
+
+        dbRef.child(Constants.FirebaseNames.NODE_ACCEPTED)
+                .child(tripId).addChildEventListener(new ChildEventListener()
+        {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s)
+            {
+
+            }
+
+            @Override
+            public final void onChildChanged(DataSnapshot dataSnapshot, String s)
+            {
+                if (dataSnapshot.getKey().equals(Constants.FirebaseNames.KEY_CONFIRM))
+                {
+                    final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                    if (dataSnapshot.getValue().equals(userEmail))
+                    {
+                        confirmationListener.tripConfirmed();
+                    } else
+                    {
+                        confirmationListener.tripNotConfirmed();
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot)
+            {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s)
+            {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+
+            }
+        });
+    }
+
+    public static void acceptRequest(final String requestId, final String latLng, final TripAcceptedCallback tripAcceptedCallback)
     {
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
@@ -139,7 +188,10 @@ public class TransportRequestHandler
                         {
                             if (databaseError == null)
                             {
-                                Log.i(App.APP_TAG, "REQUEST ACCEPTED");
+                                tripAcceptedCallback.tripAcceptedSuccessfully(requestId);
+                            } else
+                            {
+                                tripAcceptedCallback.failedToAcceptTrip(databaseError);
                             }
                         }
                     });
@@ -166,9 +218,23 @@ public class TransportRequestHandler
 
     }
 
+    public interface TripAcceptedCallback
+    {
+        void tripAcceptedSuccessfully(final String tripId);
+
+        void failedToAcceptTrip(DatabaseError databaseError);
+    }
+
     public interface RequestDetailsCallback
     {
         void OnGetRequestDetails(DataSnapshot dataSnapshot);
+    }
+
+    public interface ConfirmationListener
+    {
+        void tripConfirmed();
+
+        void tripNotConfirmed();
     }
 
 }

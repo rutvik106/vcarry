@@ -166,38 +166,29 @@ public class ActivityTripDetails extends AppCompatActivity
 
         if (tripStatus < tripStatusStarted)
         {
-            final boolean isDriverOnTrip = PreferenceManager.getDefaultSharedPreferences(ActivityTripDetails.this)
-                    .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
-            if (!isDriverOnTrip)
+            btnStartTrip.setVisibility(View.VISIBLE);
+            btnStartTrip.setOnClickListener(new View.OnClickListener()
             {
-                btnStartTrip.setVisibility(View.VISIBLE);
-                btnStartTrip.setOnClickListener(new View.OnClickListener()
+                @Override
+                public void onClick(View view)
                 {
-                    @Override
-                    public void onClick(View view)
-                    {
-                        new AlertDialog.Builder(ActivityTripDetails.this)
-                                .setTitle(getResources().getString(R.string.start_trip))
-                                .setMessage(getResources().getString(R.string.are_you_sure_start_trip))
-                                .setIcon(android.R.drawable.ic_dialog_info)
-                                .setPositiveButton(getResources().getString(R.string.start),
-                                        new DialogInterface.OnClickListener()
+                    new AlertDialog.Builder(ActivityTripDetails.this)
+                            .setTitle(getResources().getString(R.string.start_trip))
+                            .setMessage(getResources().getString(R.string.are_you_sure_start_trip))
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setPositiveButton(getResources().getString(R.string.start),
+                                    new DialogInterface.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i)
                                         {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i)
-                                            {
-                                                startTrip();
-                                            }
-                                        })
-                                .setNegativeButton(getResources().getString(R.string.cancel), null)
-                                .show();
-                    }
-                });
-            }
-
-        } else
-        {
-            btnStartTrip.setVisibility(View.GONE);
+                                            startTrip();
+                                        }
+                                    })
+                            .setNegativeButton(getResources().getString(R.string.cancel), null)
+                            .show();
+                }
+            });
         }
 
     }

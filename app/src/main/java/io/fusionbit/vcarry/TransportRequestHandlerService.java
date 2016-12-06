@@ -21,6 +21,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 import java.util.Calendar;
 
@@ -35,7 +36,10 @@ import static io.fusionbit.vcarry.Constants.NOTIFICATION_ID;
  * Created by rutvik on 10/27/2016 at 2:54 PM.
  */
 
-public class TransportRequestHandlerService extends Service implements TransportRequestHandler.TransportRequestListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, FusedLocation.GetLocation
+public class TransportRequestHandlerService extends Service
+        implements TransportRequestHandler.TransportRequestListener,
+        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,
+        FusedLocation.GetLocation, TransportRequestHandler.ConfirmationListener
 {
     private static final String TAG =
             App.APP_TAG + TransportRequestHandlerService.class.getSimpleName();
@@ -44,15 +48,13 @@ public class TransportRequestHandlerService extends Service implements Transport
 
     private TransportRequestHandler transportRequestHandler;
 
-    private int childCount = 0;
-
-    private TransportRequestResponseReceiver transportRequestResponseReceiver;
-
     FusedLocation mFusedLocation;
 
     TripDistanceDetails tripDistanceDetails;
 
     ResultReceiver resultReceiver;
+
+    private TransportRequestResponseReceiver transportRequestResponseReceiver;
 
     public TransportRequestHandlerService()
     {
@@ -67,10 +69,6 @@ public class TransportRequestHandlerService extends Service implements Transport
             {
                 transportRequestHandler = new TransportRequestHandler(this);
                 addNotification();
-                /**if (intent != null)
-                {
-                    resultReceiver = intent.getParcelableExtra(Constants.SERVICE_RESULT_RECEIVER);
-                }*/
             }
         }
 
@@ -85,9 +83,29 @@ public class TransportRequestHandlerService extends Service implements Transport
     @Override
     public void onCreate()
     {
-        transportRequestResponseReceiver = new TransportRequestResponseReceiver();
+        transportRequestResponseReceiver = new TransportRequestResponseReceiver()
+        {
+            @Override
+            public void tripAcceptedSuccessfully(String tripId)
+            {
+                startListeningForTripConfirmation(tripId);
+            }
+
+            @Override
+            public void failedToAcceptTrip(DatabaseError databaseError)
+            {
+                super.failedToAcceptTrip(databaseError);
+            }
+        };
+
+
         registerReceiver(transportRequestResponseReceiver,
                 new IntentFilter(Constants.TRANSPORT_REQUEST_RESPONSE));
+    }
+
+    public void startListeningForTripConfirmation(final String tripId)
+    {
+        TransportRequestHandler.startListeningForTripConfirmation(tripId, TransportRequestHandlerService.this);
     }
 
     @Override
@@ -204,6 +222,18 @@ public class TransportRequestHandlerService extends Service implements Transport
 
     }
 
+    @Override
+    public void tripConfirmed()
+    {
+        Toast.makeText(this, "YOUR TRIP IS CONFIRMED", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void tripNotConfirmed()
+    {
+
+    }
+
     public class TransportRequestServiceBinder extends Binder
     {
         public TransportRequestHandlerService getService()
@@ -242,15 +272,16 @@ public class TransportRequestHandlerService extends Service implements Transport
         // build notification
         // the addAction re-use the same intent to keep the example short
         Notification n = new Notification.Builder(this)
-                .setContentTitle("Transport Request")
-                .setContentText("New Transport request form V-Carry")
+                .setContentTitle(getResources().getString(R.string.transport_request))
+                .setContentText(getResources().getString(R.string.new_request))
                 .setSmallIcon(R.drawable.ic_local_shipping_black_24dp)
                 //.setContentIntent(pIntent)
                 .setAutoCancel(true)
-                .setVibrate(new long[]{100, 100})
+                .setVibrate(new long[]{10000})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .addAction(R.drawable.ic_done_black_24dp, "Accept", pAccept)
-                .addAction(R.drawable.ic_clear_black_24dp, "Reject", pReject).build();
+                .addAction(R.drawable.ic_done_black_24dp, getResources().getString(R.string.accept), pAccept)
+                .addAction(R.drawable.ic_clear_black_24dp, getResources().getString(R.string.reject), pReject)
+                .build();
 
 
         NotificationManager notificationManager =
@@ -316,16 +347,13 @@ public class TransportRequestHandlerService extends Service implements Transport
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
     {
-        Toast.makeText(this, "Fused Location API Connection Failed", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle)
     {
-        Toast.makeText(this, "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();
-
         mFusedLocation.startGettingLocation(this);
-
     }
 
     @Override
@@ -344,7 +372,7 @@ public class TransportRequestHandlerService extends Service implements Transport
         Log.i(TAG, "ACCURACY: " + location.getAccuracy());
         Log.i(TAG, "TIME in Sec: " + location.getTime() / 1000);
         Log.i(TAG, "SPEED: " + location.getSpeed());
-        Log.i(TAG, "******************************");
+        Log.i(TAG, "****************************");
         tripDistanceDetails.addLocationData(location.getTime(), location.getLatitude(), location.getLongitude());
     }
 

@@ -78,7 +78,8 @@ public class ActivityHome extends AppCompatActivity
             mServiceBound = true;
             //get service instance here
             mService = ((TransportRequestHandlerService.TransportRequestServiceBinder) service).getService();
-            if(mService!=null){
+            if (mService != null)
+            {
                 serviceResultReceiver = new ServiceResultReceiver(null);
                 mService.setResultReceiver(serviceResultReceiver);
             }
@@ -282,12 +283,12 @@ public class ActivityHome extends AppCompatActivity
     @Override
     protected void onStop()
     {
-        super.onStop();
         if (mServiceBound)
         {
             unbindService(mServiceConnection);
             mServiceBound = false;
         }
+        super.onStop();
     }
 
     private void showCompletedTripDetails(final String tripId)
