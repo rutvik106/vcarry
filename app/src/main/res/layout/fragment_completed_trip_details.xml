@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="25dp"
+    android:layout_margin="15dp"
     android:background="@android:color/white"
     android:elevation="4dp">
 
 
     <LinearLayout
+        android:id="@+id/ll_completedTripDetailsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -17,11 +19,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:gravity="center"
             android:text="@string/trip_details"
             android:textColor="#333333"
-            android:textSize="32sp"/>
+            android:textSize="18sp"/>
 
         <!--<ImageView
             android:layout_margin="5dp"
@@ -86,41 +88,69 @@
 
         </LinearLayout>
 
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:gravity="center"
-            android:text="@string/trip_distance"
-            android:textColor="#999999"/>
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:weightSum="5">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/trip_distance"
+                    android:textColor="#999999"/>
 
 
-        <TextView
-            android:id="@+id/tv_completedTripDistance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text=""
-            android:textColor="#333333"
-            android:textSize="42sp"/>
+                <TextView
+                    android:id="@+id/tv_completedTripDistance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="#333333"
+                    android:textSize="22sp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:text="@string/fare"
-            android:textColor="#999999"/>
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_completedTripFare"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text=""
-            android:textColor="#333333"
-            android:textSize="32sp"/>
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/fare"
+                    android:textColor="#999999"/>
+
+                <TextView
+                    android:id="@+id/tv_completedTripFare"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="#333333"
+                    android:textSize="22sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -137,9 +167,9 @@
             android:gravity="center"
             android:text=""
             android:textColor="#333333"
-            android:textSize="22sp"/>
+            android:textSize="16sp"/>
 
-        <TextView
+        <!--<TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -180,18 +210,160 @@
                 android:textColor="#333333"
                 android:textSize="16sp"/>
 
-        </LinearLayout>
+        </LinearLayout>-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <CheckBox
+                android:id="@+id/cb_memo"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_toRightOf="@id/cb_memo"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:text="Memo"
+                android:textColor="#333333"
+                android:textSize="16sp"/>
+
+            <EditText
+                android:id="@+id/et_memoAmount"
+                android:layout_width="100dp"
+                android:layout_height="45dp"
+                android:layout_alignParentRight="true"
+                android:gravity="center_vertical"
+                android:textColor="#333333"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_toLeftOf="@id/et_memoAmount"
+                android:gravity="center"
+                android:text="@string/rs"
+                android:textColor="#333333"
+                android:textSize="16sp"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <CheckBox
+                android:id="@+id/cb_labor"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_toRightOf="@id/cb_labor"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:text="Labor"
+                android:textColor="#333333"
+                android:textSize="16sp"/>
+
+            <EditText
+                android:id="@+id/et_laborAmount"
+                android:layout_width="100dp"
+                android:layout_height="45dp"
+                android:layout_alignParentRight="true"
+                android:gravity="center_vertical"
+                android:textColor="#333333"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_toLeftOf="@id/et_laborAmount"
+                android:gravity="center"
+                android:text="@string/rs"
+                android:textColor="#333333"
+                android:textSize="16sp"/>
+
+        </RelativeLayout>
+
+
+        <View
+            android:id="@+id/view_endSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:background="#999999"/>
+
 
     </LinearLayout>
 
-    <!--<android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_done"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@id/ll_completedTripDetailsContainer"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:gravity="center_vertical"
+            android:text="CASH RECEIVED"
+            android:textColor="#333333"
+            android:textSize="18sp"/>
+
+
+        <EditText
+            android:id="@+id/et_totalTripAmount"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
+            android:textColor="#333333"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_toLeftOf="@id/et_totalTripAmount"
+            android:gravity="center_vertical"
+            android:text="@string/rs"
+            android:textColor="#333333"
+            android:textSize="16sp"/>
+
+
+    </RelativeLayout>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_tripDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
         android:src="@drawable/ic_done_white_24dp"
-        app:fabSize="normal"/>-->
+        app:fabSize="mini"/>
+
 
 </RelativeLayout>

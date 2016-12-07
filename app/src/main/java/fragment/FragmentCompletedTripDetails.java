@@ -30,8 +30,8 @@ public class FragmentCompletedTripDetails extends Fragment
     String tripId;
 
     TextView tvCompletedTripStartTime, tvCompletedTripEndTime, tvCompletedTripDistance,
-            tvCompletedTripFare, tvCompletedTripCustomerName, tvCompletedTripFrom,
-            tvCompletedTripTo;
+            tvCompletedTripFare, tvCompletedTripCustomerName;
+    //, tvCompletedTripFrom, tvCompletedTripTo;
 
     public static FragmentCompletedTripDetails newInstance(Context context, final String tripId)
     {
@@ -52,8 +52,8 @@ public class FragmentCompletedTripDetails extends Fragment
         tvCompletedTripDistance = (TextView) view.findViewById(R.id.tv_completedTripDistance);
         tvCompletedTripFare = (TextView) view.findViewById(R.id.tv_completedTripFare);
         tvCompletedTripCustomerName = (TextView) view.findViewById(R.id.tv_completedTripCustomerName);
-        tvCompletedTripFrom = (TextView) view.findViewById(R.id.tv_completedTripFrom);
-        tvCompletedTripTo = (TextView) view.findViewById(R.id.tv_completedTripTo);
+        //tvCompletedTripFrom = (TextView) view.findViewById(R.id.tv_completedTripFrom);
+        //tvCompletedTripTo = (TextView) view.findViewById(R.id.tv_completedTripTo);
 
         showCompletedTripDetails(tripId);
 
@@ -118,9 +118,9 @@ public class FragmentCompletedTripDetails extends Fragment
 
         tvCompletedTripCustomerName.setText(tripDetails.getCustomerName());
 
-        tvCompletedTripFrom.setText(tripDetails.getFromShippingLocation());
+        //tvCompletedTripFrom.setText(tripDetails.getFromShippingLocation());
 
-        tvCompletedTripTo.setText(tripDetails.getToShippingLocation());
+        //tvCompletedTripTo.setText(tripDetails.getToShippingLocation());
 
     }
 
