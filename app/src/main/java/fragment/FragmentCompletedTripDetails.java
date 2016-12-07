@@ -8,6 +8,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import apimodels.TripDetails;
@@ -33,6 +36,10 @@ public class FragmentCompletedTripDetails extends Fragment
             tvCompletedTripFare, tvCompletedTripCustomerName;
     //, tvCompletedTripFrom, tvCompletedTripTo;
 
+    CheckBox cbMemo, cbLabor;
+
+    EditText etMemoAmount, etLaborAmount;
+
     public static FragmentCompletedTripDetails newInstance(Context context, final String tripId)
     {
         FragmentCompletedTripDetails fragmentCompletedTripDetails = new FragmentCompletedTripDetails();
@@ -46,6 +53,43 @@ public class FragmentCompletedTripDetails extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_completed_trip_details, container, false);
+
+
+        etLaborAmount = (EditText) view.findViewById(R.id.et_laborAmount);
+        etMemoAmount = (EditText) view.findViewById(R.id.et_memoAmount);
+
+        cbLabor = (CheckBox) view.findViewById(R.id.cb_labor);
+        cbMemo = (CheckBox) view.findViewById(R.id.cb_memo);
+
+        cbMemo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked)
+            {
+                if (isChecked)
+                {
+                    etMemoAmount.setEnabled(true);
+                }else {
+                    etMemoAmount.setText("");
+                    etMemoAmount.setEnabled(false);
+                }
+            }
+        });
+
+        cbLabor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked)
+            {
+                if (isChecked)
+                {
+                    etLaborAmount.setEnabled(true);
+                }else {
+                    etLaborAmount.setText("");
+                    etLaborAmount.setEnabled(false);
+                }
+            }
+        });
 
         tvCompletedTripStartTime = (TextView) view.findViewById(R.id.tv_completedTripStartTime);
         tvCompletedTripEndTime = (TextView) view.findViewById(R.id.tv_completedTripEndTime);

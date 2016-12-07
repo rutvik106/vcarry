@@ -41,6 +41,8 @@ public class ActivityTripDetails extends AppCompatActivity
 
     TripDetails tripDetails;
 
+    Realm realm;
+
     //is activity connected to service
     boolean mServiceBound = false;
 
@@ -92,6 +94,8 @@ public class ActivityTripDetails extends AppCompatActivity
 
         if (!tripId.isEmpty())
         {
+            realm = Realm.getDefaultInstance();
+            tryToGetFromRealm();
             getTripDetails();
         }
 
@@ -109,11 +113,8 @@ public class ActivityTripDetails extends AppCompatActivity
         bindService(TransportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
     }
 
-    private void getTripDetails()
+    private void tryToGetFromRealm()
     {
-
-        final Realm realm = Realm.getDefaultInstance();
-
         tripDetails = realm.where(TripDetails.class).equalTo("tripId", tripId).findFirst();
         realm.close();
 
@@ -129,6 +130,10 @@ public class ActivityTripDetails extends AppCompatActivity
                 }
             });
         }
+    }
+
+    private void getTripDetails()
+    {
 
         API.getInstance().getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripDetails>()
         {
@@ -227,6 +232,7 @@ public class ActivityTripDetails extends AppCompatActivity
 
                                 if (mService != null)
                                 {
+                                    Log.i(TAG, "STARTING TRIP NOW CALLING FUNCTION ON SERVICE");
                                     mService.startTrip(tripId);
                                 }
 

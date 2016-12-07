@@ -142,6 +142,7 @@ public class TransportRequestHandlerService extends Service
 
     private void addTripNotification()
     {
+        Log.i(TAG,"ADDING START TRIP NOTIFICATION");
 
         final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
@@ -178,6 +179,8 @@ public class TransportRequestHandlerService extends Service
 
     public void startTrip(String tripId)
     {
+        Log.i(TAG,"SERVICE IS STARTING TRIP NOW");
+
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
                 .putString(Constants.CURRENT_TRIP_ID, tripId)
@@ -294,6 +297,8 @@ public class TransportRequestHandlerService extends Service
 
     public void startCalculatingDistanceIfDriverOnTrip()
     {
+        Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE");
+
         final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
 
@@ -302,17 +307,26 @@ public class TransportRequestHandlerService extends Service
 
         if (isOnTrip)
         {
+            Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: DRIVER ON TRIP");
             if (mFusedLocation == null)
             {
+                Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: CREATING NEW FUSED LOCATION PROVIDER");
                 mFusedLocation = new FusedLocation(this, this, this);
             }
         } else
         {
+            Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: DRIVER NOT ON TRIP");
             if (mFusedLocation != null)
             {
+                Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: FUSED LOCATION PROVIDER IS NOT NULL");
+
+                Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: STOPPING LOCATION PROVIDER");
+
                 mFusedLocation.stopGettingLocation();
 
                 tripDistanceDetails.stopTrip(Calendar.getInstance().getTimeInMillis());
+
+                Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: WRITING TRIP DETAILS TO REALM");
 
                 final Realm realm = Realm.getDefaultInstance();
 
