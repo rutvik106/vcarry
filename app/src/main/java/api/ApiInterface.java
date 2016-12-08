@@ -7,6 +7,7 @@ import apimodels.TripsByDriverMail;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 /**
@@ -28,5 +29,17 @@ public interface ApiInterface
     Call<ResponseBody> updateTripStatus(@Query("method") String method,
                                         @Query("status_id") String statusId,
                                         @Query("trip_id") String tripId);
+
+    @POST("webservice.php")
+    Call<ResponseBody> stopTripAndSendDetails(@Query("method") String method,
+                                              @Query("trip_id") String tripId,
+                                              @Query("start_time") String starTime,
+                                              @Query("stop_time") String stopTime,
+                                              @Query("start_loc") String startLoc,
+                                              @Query("stop_loc") String stopLoc,
+                                              @Query("distance") String distance,
+                                              @Query("memo_amt") String memoAmount,
+                                              @Query("labour_amt") String labourAmount,
+                                              @Query("cash_received") String cashReceived);
 
 }

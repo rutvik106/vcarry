@@ -1,6 +1,7 @@
 package io.fusionbit.vcarry;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -43,7 +44,8 @@ import static io.fusionbit.vcarry.Constants.ON_TRIP_STOPPED;
 import static io.fusionbit.vcarry.Constants.WAS_LANGUAGE_CHANGED;
 
 public class ActivityHome extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FragmentMap.OnTripStopListener
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentMap.OnTripStopListener,
+        FragmentCompletedTripDetails.TripStopDataInsertionCallback
 {
     private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
 
@@ -69,6 +71,8 @@ public class ActivityHome extends AppCompatActivity
     private boolean isShowingCompletedTripDetails = false;
 
     ServiceResultReceiver serviceResultReceiver;
+
+    ProgressDialog progressDialog;
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -193,10 +197,10 @@ public class ActivityHome extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START))
         {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (isShowingCompletedTripDetails)
+        } /*else if (isShowingCompletedTripDetails)
         {
             hideCompletedTripDetails();
-        } else
+        }*/ else
         {
             if (doubleBackToExitPressedOnce)
             {
@@ -297,7 +301,7 @@ public class ActivityHome extends AppCompatActivity
         {
             isShowingCompletedTripDetails = true;
             findViewById(R.id.fl_completedTripDetails).setVisibility(View.VISIBLE);
-            fragmentCompletedTripDetails = FragmentCompletedTripDetails.newInstance(this, tripId);
+            fragmentCompletedTripDetails = FragmentCompletedTripDetails.newInstance(this, tripId, this);
             fragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
                     .add(R.id.fl_completedTripDetails, fragmentCompletedTripDetails)
@@ -375,6 +379,11 @@ public class ActivityHome extends AppCompatActivity
     {
         if (mService != null)
         {
+            progressDialog = ProgressDialog
+                    .show(this, getResources().getString(R.string.please_wait),
+                            getResources().getString(R.string.generating_trip_details), true, false);
+            progressDialog.show();
+
             mService.stopTrip();
         }
     }
@@ -401,6 +410,13 @@ public class ActivityHome extends AppCompatActivity
             {
 
                 case ON_TRIP_STOPPED:
+                    if (progressDialog != null)
+                    {
+                        if (progressDialog.isShowing())
+                        {
+                            progressDialog.dismiss();
+                        }
+                    }
                     final String tripId = resultData.getString(Constants.CURRENT_TRIP_ID);
                     if (tripId != null)
                     {
@@ -412,6 +428,22 @@ public class ActivityHome extends AppCompatActivity
                     super.onReceiveResult(resultCode, resultData);
             }
         }
+    }
+
+    @Override
+    public void dataInsertedSuccessfully()
+    {
+        Toast.makeText(this, "TRIP STOP DATA INSERTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
+        if (isShowingCompletedTripDetails)
+        {
+            hideCompletedTripDetails();
+        }
+    }
+
+    @Override
+    public void failedToInsertTripStopData()
+    {
+        Toast.makeText(this, "FAILED TO INSERTED TRIP STOP DATA", Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -84,4 +84,8 @@
     <string name="trip_location">સ્થળ</string>
     <string name="trip_distance">ટ્રીપ અંતર</string>
 
+    <string name="please_wait">મહેરબાની કરી રાહ જુવો</string>
+
+    <string name="generating_trip_details">ટ્રીપ ની વિગત જાણવા રાહ જુવો</string>
+
 </resources>

@@ -3,6 +3,7 @@ package fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,19 +13,25 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import api.API;
+import api.RetrofitCallbacks;
 import apimodels.TripDetails;
 import extra.Utils;
 import io.fusionbit.vcarry.App;
 import io.fusionbit.vcarry.R;
 import io.realm.Realm;
 import models.TripDistanceDetails;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by rutvik on 12/4/2016 at 2:56 PM.
  */
 
-public class FragmentCompletedTripDetails extends Fragment
+public class FragmentCompletedTripDetails extends Fragment implements View.OnClickListener
 {
     private static final String TAG = App.APP_TAG + FragmentCompletedTripDetails.class.getSimpleName();
 
@@ -38,13 +45,44 @@ public class FragmentCompletedTripDetails extends Fragment
 
     CheckBox cbMemo, cbLabor;
 
-    EditText etMemoAmount, etLaborAmount;
+    EditText etMemoAmount, etLaborAmount, etTotalAmount;
 
-    public static FragmentCompletedTripDetails newInstance(Context context, final String tripId)
+    FloatingActionButton fabTripDone;
+
+    TripDetails tripDetails = null;
+    TripDistanceDetails tripDistanceDetails = null;
+
+    TripStopDataInsertionCallback tripStopDataInsertionCallback;
+
+    RetrofitCallbacks OnInsertTripStopData = new RetrofitCallbacks<ResponseBody>()
+    {
+
+        @Override
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+        {
+            super.onResponse(call, response);
+            if (response.isSuccessful())
+            {
+                tripStopDataInsertionCallback.dataInsertedSuccessfully();
+            }
+            tripStopDataInsertionCallback.failedToInsertTripStopData();
+        }
+
+        @Override
+        public void onFailure(Call<ResponseBody> call, Throwable t)
+        {
+            super.onFailure(call, t);
+            tripStopDataInsertionCallback.failedToInsertTripStopData();
+        }
+    };
+
+    public static FragmentCompletedTripDetails newInstance(final Context context, final String tripId,
+                                                           final TripStopDataInsertionCallback tripStopDataInsertionCallback)
     {
         FragmentCompletedTripDetails fragmentCompletedTripDetails = new FragmentCompletedTripDetails();
         fragmentCompletedTripDetails.context = context;
         fragmentCompletedTripDetails.tripId = tripId;
+        fragmentCompletedTripDetails.tripStopDataInsertionCallback = tripStopDataInsertionCallback;
         return fragmentCompletedTripDetails;
     }
 
@@ -54,6 +92,11 @@ public class FragmentCompletedTripDetails extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_completed_trip_details, container, false);
 
+        fabTripDone = (FloatingActionButton) view.findViewById(R.id.fab_tripDone);
+
+        fabTripDone.setOnClickListener(this);
+
+        etTotalAmount = (EditText) view.findViewById(R.id.et_totalTripAmount);
 
         etLaborAmount = (EditText) view.findViewById(R.id.et_laborAmount);
         etMemoAmount = (EditText) view.findViewById(R.id.et_memoAmount);
@@ -69,7 +112,8 @@ public class FragmentCompletedTripDetails extends Fragment
                 if (isChecked)
                 {
                     etMemoAmount.setEnabled(true);
-                }else {
+                } else
+                {
                     etMemoAmount.setText("");
                     etMemoAmount.setEnabled(false);
                 }
@@ -84,7 +128,8 @@ public class FragmentCompletedTripDetails extends Fragment
                 if (isChecked)
                 {
                     etLaborAmount.setEnabled(true);
-                }else {
+                } else
+                {
                     etLaborAmount.setText("");
                     etLaborAmount.setEnabled(false);
                 }
@@ -106,9 +151,6 @@ public class FragmentCompletedTripDetails extends Fragment
 
     public void showCompletedTripDetails(String tripId)
     {
-
-        TripDetails tripDetails = null;
-        TripDistanceDetails tripDistanceDetails = null;
 
         final Realm realm = Realm.getDefaultInstance();
 
@@ -166,6 +208,51 @@ public class FragmentCompletedTripDetails extends Fragment
 
         //tvCompletedTripTo.setText(tripDetails.getToShippingLocation());
 
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+
+        if (cbLabor.isChecked())
+        {
+            if (etLaborAmount.getText().toString().trim().isEmpty())
+            {
+                Toast.makeText(context, "Please Enter Labour Amount", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        if (cbMemo.isChecked())
+        {
+            if (etMemoAmount.getText().toString().trim().isEmpty())
+            {
+                Toast.makeText(context, "Please Enter Memo Amount", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        if (etTotalAmount.getText().toString().trim().isEmpty())
+        {
+            Toast.makeText(context, "Please Enter Cash Received", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        API.getInstance().stopTripAndSendDetails(tripId, tripDistanceDetails.getTripStartTime() + "",
+                tripDistanceDetails.getTripStopTime() + "",
+                tripDistanceDetails.getStartLatLng(),
+                tripDistanceDetails.getStopLatLng(),
+                tvCompletedTripDistance.getText().toString(),
+                etMemoAmount.getText().toString(),
+                etLaborAmount.getText().toString(),
+                etTotalAmount.getText().toString(), OnInsertTripStopData);
+    }
+
+    public interface TripStopDataInsertionCallback
+    {
+        void dataInsertedSuccessfully();
+
+        void failedToInsertTripStopData();
     }
 
 }

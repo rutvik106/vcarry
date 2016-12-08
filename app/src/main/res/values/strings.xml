@@ -79,4 +79,8 @@
     <string name="trip_location">Location</string>
     <string name="trip_distance">Trip Distance</string>
 
+    <string name="please_wait">Please Wait</string>
+
+    <string name="generating_trip_details">Generating trip details</string>
+
 </resources>
