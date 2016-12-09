@@ -51,4 +51,6 @@ public class Constants
         public static final String KEY_CONFIRM = "confirm";
     }
 
+    public static final String IS_BILL_PENDING = "IS_BILL_PENDING";
+
 }

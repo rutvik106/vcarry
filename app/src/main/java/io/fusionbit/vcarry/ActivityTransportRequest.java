@@ -221,6 +221,6 @@ public class ActivityTransportRequest extends AppCompatActivity
     {
         Log.i(TAG, "TRIP ID: " + tripId + " FAILED TO ACCEPT");
         Toast.makeText(this, "FAILED TO ACCEPT TRIP", Toast.LENGTH_SHORT).show();
-        TransportRequestHandler.insertTripAcceptedDataUsingApi(tripId, location, acceptedTime);
+        //TransportRequestHandler.insertTripAcceptedDataUsingApi(tripId, location, acceptedTime);
     }
 }

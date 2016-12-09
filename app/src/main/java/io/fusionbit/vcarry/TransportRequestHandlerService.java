@@ -68,8 +68,8 @@ public class TransportRequestHandlerService extends Service
             if (transportRequestHandler == null)
             {
                 transportRequestHandler = new TransportRequestHandler(this);
-                addNotification();
             }
+            addNotification();
             TransportRequestHandler.setupConnectivityLogic();
         }
 

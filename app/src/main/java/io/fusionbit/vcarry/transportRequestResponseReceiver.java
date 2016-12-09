@@ -118,6 +118,6 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
     {
         Log.i(TAG, "TRIP ID: " + tripId + " FAILED TO ACCEPT");
         Toast.makeText(context, "FAILED TO ACCEPT TRIP", Toast.LENGTH_SHORT).show();
-        TransportRequestHandler.insertTripAcceptedDataUsingApi(tripId, location, acceptedTime);
+        //TransportRequestHandler.insertTripAcceptedDataUsingApi(tripId, location, acceptedTime);
     }
 }

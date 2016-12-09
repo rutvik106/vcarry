@@ -2,6 +2,7 @@ package fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import api.RetrofitCallbacks;
 import apimodels.TripDetails;
 import extra.Utils;
 import io.fusionbit.vcarry.App;
+import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.R;
 import io.realm.Realm;
 import models.TripDistanceDetails;
@@ -145,6 +147,11 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
         tvCompletedTripCustomerName = (TextView) view.findViewById(R.id.tv_completedTripCustomerName);
         //tvCompletedTripFrom = (TextView) view.findViewById(R.id.tv_completedTripFrom);
         //tvCompletedTripTo = (TextView) view.findViewById(R.id.tv_completedTripTo);
+
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .edit()
+                .putBoolean(Constants.IS_BILL_PENDING, true)
+                .apply();
 
         showCompletedTripDetails(tripId);
 

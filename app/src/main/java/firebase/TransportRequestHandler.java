@@ -183,6 +183,7 @@ public class TransportRequestHandler
         data.put("trip_id", requestId);
         data.put("confirm", 0);
 
+        insertTripAcceptedDataUsingApi(requestId, latLng, acceptedTime);
 
         dbRef.child("request").child(requestId).removeValue(new DatabaseReference.CompletionListener()
         {
@@ -304,8 +305,8 @@ public class TransportRequestHandler
     }
 
 
-    public static void insertTripAcceptedDataUsingApi(final String tripId, final String location,
-                                                      final String acceptedTime)
+    private static void insertTripAcceptedDataUsingApi(final String tripId, final String location,
+                                                       final String acceptedTime)
     {
         final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         API.getInstance().insertTripAcceptedData(driverEmail, tripId, location, acceptedTime,

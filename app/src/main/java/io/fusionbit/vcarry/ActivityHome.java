@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +18,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -25,11 +28,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import extra.CircleTransform;
 import extra.LocaleHelper;
@@ -45,7 +54,7 @@ import static io.fusionbit.vcarry.Constants.WAS_LANGUAGE_CHANGED;
 
 public class ActivityHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentMap.OnTripStopListener,
-        FragmentCompletedTripDetails.TripStopDataInsertionCallback
+        FragmentCompletedTripDetails.TripStopDataInsertionCallback, OnCompleteListener<Void>
 {
     private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
 
@@ -73,6 +82,8 @@ public class ActivityHome extends AppCompatActivity
     ServiceResultReceiver serviceResultReceiver;
 
     ProgressDialog progressDialog;
+
+    FirebaseRemoteConfig remoteConfig;
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -179,6 +190,40 @@ public class ActivityHome extends AppCompatActivity
     {
         super.onStart();
         Log.i(TAG, "HOME ACTIVITY ON START");
+
+        final boolean isBillPending = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(Constants.IS_BILL_PENDING, false);
+
+        if (isBillPending)
+        {
+            showCompletedTripDetails();
+        }
+
+        //FIREBASE REMOTE CONFIG
+
+        remoteConfig = FirebaseRemoteConfig.getInstance();
+
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .build();
+
+        remoteConfig.setConfigSettings(configSettings);
+
+        final Map<String, Object> remoteValuesMap = new HashMap<>();
+        remoteValuesMap.put("urgent_notice", "");
+        remoteValuesMap.put("show_urgent_notice", false);
+
+        remoteConfig.setDefaults(remoteValuesMap);
+
+        if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled())
+        {
+            remoteConfig.fetch(0).addOnCompleteListener(this);
+        } else
+        {
+            remoteConfig.fetch(2000).addOnCompleteListener(this);
+        }
+
+        ////////////////////////
 
         //start bound service now
         Intent transportRequestHandlerService = new Intent(this, TransportRequestHandlerService.class);
@@ -295,8 +340,12 @@ public class ActivityHome extends AppCompatActivity
         super.onStop();
     }
 
-    private void showCompletedTripDetails(final String tripId)
+    private void showCompletedTripDetails()
     {
+
+        final String tripId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.CURRENT_TRIP_ID, "");
+
         if (!isShowingCompletedTripDetails)
         {
             isShowingCompletedTripDetails = true;
@@ -396,6 +445,28 @@ public class ActivityHome extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onComplete(@NonNull Task<Void> task)
+    {
+        if (task.isSuccessful())
+        {
+
+            remoteConfig.activateFetched();
+
+            final boolean showUrgentNotice = remoteConfig.getBoolean("show_urgent_notice");
+
+            if (showUrgentNotice)
+            {
+                showUrgentNotice();
+            }
+
+
+        } else
+        {
+
+        }
+    }
+
     public class ServiceResultReceiver extends ResultReceiver
     {
         public ServiceResultReceiver(Handler handler)
@@ -420,7 +491,7 @@ public class ActivityHome extends AppCompatActivity
                     final String tripId = resultData.getString(Constants.CURRENT_TRIP_ID);
                     if (tripId != null)
                     {
-                        showCompletedTripDetails(tripId);
+                        showCompletedTripDetails();
                     }
                     break;
 
@@ -437,6 +508,11 @@ public class ActivityHome extends AppCompatActivity
         if (isShowingCompletedTripDetails)
         {
             hideCompletedTripDetails();
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putBoolean(Constants.IS_BILL_PENDING, false)
+                    .putString(Constants.CURRENT_TRIP_ID, null)
+                    .apply();
         }
     }
 
@@ -444,6 +520,18 @@ public class ActivityHome extends AppCompatActivity
     public void failedToInsertTripStopData()
     {
         Toast.makeText(this, "FAILED TO INSERTED TRIP STOP DATA", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void showUrgentNotice()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Urgent Notice!")
+                .setMessage(remoteConfig.getString("urgent_notice"))
+                .setCancelable(false)
+                .setPositiveButton("OK", null);
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }
