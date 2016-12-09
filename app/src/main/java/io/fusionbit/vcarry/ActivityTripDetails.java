@@ -92,6 +92,13 @@ public class ActivityTripDetails extends AppCompatActivity
 
         tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
 
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
         if (!tripId.isEmpty())
         {
             realm = Realm.getDefaultInstance();
@@ -99,12 +106,6 @@ public class ActivityTripDetails extends AppCompatActivity
             getTripDetails();
         }
 
-    }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
         //start bound service now
         Intent TransportRequestHandlerService = new Intent(this, TransportRequestHandlerService.class);
         startService(TransportRequestHandlerService);

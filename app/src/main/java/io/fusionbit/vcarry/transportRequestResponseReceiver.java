@@ -8,6 +8,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -24,6 +26,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class TransportRequestResponseReceiver extends BroadcastReceiver
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, TransportRequestHandler.TripAcceptedCallback
 {
+    private static final String TAG =
+            App.APP_TAG + TransportRequestResponseReceiver.class.getSimpleName();
 
     FusedLocation fusedLocation;
 
@@ -31,9 +35,13 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
 
     NotificationManager notificationManager;
 
+    Context context;
+
     @Override
     public void onReceive(Context context, Intent intent)
     {
+        this.context = context;
+
         response = intent.getStringExtra(Constants.T_RESPONSE);
         requestId = intent.getStringExtra(Constants.TRANSPORT_REQUEST_ID);
 
@@ -101,12 +109,15 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
     @Override
     public void tripAcceptedSuccessfully(String tripId)
     {
-
+        Log.i(TAG, "TRIP ID: " + tripId + " WAS ACCEPTED SUCCESSFULLY");
+        Toast.makeText(context, "TRIP ACCEPTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void failedToAcceptTrip(DatabaseError databaseError)
+    public void failedToAcceptTrip(String tripId, String location, String acceptedTime, DatabaseError databaseError)
     {
-
+        Log.i(TAG, "TRIP ID: " + tripId + " FAILED TO ACCEPT");
+        Toast.makeText(context, "FAILED TO ACCEPT TRIP", Toast.LENGTH_SHORT).show();
+        TransportRequestHandler.insertTripAcceptedDataUsingApi(tripId, location, acceptedTime);
     }
 }

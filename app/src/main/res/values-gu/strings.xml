@@ -87,5 +87,14 @@
     <string name="please_wait">મહેરબાની કરી રાહ જુવો</string>
 
     <string name="generating_trip_details">ટ્રીપ ની વિગત જાણવા રાહ જુવો</string>
+    <string name="memo">રસીદ</string>
+    <string name="labour">મજૂરી</string>
+    <string name="cash_received">રોકડ આપેલ</string>
+
+    <string name="trip_confirm_notification_title">અભિનંદન!</string>
+    <string name="trip_confirm_notification_message">તમારી ટ્રીપ પાક્કી છે</string>
+
+    <string name="trip_not_confirm_notification_title">માફ કરશો</string>
+    <string name="trip_not_confirm_notification_message">બીજા કોઇને સફર મળી</string>
 
 </resources>

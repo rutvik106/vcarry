@@ -64,8 +64,10 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
             if (response.isSuccessful())
             {
                 tripStopDataInsertionCallback.dataInsertedSuccessfully();
+            } else
+            {
+                tripStopDataInsertionCallback.failedToInsertTripStopData();
             }
-            tripStopDataInsertionCallback.failedToInsertTripStopData();
         }
 
         @Override

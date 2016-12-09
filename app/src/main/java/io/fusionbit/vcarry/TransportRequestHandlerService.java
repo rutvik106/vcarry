@@ -48,11 +48,11 @@ public class TransportRequestHandlerService extends Service
 
     private TransportRequestHandler transportRequestHandler;
 
-    FusedLocation mFusedLocation;
+    private FusedLocation mFusedLocation;
 
-    TripDistanceDetails tripDistanceDetails;
+    private TripDistanceDetails tripDistanceDetails;
 
-    ResultReceiver resultReceiver;
+    private ResultReceiver resultReceiver;
 
     private TransportRequestResponseReceiver transportRequestResponseReceiver;
 
@@ -70,6 +70,7 @@ public class TransportRequestHandlerService extends Service
                 transportRequestHandler = new TransportRequestHandler(this);
                 addNotification();
             }
+            TransportRequestHandler.setupConnectivityLogic();
         }
 
         return START_STICKY;
@@ -88,13 +89,14 @@ public class TransportRequestHandlerService extends Service
             @Override
             public void tripAcceptedSuccessfully(String tripId)
             {
+                super.tripAcceptedSuccessfully(tripId);
                 startListeningForTripConfirmation(tripId);
             }
 
             @Override
-            public void failedToAcceptTrip(DatabaseError databaseError)
+            public void failedToAcceptTrip(String tripId, String location, String acceptedTime, DatabaseError databaseError)
             {
-                super.failedToAcceptTrip(databaseError);
+                super.failedToAcceptTrip(tripId, location, acceptedTime, databaseError);
             }
         };
 
@@ -142,7 +144,7 @@ public class TransportRequestHandlerService extends Service
 
     private void addTripNotification()
     {
-        Log.i(TAG,"ADDING START TRIP NOTIFICATION");
+        Log.i(TAG, "ADDING START TRIP NOTIFICATION");
 
         final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
@@ -179,7 +181,7 @@ public class TransportRequestHandlerService extends Service
 
     public void startTrip(String tripId)
     {
-        Log.i(TAG,"SERVICE IS STARTING TRIP NOW");
+        Log.i(TAG, "SERVICE IS STARTING TRIP NOW");
 
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
@@ -226,15 +228,19 @@ public class TransportRequestHandlerService extends Service
     }
 
     @Override
-    public void tripConfirmed()
+    public void tripConfirmed(String tripId)
     {
-        Toast.makeText(this, "YOUR TRIP IS CONFIRMED", Toast.LENGTH_SHORT).show();
+        showSimpleNotification(Integer.valueOf(tripId),
+                getResources().getString(R.string.trip_confirm_notification_title),
+                getResources().getString(R.string.trip_confirm_notification_message));
     }
 
     @Override
-    public void tripNotConfirmed()
+    public void tripNotConfirmed(String tripId)
     {
-
+        showSimpleNotification(Integer.valueOf(tripId),
+                getResources().getString(R.string.trip_not_confirm_notification_title),
+                getResources().getString(R.string.trip_not_confirm_notification_message));
     }
 
     public class TransportRequestServiceBinder extends Binder
@@ -297,7 +303,7 @@ public class TransportRequestHandlerService extends Service
 
     public void startCalculatingDistanceIfDriverOnTrip()
     {
-        Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE");
+        Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE");
 
         final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
@@ -307,26 +313,28 @@ public class TransportRequestHandlerService extends Service
 
         if (isOnTrip)
         {
-            Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: DRIVER ON TRIP");
+            Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: DRIVER ON TRIP");
             if (mFusedLocation == null)
             {
-                Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: CREATING NEW FUSED LOCATION PROVIDER");
+                Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: CREATING NEW FUSED LOCATION PROVIDER");
                 mFusedLocation = new FusedLocation(this, this, this);
             }
         } else
         {
-            Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: DRIVER NOT ON TRIP");
+            Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: DRIVER NOT ON TRIP");
             if (mFusedLocation != null)
             {
-                Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: FUSED LOCATION PROVIDER IS NOT NULL");
+                Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: FUSED LOCATION PROVIDER IS NOT NULL");
 
-                Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: STOPPING LOCATION PROVIDER");
+                Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: STOPPING LOCATION PROVIDER");
 
                 mFusedLocation.stopGettingLocation();
 
+                mFusedLocation = null;
+
                 tripDistanceDetails.stopTrip(Calendar.getInstance().getTimeInMillis());
 
-                Log.i(TAG,"INSIDE START CALCULATING TRIP DISTANCE: WRITING TRIP DETAILS TO REALM");
+                Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: WRITING TRIP DETAILS TO REALM");
 
                 final Realm realm = Realm.getDefaultInstance();
 
@@ -361,12 +369,13 @@ public class TransportRequestHandlerService extends Service
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
     {
-
+        Toast.makeText(this, "Fused Location API FAILED TO CONNECT", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle)
     {
+        Toast.makeText(this, "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();
         mFusedLocation.startGettingLocation(this);
     }
 
@@ -379,6 +388,7 @@ public class TransportRequestHandlerService extends Service
     @Override
     public void onLocationChanged(Location location)
     {
+        Toast.makeText(this, "Location CHANGED!!!", Toast.LENGTH_SHORT).show();
         Log.i(TAG, "******LOCATION CHANGED******");
         Log.i(TAG, "LAT: " + location.getLatitude());
         Log.i(TAG, "LNG: " + location.getLongitude());
@@ -388,6 +398,24 @@ public class TransportRequestHandlerService extends Service
         Log.i(TAG, "SPEED: " + location.getSpeed());
         Log.i(TAG, "****************************");
         tripDistanceDetails.addLocationData(location.getTime(), location.getLatitude(), location.getLongitude());
+    }
+
+    public void showSimpleNotification(int tripId, String title, String message)
+    {
+        Notification n = new Notification.Builder(this)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(R.drawable.logo_small)
+                .setAutoCancel(true)
+                .setVibrate(new long[]{10000, 1000, 100})
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .build();
+
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(tripId, n);
     }
 
 }

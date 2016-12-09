@@ -8,7 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -24,8 +24,8 @@ public class FusedLocation implements LocationListener
 {
 
     private static final String TAG = "LOC " + FusedLocation.class.getSimpleName();
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 8000; //2000;
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 5000; //UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 7000; //2000;
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 3000; //UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 
 
     private GoogleApiClient mGoogleApiClient;
@@ -40,7 +40,7 @@ public class FusedLocation implements LocationListener
     public enum Status
     {
         UNAVAILABLE,
-        UPDATEREQUIRE,
+        UPDATE_REQUIRE,
         AVAILABLE
     }
 
@@ -120,16 +120,16 @@ public class FusedLocation implements LocationListener
     }
 
 
-    public Status isGooglePlayServiceAvailable(Context context)
+    public static Status isGooglePlayServiceAvailable(Context context)
     {
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
+        int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
 
         if (status == ConnectionResult.SUCCESS)
         {
             return Status.AVAILABLE;
         } else if (status == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED)
         {
-            return Status.UPDATEREQUIRE;
+            return Status.UPDATE_REQUIRE;
         } else
         {
             return Status.UNAVAILABLE;

@@ -6,13 +6,21 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import api.API;
+import api.RetrofitCallbacks;
+import extra.Log;
+import io.fusionbit.vcarry.App;
 import io.fusionbit.vcarry.Constants;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by rutvik on 10/27/2016 at 1:03 PM.
@@ -20,6 +28,8 @@ import io.fusionbit.vcarry.Constants;
 
 public class TransportRequestHandler
 {
+
+    private static final String TAG = App.APP_TAG + TransportRequestHandler.class.getSimpleName();
 
     private long totalRequest;
 
@@ -129,10 +139,10 @@ public class TransportRequestHandler
                     final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                     if (dataSnapshot.getValue().equals(userEmail))
                     {
-                        confirmationListener.tripConfirmed();
+                        confirmationListener.tripConfirmed(tripId);
                     } else
                     {
-                        confirmationListener.tripNotConfirmed();
+                        confirmationListener.tripNotConfirmed(tripId);
                     }
                 }
             }
@@ -162,11 +172,13 @@ public class TransportRequestHandler
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
 
+        final String acceptedTime = Calendar.getInstance().getTimeInMillis() + "";
+
         final Map data = new HashMap<>();
 
         data.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
         data.put("name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        data.put("time", Calendar.getInstance().getTimeInMillis());
+        data.put("time", acceptedTime);
         data.put("location", latLng);
         data.put("trip_id", requestId);
         data.put("confirm", 0);
@@ -191,11 +203,14 @@ public class TransportRequestHandler
                                 tripAcceptedCallback.tripAcceptedSuccessfully(requestId);
                             } else
                             {
-                                tripAcceptedCallback.failedToAcceptTrip(databaseError);
+                                tripAcceptedCallback.failedToAcceptTrip(requestId, latLng, acceptedTime, databaseError);
                             }
                         }
                     });
 
+                } else
+                {
+                    tripAcceptedCallback.failedToAcceptTrip(requestId, latLng, acceptedTime, databaseError);
                 }
             }
         });
@@ -222,7 +237,8 @@ public class TransportRequestHandler
     {
         void tripAcceptedSuccessfully(final String tripId);
 
-        void failedToAcceptTrip(DatabaseError databaseError);
+        void failedToAcceptTrip(final String tripId, final String location,
+                                final String acceptedTime, final DatabaseError databaseError);
     }
 
     public interface RequestDetailsCallback
@@ -232,9 +248,88 @@ public class TransportRequestHandler
 
     public interface ConfirmationListener
     {
-        void tripConfirmed();
+        void tripConfirmed(String tripId);
 
-        void tripNotConfirmed();
+        void tripNotConfirmed(String tripId);
     }
+
+
+    public static void setupConnectivityLogic()
+    {
+        Log.i(TAG, "SETTING UP CONNECTIVITY LOGIC");
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        //final DatabaseReference lastSeenRef = FirebaseDatabase.getInstance().getReference("/users/" + uid + "/last-seen");
+        final DatabaseReference connectivity = FirebaseDatabase.getInstance().getReference("/users/" + uid + "/connectivity");
+
+        //get refrence to firebase .info/connected database
+        final DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+
+        //add value listener on server side (will be triggered when user is disconnected/connected)
+        connectedRef.addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot snapshot)
+            {
+                boolean connected = snapshot.getValue(Boolean.class);
+
+                if (connected)
+                {
+                    Log.i(TAG, "CONNECTIVITY LOGIC SUCCESSFULLY SET");
+
+                    //if connected to databse set value to "online" and onDisconnect set value to "offline"
+                    final Map connectivityMap = new HashMap();
+                    connectivityMap.put("email", email);
+                    connectivityMap.put("connected", 1);
+                    connectivityMap.put("last-connected", ServerValue.TIMESTAMP);
+                    connectivity.updateChildren(connectivityMap);
+
+                    // when I disconnect, update the last time I was seen online
+                    final Map connectivityMap2 = new HashMap();
+                    connectivityMap2.put("email", email);
+                    connectivityMap2.put("connected", 0);
+                    connectivityMap2.put("last-connected", ServerValue.TIMESTAMP);
+                    connectivity.onDisconnect().updateChildren(connectivityMap2);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error)
+            {
+                Log.i(TAG, "CONNECTIVITY Listener was cancelled at .info/connected");
+            }
+        });
+    }
+
+
+    public static void insertTripAcceptedDataUsingApi(final String tripId, final String location,
+                                                      final String acceptedTime)
+    {
+        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        API.getInstance().insertTripAcceptedData(driverEmail, tripId, location, acceptedTime,
+                new RetrofitCallbacks<ResponseBody>()
+                {
+
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            Log.i(TAG, "ACCEPTED TRIP DATA WAS INSERTED IN DATABASE");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        Log.i(TAG, "FAILED TO INSERTED ACCEPTED TRIP DATA IN DATABASE");
+                    }
+                });
+    }
+
 
 }

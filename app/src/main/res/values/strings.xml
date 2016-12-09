@@ -82,5 +82,14 @@
     <string name="please_wait">Please Wait</string>
 
     <string name="generating_trip_details">Generating trip details</string>
+    <string name="memo">Memo</string>
+    <string name="labour">Labour</string>
+    <string name="cash_received">CASH RECEIVED</string>
+
+    <string name="trip_confirm_notification_title">Congratulation!</string>
+    <string name="trip_confirm_notification_message">Yor trip is confirmed</string>
+
+    <string name="trip_not_confirm_notification_title">Sorry</string>
+    <string name="trip_not_confirm_notification_message">Someone else got the trip</string>
 
 </resources>

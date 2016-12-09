@@ -6,9 +6,9 @@ import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.GET;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 /**
  * Created by rutvik on 11/27/2016 at 3:47 PM.
@@ -17,29 +17,42 @@ import retrofit2.http.Query;
 public interface ApiInterface
 {
 
-    @GET("webservice.php")
-    Call<List<TripsByDriverMail>> getTripsByDriverEmail(@Query("method") String method,
-                                                        @Query("driver_email") String driverEmail);
-
-    @GET("webservice.php")
-    Call<TripDetails> getTripDetailsByTripId(@Query("method") String method,
-                                             @Query("trip_id") String tripId);
-
-    @GET("webservice.php")
-    Call<ResponseBody> updateTripStatus(@Query("method") String method,
-                                        @Query("status_id") String statusId,
-                                        @Query("trip_id") String tripId);
-
+    @FormUrlEncoded
     @POST("webservice.php")
-    Call<ResponseBody> stopTripAndSendDetails(@Query("method") String method,
-                                              @Query("trip_id") String tripId,
-                                              @Query("start_time") String starTime,
-                                              @Query("stop_time") String stopTime,
-                                              @Query("start_loc") String startLoc,
-                                              @Query("stop_loc") String stopLoc,
-                                              @Query("distance") String distance,
-                                              @Query("memo_amt") String memoAmount,
-                                              @Query("labour_amt") String labourAmount,
-                                              @Query("cash_received") String cashReceived);
+    Call<List<TripsByDriverMail>> getTripsByDriverEmail(@Field("method") String method,
+                                                        @Field("driver_email") String driverEmail);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<TripDetails> getTripDetailsByTripId(@Field("method") String method,
+                                             @Field("trip_id") String tripId);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> updateTripStatus(@Field("method") String method,
+                                        @Field("status_id") String statusId,
+                                        @Field("trip_id") String tripId);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> stopTripAndSendDetails(@Field("method") String method,
+                                              @Field("trip_id") String tripId,
+                                              @Field("start_time") String starTime,
+                                              @Field("stop_time") String stopTime,
+                                              @Field("start_loc") String startLoc,
+                                              @Field("stop_loc") String stopLoc,
+                                              @Field("distance") String distance,
+                                              @Field("memo_amt") String memoAmount,
+                                              @Field("labour_amt") String labourAmount,
+                                              @Field("cash_received") String cashReceived);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> insertTripAcceptedData(@Field("method") String method,
+                                              @Field("driver_email") String driverEmail,
+                                              @Field("trip_id") String tripId,
+                                              @Field("location") String location,
+                                              @Field("accepted_time") String acceptedTime);
+
 
 }

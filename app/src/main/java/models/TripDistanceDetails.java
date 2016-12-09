@@ -115,11 +115,19 @@ public class TripDistanceDetails extends RealmObject
 
     public String getStartLatLng()
     {
+        if (latLngDataList.size() == 0)
+        {
+            return "0.00,0.00";
+        }
         return latLngDataList.get(0).getLat() + "," + latLngDataList.get(0).getLng();
     }
 
     public String getStopLatLng()
     {
+        if (latLngDataList.size() == 0)
+        {
+            return "0.00,0.00";
+        }
         return latLngDataList.last().getLat() + "," + latLngDataList.last().getLng();
     }
 

@@ -32,10 +32,18 @@
             android:textSize="16sp"/>
 
         <TextView
-            android:id="@+id/tv_from"
+            android:id="@+id/tv_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:text="@string/time"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tv_from"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="@string/request_from"
             android:textSize="16sp"/>
 

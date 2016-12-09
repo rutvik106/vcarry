@@ -11,9 +11,11 @@ import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -22,10 +24,15 @@ import com.google.firebase.database.DatabaseError;
 
 import java.util.Map;
 
+import extra.Utils;
 import firebase.TransportRequestHandler;
 
-public class ActivityTransportRequest extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, TransportRequestHandler.RequestDetailsCallback, TransportRequestHandler.TripAcceptedCallback
+public class ActivityTransportRequest extends AppCompatActivity
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        TransportRequestHandler.RequestDetailsCallback, TransportRequestHandler.TripAcceptedCallback
 {
+
+    private static final String TAG = App.APP_TAG + ActivityTransportRequest.class.getSimpleName();
 
     private String requestId;
 
@@ -33,7 +40,7 @@ public class ActivityTransportRequest extends AppCompatActivity implements Googl
 
     FusedLocation fusedLocation;
 
-    TextView tvFrom, tvTo;
+    TextView tvFrom, tvTo, tvTime;
 
     TransportRequestHandlerService mService;
 
@@ -102,6 +109,7 @@ public class ActivityTransportRequest extends AppCompatActivity implements Googl
 
         tvFrom = (TextView) findViewById(R.id.tv_from);
         tvTo = (TextView) findViewById(R.id.tv_to);
+        tvTime = (TextView) findViewById(R.id.tv_time);
 
 
         getRequestDetails();
@@ -194,17 +202,25 @@ public class ActivityTransportRequest extends AppCompatActivity implements Googl
         Map details = (Map) dataSnapshot.getValue();
         tvFrom.setText(getResources().getString(R.string.request_from) + ": " + details.get("from").toString());
         tvTo.setText(getResources().getString(R.string.request_to) + ": " + details.get("to").toString());
+        if (details.get("date_time") != null)
+        {
+            tvTime.setText(getResources().getString(R.string.time) + ": " + Utils.convertDateToRequireFormat(details.get("date_time").toString()));
+        }
     }
 
     @Override
     public void tripAcceptedSuccessfully(String tripId)
     {
+        Log.i(TAG, "TRIP ID: " + tripId + " WAS ACCEPTED SUCCESSFULLY");
+        Toast.makeText(this, "TRIP ACCEPTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
         mService.startListeningForTripConfirmation(tripId);
     }
 
     @Override
-    public void failedToAcceptTrip(DatabaseError databaseError)
+    public void failedToAcceptTrip(String tripId, String location, String acceptedTime, DatabaseError databaseError)
     {
-
+        Log.i(TAG, "TRIP ID: " + tripId + " FAILED TO ACCEPT");
+        Toast.makeText(this, "FAILED TO ACCEPT TRIP", Toast.LENGTH_SHORT).show();
+        TransportRequestHandler.insertTripAcceptedDataUsingApi(tripId, location, acceptedTime);
     }
 }

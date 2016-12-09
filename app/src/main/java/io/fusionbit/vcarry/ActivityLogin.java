@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.MainThread;
@@ -96,6 +97,20 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
     {
         if (!isConnected)
         {
+            return;
+        }
+
+        final FusedLocation.Status status = FusedLocation.isGooglePlayServiceAvailable(this);
+        if (status == FusedLocation.Status.UPDATE_REQUIRE)
+        {
+            final String appPackageName = "com.google.android.gms";
+            try
+            {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+            } catch (android.content.ActivityNotFoundException anfe)
+            {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            }
             return;
         }
 

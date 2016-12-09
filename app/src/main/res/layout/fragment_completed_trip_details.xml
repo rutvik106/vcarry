@@ -234,7 +234,7 @@
                 android:layout_toRightOf="@id/cb_memo"
                 android:gravity="center"
                 android:paddingLeft="5dp"
-                android:text="Memo"
+                android:text="@string/memo"
                 android:textColor="#333333"
                 android:textSize="16sp"/>
 
@@ -280,7 +280,7 @@
                 android:layout_toRightOf="@id/cb_labor"
                 android:gravity="center"
                 android:paddingLeft="5dp"
-                android:text="Labor"
+                android:text="@string/labour"
                 android:textColor="#333333"
                 android:textSize="16sp"/>
 
@@ -332,7 +332,7 @@
             android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:gravity="center_vertical"
-            android:text="CASH RECEIVED"
+            android:text="@string/cash_received"
             android:textColor="#333333"
             android:textSize="18sp"/>
 
