@@ -97,4 +97,8 @@
     <string name="trip_not_confirm_notification_title">માફ કરશો</string>
     <string name="trip_not_confirm_notification_message">બીજા કોઇને સફર મળી</string>
 
+    <string name="ok">ઠીક છે</string>
+
+    <string name="please_update">અપડેટ કરો</string>
+
 </resources>

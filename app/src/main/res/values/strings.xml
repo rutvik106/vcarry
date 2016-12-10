@@ -92,4 +92,8 @@
     <string name="trip_not_confirm_notification_title">Sorry</string>
     <string name="trip_not_confirm_notification_message">Someone else got the trip</string>
 
+    <string name="ok">OK</string>
+
+    <string name="please_update">Please Update</string>
+
 </resources>

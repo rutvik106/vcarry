@@ -36,9 +36,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import extra.CircleTransform;
 import extra.LocaleHelper;
@@ -201,27 +199,7 @@ public class ActivityHome extends AppCompatActivity
 
         //FIREBASE REMOTE CONFIG
 
-        remoteConfig = FirebaseRemoteConfig.getInstance();
-
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                .build();
-
-        remoteConfig.setConfigSettings(configSettings);
-
-        final Map<String, Object> remoteValuesMap = new HashMap<>();
-        remoteValuesMap.put("urgent_notice", "");
-        remoteValuesMap.put("show_urgent_notice", false);
-
-        remoteConfig.setDefaults(remoteValuesMap);
-
-        if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled())
-        {
-            remoteConfig.fetch(0).addOnCompleteListener(this);
-        } else
-        {
-            remoteConfig.fetch(2000).addOnCompleteListener(this);
-        }
+        setupFirebaseRemoteConfig();
 
         ////////////////////////
 
@@ -233,6 +211,27 @@ public class ActivityHome extends AppCompatActivity
         //bind activity to service
         bindService(transportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
 
+    }
+
+    private void setupFirebaseRemoteConfig()
+    {
+        remoteConfig = FirebaseRemoteConfig.getInstance();
+
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .build();
+
+        remoteConfig.setConfigSettings(configSettings);
+
+        remoteConfig.setDefaults(Constants.getFirebaseRemoteValuesMap());
+
+        if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled())
+        {
+            remoteConfig.fetch(0).addOnCompleteListener(this);
+        } else
+        {
+            remoteConfig.fetch(2000).addOnCompleteListener(this);
+        }
     }
 
     @Override
@@ -460,11 +459,46 @@ public class ActivityHome extends AppCompatActivity
                 showUrgentNotice();
             }
 
+            final boolean isForceUpdate = remoteConfig.getBoolean("force_update");
 
-        } else
-        {
+            if (isForceUpdate)
+            {
+                forceUserToUpdateApp();
+            }
+
 
         }
+    }
+
+    private void forceUserToUpdateApp()
+    {
+
+        final int versionCode = BuildConfig.VERSION_CODE;
+
+        final long newVersionCode = remoteConfig.getLong("version_code");
+
+        if (versionCode < newVersionCode)
+        {
+
+            String updateMessage = "";
+
+            if (LocaleHelper.getLanguage(this).equals("gu"))
+            {
+                updateMessage = remoteConfig.getString("update_message_gujarati");
+            } else
+            {
+                updateMessage = remoteConfig.getString("update_message_english");
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getResources().getString(R.string.please_update))
+                    .setMessage(updateMessage)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setCancelable(false);
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
     }
 
     public class ServiceResultReceiver extends ResultReceiver
@@ -525,11 +559,24 @@ public class ActivityHome extends AppCompatActivity
 
     private void showUrgentNotice()
     {
+        String message = "";
+        String title = "";
+
+        if (LocaleHelper.getLanguage(this).equals("gu"))
+        {
+            message = remoteConfig.getString("urgent_notice_gujarati");
+            title = remoteConfig.getString("urgent_notice_title_gujarati");
+        } else
+        {
+            message = remoteConfig.getString("urgent_notice_english");
+            title = remoteConfig.getString("urgent_notice_title_english");
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Urgent Notice!")
-                .setMessage(remoteConfig.getString("urgent_notice"))
+        builder.setTitle(title)
+                .setMessage(message)
                 .setCancelable(false)
-                .setPositiveButton("OK", null);
+                .setPositiveButton(getResources().getString(R.string.ok), null);
         AlertDialog alert = builder.create();
         alert.show();
     }

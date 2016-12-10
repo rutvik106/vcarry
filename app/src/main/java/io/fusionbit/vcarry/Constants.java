@@ -1,5 +1,7 @@
 package io.fusionbit.vcarry;
 
+import java.util.HashMap;
+
 /**
  * Created by rutvik on 11/16/2016 at 2:38 PM.
  */
@@ -52,5 +54,20 @@ public class Constants
     }
 
     public static final String IS_BILL_PENDING = "IS_BILL_PENDING";
+
+    public static HashMap<String, Object> getFirebaseRemoteValuesMap()
+    {
+
+        return new HashMap<String, Object>()
+        {{
+
+            put("urgent_notice_english", "");
+            put("urgent_notice_gujarati", "");
+            put("show_urgent_notice", false);
+            put("force_update", false);
+
+        }};
+
+    }
 
 }
