@@ -165,11 +165,10 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
 
         tripDetails = realm.where(TripDetails.class)
                 .equalTo("tripId", tripId).findFirst();
-        realm.close();
 
         tripDistanceDetails = realm.where(TripDistanceDetails.class)
                 .equalTo("tripId", tripId).findFirst();
-        realm.close();
+
 
         if (tripDetails == null)
         {

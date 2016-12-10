@@ -63,10 +63,10 @@
             android:weightSum="5">
 
             <TextView
-                android:layout_marginLeft="20dp"
                 android:id="@+id/tv_completedTripStartTime"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
                 android:layout_weight="2"
                 android:gravity="center"
                 android:textColor="#333333"
@@ -79,10 +79,10 @@
                 android:src="@drawable/ic_arrow_forward_black_24dp"/>
 
             <TextView
-                android:layout_marginRight="20dp"
                 android:id="@+id/tv_completedTripEndTime"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
                 android:layout_weight="2"
                 android:gravity="center"
                 android:textColor="#333333"
@@ -239,12 +239,15 @@
                 android:textSize="16sp"/>
 
             <EditText
-                android:enabled="false"
                 android:id="@+id/et_memoAmount"
                 android:layout_width="100dp"
                 android:layout_height="45dp"
                 android:layout_alignParentRight="true"
+                android:enabled="false"
                 android:gravity="center_vertical"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLines="1"
                 android:textColor="#333333"
                 android:textSize="16sp"/>
 
@@ -285,12 +288,15 @@
                 android:textSize="16sp"/>
 
             <EditText
-                android:enabled="false"
                 android:id="@+id/et_laborAmount"
                 android:layout_width="100dp"
                 android:layout_height="45dp"
                 android:layout_alignParentRight="true"
+                android:enabled="false"
                 android:gravity="center_vertical"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLines="1"
                 android:textColor="#333333"
                 android:textSize="16sp"/>
 
@@ -343,6 +349,9 @@
             android:layout_height="45dp"
             android:layout_alignParentRight="true"
             android:gravity="center_vertical"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:maxLines="1"
             android:textColor="#333333"
             android:textSize="16sp"/>
 
