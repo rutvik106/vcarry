@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +20,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +28,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,9 +52,10 @@ import fragment.FragmentTripsOnOffer;
 import static io.fusionbit.vcarry.Constants.ON_TRIP_STOPPED;
 import static io.fusionbit.vcarry.Constants.WAS_LANGUAGE_CHANGED;
 
-public class ActivityHome extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FragmentMap.OnTripStopListener,
-        FragmentCompletedTripDetails.TripStopDataInsertionCallback, OnCompleteListener<Void>
+public class ActivityHome extends FusedLocation.LocationAwareActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        FragmentMap.OnTripStopListener,
+        FragmentCompletedTripDetails.TripStopDataInsertionCallback, OnCompleteListener<Void>, GoogleApiClient.OnConnectionFailedListener
 {
     private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
 
@@ -82,6 +85,8 @@ public class ActivityHome extends AppCompatActivity
     ProgressDialog progressDialog;
 
     FirebaseRemoteConfig remoteConfig;
+
+    FusedLocation fusedLocation;
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -114,6 +119,16 @@ public class ActivityHome extends AppCompatActivity
         setContentView(R.layout.activity_home);
 
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
+
+
+        fusedLocation = new FusedLocation(this, new FusedLocation.ApiConnectionCallbacks(this)
+        {
+            @Override
+            public void onConnected(@Nullable Bundle bundle)
+            {
+                super.onConnected(bundle);
+            }
+        }, this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -498,6 +513,30 @@ public class ActivityHome extends AppCompatActivity
             AlertDialog alert = builder.create();
             alert.show();
         }
+
+    }
+
+    @Override
+    public void locationServiceAlreadyOn()
+    {
+
+    }
+
+    @Override
+    public void locationServiceTurnedOn()
+    {
+
+    }
+
+    @Override
+    public void locationSettingChangeUnavailable()
+    {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
+    {
 
     }
 

@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,8 +25,8 @@ import java.util.Map;
 import extra.Utils;
 import firebase.TransportRequestHandler;
 
-public class ActivityTransportRequest extends AppCompatActivity
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+public class ActivityTransportRequest extends FusedLocation.LocationAwareActivity
+        implements GoogleApiClient.OnConnectionFailedListener,
         TransportRequestHandler.RequestDetailsCallback, TransportRequestHandler.TripAcceptedCallback
 {
 
@@ -150,14 +148,15 @@ public class ActivityTransportRequest extends AppCompatActivity
 
     private void acceptRequest()
     {
-        fusedLocation = new FusedLocation(this, this, this);
+        fusedLocation = new FusedLocation(this,
+                new FusedLocationApiCallbacks(this), this);
 
         notificationManager.cancel(Integer.valueOf(requestId));
-        finish();
     }
 
     private void rejectRequest()
     {
+        TransportRequestHandler.rejectRequest();
         notificationManager.cancel(Integer.valueOf(requestId));
         finish();
     }
@@ -168,27 +167,6 @@ public class ActivityTransportRequest extends AppCompatActivity
         super.onBackPressed();
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle)
-    {
-        fusedLocation.startGettingLocation(new FusedLocation.GetLocation()
-        {
-            @Override
-            public void onLocationChanged(Location location)
-            {
-                TransportRequestHandler.acceptRequest(requestId, location.getLatitude() + "," + location.getLongitude()
-                        , ActivityTransportRequest.this);
-
-                fusedLocation.stopGettingLocation();
-            }
-        });
-    }
-
-    @Override
-    public void onConnectionSuspended(int i)
-    {
-        TransportRequestHandler.acceptRequest(requestId, null, this);
-    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
@@ -217,10 +195,69 @@ public class ActivityTransportRequest extends AppCompatActivity
     }
 
     @Override
-    public void failedToAcceptTrip(String tripId, String location, String acceptedTime, DatabaseError databaseError)
+    public void failedToAcceptTrip(String tripId, String location, String
+            acceptedTime, DatabaseError databaseError)
     {
         Log.i(TAG, "TRIP ID: " + tripId + " FAILED TO ACCEPT");
         Toast.makeText(this, "FAILED TO ACCEPT TRIP", Toast.LENGTH_SHORT).show();
         //TransportRequestHandler.insertTripAcceptedDataUsingApi(tripId, location, acceptedTime);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    private void acceptTrip()
+    {
+        fusedLocation.startGettingLocation(new FusedLocation.GetLocation()
+        {
+            @Override
+            public void onLocationChanged(Location location)
+            {
+                TransportRequestHandler.acceptRequest(requestId, location.getLatitude() + "," + location.getLongitude()
+                        , ActivityTransportRequest.this);
+
+                fusedLocation.stopGettingLocation();
+                finish();
+            }
+        });
+    }
+
+    @Override
+    public void locationServiceAlreadyOn()
+    {
+        acceptTrip();
+    }
+
+    @Override
+    public void locationServiceTurnedOn()
+    {
+        acceptTrip();
+    }
+
+    @Override
+    public void locationSettingChangeUnavailable()
+    {
+        Toast.makeText(mService, "Please turn on location service", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private class FusedLocationApiCallbacks extends FusedLocation.ApiConnectionCallbacks
+    {
+
+        public FusedLocationApiCallbacks(FusedLocation.LocationAwareActivity locationAwareActivity)
+        {
+            super(locationAwareActivity);
+        }
+
+        @Override
+        public void onConnectionSuspended(int i)
+        {
+
+        }
+    }
+
 }

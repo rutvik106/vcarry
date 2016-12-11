@@ -1,6 +1,7 @@
 package fragment;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -198,7 +199,7 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
         Log.i(TAG, "tripDistanceDetails stop time: " + tripDistanceDetails.getTripStopTime());
 
         Log.i(TAG, "tripDetails customer name: " + tripDetails.getCustomerName());
-        Log.i(TAG, "tripDistanceDetails distance travelled: " + tripDistanceDetails.getDistanceTravelled());
+        //Log.i(TAG, "tripDistanceDetails distance travelled: " + tripDistanceDetails.getDistanceTravelled());
 
         tvCompletedTripStartTime
                 .setText(Utils.getDateFromMills(tripDistanceDetails.getTripStartTime()));
@@ -206,7 +207,29 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
         tvCompletedTripEndTime
                 .setText(Utils.getDateFromMills(tripDistanceDetails.getTripStopTime()));
 
-        tvCompletedTripDistance.setText(tripDistanceDetails.getDistanceTravelled() + "Km");
+
+        new AsyncTask<Void, Void, Double>()
+        {
+
+            final String tId = tripId;
+
+            @Override
+            protected Double doInBackground(Void... voids)
+            {
+                final Realm mRealm = Realm.getDefaultInstance();
+
+                final TripDistanceDetails mTripDistanceDetails = mRealm.where(TripDistanceDetails.class)
+                        .equalTo("tripId", tId).findFirst();
+
+                return mTripDistanceDetails.getDistanceTravelled();
+            }
+
+            @Override
+            protected void onPostExecute(Double aDouble)
+            {
+                tvCompletedTripDistance.setText(aDouble + "Km");
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         tvCompletedTripFare.setText(getResources().getString(R.string.rs) + " " + tripDetails.getFare());
 

@@ -24,7 +24,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 
 public class TransportRequestResponseReceiver extends BroadcastReceiver
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, TransportRequestHandler.TripAcceptedCallback
+        implements GoogleApiClient.OnConnectionFailedListener, TransportRequestHandler.TripAcceptedCallback
 {
     private static final String TAG =
             App.APP_TAG + TransportRequestResponseReceiver.class.getSimpleName();
@@ -48,49 +48,53 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
         notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
-        fusedLocation = new FusedLocation(context, this, this);
-
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle)
-    {
-        fusedLocation.startGettingLocation(new FusedLocation.GetLocation()
+        fusedLocation = new FusedLocation(context, new FusedLocation.ApiConnectionCallbacks(null)
         {
             @Override
-            public void onLocationChanged(Location location)
+            public void onConnected(@Nullable Bundle bundle)
             {
+                fusedLocation.startGettingLocation(new FusedLocation.GetLocation()
+                {
+                    @Override
+                    public void onLocationChanged(Location location)
+                    {
 
+                        if (response.equals(Constants.ACCEPT))
+                        {
+                            TransportRequestHandler
+                                    .acceptRequest(requestId,
+                                            location.getLatitude() + "," + location.getLongitude()
+                                            , TransportRequestResponseReceiver.this);
+                        } else if (response.equals(Constants.REJECT))
+                        {
+                            TransportRequestHandler.rejectRequest();
+                        }
+
+                        fusedLocation.stopGettingLocation();
+                        notificationManager.cancel(Integer.valueOf(requestId));
+                    }
+                });
+            }
+
+            @Override
+            public void onConnectionSuspended(int i)
+            {
                 if (response.equals(Constants.ACCEPT))
                 {
-                    TransportRequestHandler
-                            .acceptRequest(requestId,
-                                    location.getLatitude() + "," + location.getLongitude()
-                                    , TransportRequestResponseReceiver.this);
+                    TransportRequestHandler.acceptRequest(requestId, null, null);
                 } else if (response.equals(Constants.REJECT))
                 {
                     TransportRequestHandler.rejectRequest();
                 }
-
-                fusedLocation.stopGettingLocation();
+                TransportRequestHandler.acceptRequest(requestId, null, null);
                 notificationManager.cancel(Integer.valueOf(requestId));
             }
-        });
+
+
+        }, this);
+
     }
 
-    @Override
-    public void onConnectionSuspended(int i)
-    {
-        if (response.equals(Constants.ACCEPT))
-        {
-            TransportRequestHandler.acceptRequest(requestId, null, null);
-        } else if (response.equals(Constants.REJECT))
-        {
-            TransportRequestHandler.rejectRequest();
-        }
-        TransportRequestHandler.acceptRequest(requestId, null, null);
-        notificationManager.cancel(Integer.valueOf(requestId));
-    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)

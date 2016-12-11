@@ -176,5 +176,17 @@
         android:textStyle="bold"
         android:visibility="gone"/>
 
+    <Button
+        android:id="@+id/btn_viewTripDetails"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:background="@color/colorAccent"
+        android:text="@string/trip_details"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
 
 </RelativeLayout>

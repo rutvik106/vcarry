@@ -169,6 +169,7 @@ public class ActivityTripDetails extends AppCompatActivity
 
         final int tripStatus = Integer.valueOf(tripDetails.getTripStatus());
         final int tripStatusStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
+        final int tripStatusFinished = Integer.valueOf(Constants.TRIP_STATUS_FINISHED);
 
         if (tripStatus < tripStatusStarted)
         {
@@ -193,6 +194,19 @@ public class ActivityTripDetails extends AppCompatActivity
                                     })
                             .setNegativeButton(getResources().getString(R.string.cancel), null)
                             .show();
+                }
+            });
+        } else if (tripStatus == tripStatusFinished)
+        {
+            findViewById(R.id.btn_viewTripDetails).setVisibility(View.VISIBLE);
+            findViewById(R.id.btn_viewTripDetails).setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    Intent i = new Intent(ActivityTripDetails.this, ActivityFinishedTripDetails.class);
+                    i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
+                    startActivity(i);
                 }
             });
         }

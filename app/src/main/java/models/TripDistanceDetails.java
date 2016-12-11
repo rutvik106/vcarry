@@ -1,5 +1,7 @@
 package models;
 
+import android.location.Location;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -64,7 +66,7 @@ public class TripDistanceDetails extends RealmObject
 
     public double getDistanceTravelled()
     {
-        double distanceTravelled = 0;
+        float distanceTravelled = 0;
         int totalIterationCount = 0;
 
         if (getLatLngDataList().size() % 2 == 0)
@@ -75,25 +77,49 @@ public class TripDistanceDetails extends RealmObject
             totalIterationCount = (getLatLngDataList().size() - 1) / 2;
         }
 
-        for (int i = 0; i < totalIterationCount; i++)
+
+        for (int i = 1; i < totalIterationCount; i++)
+        {
+            final int start = i;
+            final int end = (i - 1);
+
+            final Location startLocation = new Location("START LOCATION");
+            startLocation.setLatitude(getLatLngDataList().get(start).getLat());
+            startLocation.setLongitude(getLatLngDataList().get(start).getLng());
+
+            final Location stopLocation = new Location("STOP LOCATION");
+            stopLocation.setLatitude(getLatLngDataList().get(end).getLat());
+            stopLocation.setLongitude(getLatLngDataList().get(end).getLng());
+
+            distanceTravelled = distanceTravelled +
+                    (startLocation.distanceTo(stopLocation) / 1000);
+
+        }
+
+
+        /*for (int i = 0; i < totalIterationCount; i++)
         {
             final int start = i * 2;
             final int end = (i * 2) + 1;
 
+            final Location startLocation = new Location("START LOCATION");
+            startLocation.setLatitude(getLatLngDataList().get(start).getLat());
+            startLocation.setLongitude(getLatLngDataList().get(start).getLng());
+
+            final Location stopLocation = new Location("STOP LOCATION");
+            startLocation.setLatitude(getLatLngDataList().get(end).getLat());
+            startLocation.setLongitude(getLatLngDataList().get(end).getLng());
 
             distanceTravelled = distanceTravelled +
-                    getDistanceInMeters(getLatLngDataList().get(start).getLat(),
+                    startLocation.distanceTo(stopLocation);
+
+                    *//*getDistanceInMeters(getLatLngDataList().get(start).getLat(),
                             getLatLngDataList().get(start).getLng(),
                             getLatLngDataList().get(end).getLat(),
-                            getLatLngDataList().get(end).getLng());
-        }
+                            getLatLngDataList().get(end).getLng());*//*
+        }*/
 
-        distanceTravelled = distanceTravelled / 1000;
-
-        double roundOff = Math.round(distanceTravelled * 100.0) / 100.0;
-
-        return roundOff;
-
+        return Math.round(distanceTravelled * 100.0) / 100.0;
     }
 
     private double getDistanceInMeters(double startLat, double startLng, double endLat, double endLng)

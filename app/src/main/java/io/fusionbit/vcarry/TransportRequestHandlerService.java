@@ -38,7 +38,7 @@ import static io.fusionbit.vcarry.Constants.NOTIFICATION_ID;
 
 public class TransportRequestHandlerService extends Service
         implements TransportRequestHandler.TransportRequestListener,
-        GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
         FusedLocation.GetLocation, TransportRequestHandler.ConfirmationListener
 {
     private static final String TAG =
@@ -317,7 +317,23 @@ public class TransportRequestHandlerService extends Service
             if (mFusedLocation == null)
             {
                 Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: CREATING NEW FUSED LOCATION PROVIDER");
-                mFusedLocation = new FusedLocation(this, this, this);
+                mFusedLocation = new FusedLocation(this, new FusedLocation.ApiConnectionCallbacks(null)
+                {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle)
+                    {
+                        Toast.makeText(TransportRequestHandlerService.this,
+                                "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();
+                        mFusedLocation.startGettingLocation(TransportRequestHandlerService.this);
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i)
+                    {
+                        Toast.makeText(TransportRequestHandlerService.this,
+                                "Fused Location API Connection Suspended", Toast.LENGTH_SHORT).show();
+                    }
+                }, this);
             }
         } else
         {
@@ -358,7 +374,7 @@ public class TransportRequestHandlerService extends Service
                 });
 
 
-                Toast.makeText(this, "TOTAL DISTANCE in m: " + tripDistanceDetails.getDistanceTravelled(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "TOTAL DISTANCE in m: " + tripDistanceDetails.getDistanceTravelled(), Toast.LENGTH_SHORT).show();
 
 
             }
@@ -370,19 +386,6 @@ public class TransportRequestHandlerService extends Service
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
     {
         Toast.makeText(this, "Fused Location API FAILED TO CONNECT", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle)
-    {
-        Toast.makeText(this, "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();
-        mFusedLocation.startGettingLocation(this);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i)
-    {
-        Toast.makeText(this, "Fused Location API Connection Suspended", Toast.LENGTH_SHORT).show();
     }
 
     @Override

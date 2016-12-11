@@ -65,6 +65,11 @@ public class Constants
             put("urgent_notice_gujarati", "");
             put("show_urgent_notice", false);
             put("force_update", false);
+            put("version_code", 1);
+            put("update_message_english", "");
+            put("update_message_gujarati", "");
+            put("urgent_notice_title_english", "");
+            put("urgent_notice_title_gujarati", "");
 
         }};
 

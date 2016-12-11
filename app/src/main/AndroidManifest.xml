@@ -19,9 +19,9 @@
     <uses-feature android:name="android.hardware.location.gps"/>
 
     <application
-        android:extractNativeLibs="false"
         android:name=".App"
         android:allowBackup="true"
+        android:extractNativeLibs="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -76,9 +76,9 @@
         </activity>
         <activity
             android:name=".ActivityHome"
+            android:configChanges="locale"
             android:label="@string/title_activity_home"
             android:launchMode="singleTask"
-            android:configChanges="locale"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
@@ -92,9 +92,12 @@
             android:name=".ActivitySettings"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ActivityTripDetails"
-            android:theme="@style/TripDetails"
-            android:screenOrientation="portrait">
+        <activity
+            android:name=".ActivityTripDetails"
+            android:screenOrientation="portrait"
+            android:theme="@style/TripDetails">
+        </activity>
+        <activity android:name=".ActivityFinishedTripDetails">
         </activity>
     </application>
 
