@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,12 +36,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import extra.CircleTransform;
 import extra.LocaleHelper;
 import extra.Log;
 import fragment.FragmentAccBalance;
@@ -48,6 +47,7 @@ import fragment.FragmentCompletedTripDetails;
 import fragment.FragmentMap;
 import fragment.FragmentTrips;
 import fragment.FragmentTripsOnOffer;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import static io.fusionbit.vcarry.Constants.ON_TRIP_STOPPED;
 import static io.fusionbit.vcarry.Constants.WAS_LANGUAGE_CHANGED;
@@ -161,8 +161,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {
 
-            Picasso.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
-                    .transform(new CircleTransform())
+            Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
+                    .bitmapTransform(new CropCircleTransformation(this))
                     .into((ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userPic));
 
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_titleUserName))

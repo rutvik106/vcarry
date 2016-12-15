@@ -2,6 +2,8 @@ package models;
 
 import android.location.Location;
 
+import extra.Log;
+import io.fusionbit.vcarry.App;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -12,6 +14,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class TripDistanceDetails extends RealmObject
 {
+    public static final String TAG = App.APP_TAG + TripDistanceDetails.class.getSimpleName();
 
     @PrimaryKey
     String tripId;
@@ -66,20 +69,24 @@ public class TripDistanceDetails extends RealmObject
 
     public double getDistanceTravelled()
     {
-        float distanceTravelled = 0;
-        int totalIterationCount = 0;
+        Log.i(TAG, "TOTAL LAT LNG POINTS: " + getLatLngDataList().size());
 
-        if (getLatLngDataList().size() % 2 == 0)
+        float distanceTravelled = 0;
+        //int totalIterationCount = 0;
+
+        /*if (getLatLngDataList().size() % 2 == 0)
         {
             totalIterationCount = getLatLngDataList().size() / 2;
         } else
         {
             totalIterationCount = (getLatLngDataList().size() - 1) / 2;
-        }
+        }*/
 
 
-        for (int i = 1; i < totalIterationCount; i++)
+        for (int i = 1; i < getLatLngDataList().size(); i++)
         {
+            Log.i(TAG, i + " LAT LNG: " + getLatLngDataList().get(i).getLat() + ","
+                    + getLatLngDataList().get(i).getLng());
             final int start = i;
             final int end = (i - 1);
 
@@ -119,7 +126,7 @@ public class TripDistanceDetails extends RealmObject
                             getLatLngDataList().get(end).getLng());*//*
         }*/
 
-        return Math.round(distanceTravelled * 100.0) / 100.0;
+        return Math.round(distanceTravelled * 10.0) / 10.0;
     }
 
     private double getDistanceInMeters(double startLat, double startLng, double endLat, double endLng)

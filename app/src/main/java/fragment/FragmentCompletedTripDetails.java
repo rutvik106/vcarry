@@ -227,7 +227,7 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
             @Override
             protected void onPostExecute(Double aDouble)
             {
-                tvCompletedTripDistance.setText(aDouble + "Km");
+                tvCompletedTripDistance.setText(aDouble + " Km");
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
