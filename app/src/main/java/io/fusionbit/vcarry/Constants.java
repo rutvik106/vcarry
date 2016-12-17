@@ -31,6 +31,8 @@ public class Constants
 
     public static final String INTENT_EXTRA_TRIP_ID = "TRIP_ID";
 
+    public static final String INTENT_EXTRA_TIME = "INTENT_EXTRA_TIME";
+
     public static final String TRIP_STATUS_NEW = "1";
     public static final String TRIP_STATUS_DRIVER_ALLOCATED = "2";
     public static final String TRIP_STATUS_LOADING = "3";
@@ -72,6 +74,14 @@ public class Constants
             put("urgent_notice_title_gujarati", "");
 
         }};
+
+    }
+
+    static class Broadcast
+    {
+
+        public static final String UPCOMING_TRIP_NOTIFICATION =
+                App.APP_TAG + Broadcast.class.getSimpleName() + "UPCOMING_TRIP_NOTIFICATION";
 
     }
 

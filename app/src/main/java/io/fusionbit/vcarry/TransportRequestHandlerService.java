@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import java.util.Calendar;
 
 import extra.Log;
+import extra.Utils;
 import firebase.TransportRequestHandler;
 import io.realm.Realm;
 import models.TripDistanceDetails;
@@ -230,7 +231,7 @@ public class TransportRequestHandlerService extends Service
     @Override
     public void tripConfirmed(String tripId)
     {
-        showSimpleNotification(Integer.valueOf(tripId),
+        Utils.showSimpleNotification(this, Integer.valueOf(tripId),
                 getResources().getString(R.string.trip_confirm_notification_title),
                 getResources().getString(R.string.trip_confirm_notification_message));
     }
@@ -238,7 +239,7 @@ public class TransportRequestHandlerService extends Service
     @Override
     public void tripNotConfirmed(String tripId)
     {
-        showSimpleNotification(Integer.valueOf(tripId),
+        Utils.showSimpleNotification(this, Integer.valueOf(tripId),
                 getResources().getString(R.string.trip_not_confirm_notification_title),
                 getResources().getString(R.string.trip_not_confirm_notification_message));
     }
@@ -401,24 +402,6 @@ public class TransportRequestHandlerService extends Service
         Log.i(TAG, "SPEED: " + location.getSpeed());
         Log.i(TAG, "****************************");
         tripDistanceDetails.addLocationData(location.getTime(), location.getLatitude(), location.getLongitude());
-    }
-
-    public void showSimpleNotification(int tripId, String title, String message)
-    {
-        Notification n = new Notification.Builder(this)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setSmallIcon(R.drawable.logo_small)
-                .setAutoCancel(true)
-                .setVibrate(new long[]{10000, 1000, 100})
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .build();
-
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        notificationManager.notify(tripId, n);
     }
 
 }

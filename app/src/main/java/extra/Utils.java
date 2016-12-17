@@ -1,9 +1,12 @@
 package extra;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.media.RingtoneManager;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.view.WindowManager;
@@ -13,6 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import io.fusionbit.vcarry.R;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by rutvik on 12/3/2016 at 8:09 AM.
@@ -89,6 +96,24 @@ public class Utils
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());
+    }
+
+    public static void showSimpleNotification(final Context context, int tripId, String title, String message)
+    {
+        Notification n = new Notification.Builder(context)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(R.drawable.logo_small)
+                .setAutoCancel(true)
+                .setVibrate(new long[]{10000, 1000, 100})
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .build();
+
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(tripId, n);
     }
 
 }
