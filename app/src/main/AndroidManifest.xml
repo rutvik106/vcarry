@@ -44,6 +44,8 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name="broadcastreceivers.UpcomingTripNotificationReceiver"/>
+
         <activity
             android:name=".ActivitySplash"
             android:configChanges="orientation|keyboardHidden|screenSize"

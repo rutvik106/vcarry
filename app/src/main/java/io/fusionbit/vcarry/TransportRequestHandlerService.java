@@ -1,9 +1,11 @@
 package io.fusionbit.vcarry;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
@@ -23,13 +25,23 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
+import api.API;
+import api.RetrofitCallbacks;
+import apimodels.TripDetails;
+import broadcastreceivers.UpcomingTripNotificationReceiver;
 import extra.Log;
 import extra.Utils;
 import firebase.TransportRequestHandler;
 import io.realm.Realm;
 import models.TripDistanceDetails;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static io.fusionbit.vcarry.Constants.NOTIFICATION_ID;
 
@@ -54,6 +66,8 @@ public class TransportRequestHandlerService extends Service
     private TripDistanceDetails tripDistanceDetails;
 
     private ResultReceiver resultReceiver;
+
+    private UpcomingTripNotificationReceiver upcomingTripNotificationReceiver;
 
     private TransportRequestResponseReceiver transportRequestResponseReceiver;
 
@@ -104,6 +118,11 @@ public class TransportRequestHandlerService extends Service
 
         registerReceiver(transportRequestResponseReceiver,
                 new IntentFilter(Constants.TRANSPORT_REQUEST_RESPONSE));
+
+        upcomingTripNotificationReceiver = new UpcomingTripNotificationReceiver();
+
+        registerReceiver(upcomingTripNotificationReceiver,
+                new IntentFilter(Constants.Broadcast.UPCOMING_TRIP_NOTIFICATION));
     }
 
     public void startListeningForTripConfirmation(final String tripId)
@@ -115,6 +134,7 @@ public class TransportRequestHandlerService extends Service
     public void onDestroy()
     {
         unregisterReceiver(transportRequestResponseReceiver);
+        unregisterReceiver(upcomingTripNotificationReceiver);
         super.onDestroy();
     }
 
@@ -231,9 +251,78 @@ public class TransportRequestHandlerService extends Service
     @Override
     public void tripConfirmed(String tripId)
     {
+        insertTripDataIntoRealmAndSetupAlarm(tripId);
+
         Utils.showSimpleNotification(this, Integer.valueOf(tripId),
                 getResources().getString(R.string.trip_confirm_notification_title),
                 getResources().getString(R.string.trip_confirm_notification_message));
+    }
+
+    private void insertTripDataIntoRealmAndSetupAlarm(final String tripId)
+    {
+
+        final RetrofitCallbacks<TripDetails> callback = new RetrofitCallbacks<TripDetails>()
+        {
+
+            @Override
+            public void onResponse(Call<TripDetails> call, final Response<TripDetails> response)
+            {
+                super.onResponse(call, response);
+                if (response.isSuccessful())
+                {
+                    Realm.getDefaultInstance().executeTransactionAsync(new Realm.Transaction()
+                    {
+                        @Override
+                        public void execute(Realm realm)
+                        {
+                            realm.copyToRealmOrUpdate(response.body());
+                        }
+                    }, new Realm.Transaction.OnSuccess()
+                    {
+                        @Override
+                        public void onSuccess()
+                        {
+                            setupTripAlarm(tripId);
+                        }
+                    });
+                }
+            }
+        };
+
+        API.getInstance().getTripDetailsByTripId(tripId, callback);
+
+    }
+
+    private void setupTripAlarm(final String tripId)
+    {
+        final Realm realm = Realm.getDefaultInstance();
+        final TripDetails tripDetails =
+                realm.where(TripDetails.class)
+                        .equalTo("tripId", tripId)
+                        .findFirst();
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+        try
+        {
+            Date tripDate = sdf.parse(tripDetails.getTripDatetime());
+            final Date currentDate = new Date();
+            if (!currentDate.after(tripDate))
+            {
+                Intent i = new Intent(this, UpcomingTripNotificationReceiver.class);
+                i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
+                i.putExtra(Constants.INTENT_EXTRA_TIME, tripDate.getTime());
+                PendingIntent pintent = PendingIntent.getBroadcast(this, 0, i, 0);
+                AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                alarm.set(AlarmManager.RTC_WAKEUP, tripDate.getTime() - (60 * (60 * 1000)), pintent);
+                Toast.makeText(this, "Trip Alarm was set!", Toast.LENGTH_SHORT).show();
+            }
+        } catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
@@ -250,6 +339,7 @@ public class TransportRequestHandlerService extends Service
         {
             return TransportRequestHandlerService.this;
         }
+
     }
 
     private void showAlert(String requestId)
