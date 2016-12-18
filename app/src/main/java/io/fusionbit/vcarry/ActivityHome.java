@@ -617,7 +617,14 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 .setCancelable(false)
                 .setPositiveButton(getResources().getString(R.string.ok), null);
         AlertDialog alert = builder.create();
-        alert.show();
+        if (!isFinishing())
+        {
+            alert.show();
+        } else
+        {
+            alert.dismiss();
+            alert = null;
+        }
     }
 
 }

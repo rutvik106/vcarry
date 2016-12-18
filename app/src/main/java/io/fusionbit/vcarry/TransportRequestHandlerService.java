@@ -251,11 +251,17 @@ public class TransportRequestHandlerService extends Service
     @Override
     public void tripConfirmed(String tripId)
     {
+
+        final Intent intent = new Intent(this, ActivityTripDetails.class);
+        intent.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
+
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
         insertTripDataIntoRealmAndSetupAlarm(tripId);
 
         Utils.showSimpleNotification(this, Integer.valueOf(tripId),
                 getResources().getString(R.string.trip_confirm_notification_title),
-                getResources().getString(R.string.trip_confirm_notification_message));
+                getResources().getString(R.string.trip_confirm_notification_message), pendingIntent);
     }
 
     private void insertTripDataIntoRealmAndSetupAlarm(final String tripId)
@@ -306,12 +312,12 @@ public class TransportRequestHandlerService extends Service
         try
         {
             Date tripDate = sdf.parse(tripDetails.getTripDatetime());
-            final Date currentDate = new Date();
-            if (!currentDate.after(tripDate))
+            final long currentDate = Calendar.getInstance().getTimeInMillis();
+            if (currentDate < tripDate.getTime() - (60 * (60 * 1000)))
             {
                 Intent i = new Intent(this, UpcomingTripNotificationReceiver.class);
                 i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
-                i.putExtra(Constants.INTENT_EXTRA_TIME, tripDate.getTime());
+                i.putExtra(Constants.INTENT_EXTRA_TIME, Utils.getDateFromMills(tripDate.getTime()));
                 PendingIntent pintent = PendingIntent.getBroadcast(this, 0, i, 0);
                 AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarm.set(AlarmManager.RTC_WAKEUP, tripDate.getTime() - (60 * (60 * 1000)), pintent);
@@ -330,7 +336,7 @@ public class TransportRequestHandlerService extends Service
     {
         Utils.showSimpleNotification(this, Integer.valueOf(tripId),
                 getResources().getString(R.string.trip_not_confirm_notification_title),
-                getResources().getString(R.string.trip_not_confirm_notification_message));
+                getResources().getString(R.string.trip_not_confirm_notification_message), null);
     }
 
     public class TransportRequestServiceBinder extends Binder
@@ -377,7 +383,7 @@ public class TransportRequestHandlerService extends Service
                 .setSmallIcon(R.drawable.ic_local_shipping_black_24dp)
                 //.setContentIntent(pIntent)
                 .setAutoCancel(true)
-                .setVibrate(new long[]{10000})
+                .setVibrate(new long[]{0, 500, 200, 500})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .addAction(R.drawable.ic_done_black_24dp, getResources().getString(R.string.accept), pAccept)
                 .addAction(R.drawable.ic_clear_black_24dp, getResources().getString(R.string.reject), pReject)

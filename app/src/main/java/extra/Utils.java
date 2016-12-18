@@ -2,6 +2,7 @@ package extra;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -98,14 +99,16 @@ public class Utils
         return formatter.format(calendar.getTime());
     }
 
-    public static void showSimpleNotification(final Context context, int tripId, String title, String message)
+    public static void showSimpleNotification(final Context context, int tripId,
+                                              String title, String message, PendingIntent pendingIntent)
     {
         Notification n = new Notification.Builder(context)
                 .setContentTitle(title)
                 .setContentText(message)
+                .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.logo_small)
                 .setAutoCancel(true)
-                .setVibrate(new long[]{10000, 1000, 100})
+                .setVibrate(new long[]{0, 500, 200, 500})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .build();
 
