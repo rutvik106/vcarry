@@ -27,9 +27,9 @@ public class UpcomingTripNotificationReceiver extends BroadcastReceiver
         {
 
             final Intent tripDetails = new Intent(context, ActivityTripDetails.class);
-            intent.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
+            tripDetails.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
 
-            final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, tripDetails, 0);
 
             Utils.showSimpleNotification(context, Integer.valueOf(tripId),
                     "Upcoming Trip!", "You have a trip at " + time, pendingIntent);

@@ -361,19 +361,26 @@ public class TransportRequestHandlerService extends Service
         final int mRequestId = Integer
                 .valueOf(requestId);
 
-        Intent accept = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
+        final Intent accept = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
         accept.putExtra(Constants.T_RESPONSE, Constants.ACCEPT);
         accept.putExtra(Constants.TRANSPORT_REQUEST_ID, requestId);
 
-        PendingIntent pAccept = PendingIntent
+        final PendingIntent pAccept = PendingIntent
                 .getBroadcast(this, mRequestId, accept, 0);
 
-        Intent reject = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
+        final Intent reject = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
         reject.putExtra(Constants.T_RESPONSE, Constants.REJECT);
         reject.putExtra(Constants.TRANSPORT_REQUEST_ID, requestId);
 
-        PendingIntent pReject = PendingIntent
+        final PendingIntent pReject = PendingIntent
                 .getBroadcast(this, mRequestId, reject, 0);
+
+        final Intent tripAlertActivity = new Intent(this, ActivityTransportRequest.class);
+        tripAlertActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        tripAlertActivity.putExtra("REQUEST_ID", requestId);
+
+        final PendingIntent showTripDetailsPendingIntent =
+                PendingIntent.getActivity(this, 0, tripAlertActivity, 0);
 
         // build notification
         // the addAction re-use the same intent to keep the example short
@@ -381,7 +388,7 @@ public class TransportRequestHandlerService extends Service
                 .setContentTitle(getResources().getString(R.string.transport_request))
                 .setContentText(getResources().getString(R.string.new_request))
                 .setSmallIcon(R.drawable.ic_local_shipping_black_24dp)
-                //.setContentIntent(pIntent)
+                .setContentIntent(showTripDetailsPendingIntent)
                 .setAutoCancel(true)
                 .setVibrate(new long[]{0, 500, 200, 500})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
