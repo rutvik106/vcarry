@@ -92,20 +92,12 @@
     </LinearLayout>
 
 
-    <io.fusionbit.vcarry.MapWrapperLayout
-        android:id="@+id/map_wrapper_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/ll_dashboardContainer">
-
         <fragment
             android:id="@+id/frag_map"
             class="fragment.SyncedMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context="fragment.FragmentMap"/>
-
-    </io.fusionbit.vcarry.MapWrapperLayout>
 
 
 </RelativeLayout>

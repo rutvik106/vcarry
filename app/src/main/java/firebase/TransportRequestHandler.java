@@ -185,34 +185,51 @@ public class TransportRequestHandler
 
         insertTripAcceptedDataUsingApi(requestId, latLng, acceptedTime);
 
-        dbRef.child("request").child(requestId).removeValue(new DatabaseReference.CompletionListener()
+        dbRef.child("request").child(requestId).addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference)
+            public void onDataChange(DataSnapshot dataSnapshot)
             {
-                if (databaseError == null)
+                if (dataSnapshot.hasChildren())
                 {
                     dbRef.getRoot();
-
-                    dbRef.child("accepted").child(requestId).updateChildren(data, new DatabaseReference.CompletionListener()
+                    dbRef.child("request").child(requestId).removeValue(new DatabaseReference.CompletionListener()
                     {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference)
                         {
                             if (databaseError == null)
                             {
-                                tripAcceptedCallback.tripAcceptedSuccessfully(requestId);
+                                dbRef.getRoot();
+
+                                dbRef.child("accepted").child(requestId).updateChildren(data, new DatabaseReference.CompletionListener()
+                                {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference)
+                                    {
+                                        if (databaseError == null)
+                                        {
+                                            tripAcceptedCallback.tripAcceptedSuccessfully(requestId);
+                                        } else
+                                        {
+                                            tripAcceptedCallback.failedToAcceptTrip(requestId, latLng, acceptedTime, databaseError);
+                                        }
+                                    }
+                                });
+
                             } else
                             {
                                 tripAcceptedCallback.failedToAcceptTrip(requestId, latLng, acceptedTime, databaseError);
                             }
                         }
                     });
-
-                } else
-                {
-                    tripAcceptedCallback.failedToAcceptTrip(requestId, latLng, acceptedTime, databaseError);
                 }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError)
+            {
+
             }
         });
 

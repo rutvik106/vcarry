@@ -32,7 +32,6 @@ import api.RetrofitCallbacks;
 import apimodels.TripDetails;
 import io.fusionbit.vcarry.App;
 import io.fusionbit.vcarry.Constants;
-import io.fusionbit.vcarry.MapWrapperLayout;
 import io.fusionbit.vcarry.R;
 import io.realm.Realm;
 import okhttp3.ResponseBody;
@@ -61,8 +60,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
     private GoogleMap mMap;
 
     private LatLngInterpolator mLatLngInterpolator;
-
-    private MapWrapperLayout mapWrapperLayout;
 
     public boolean isReady = false;
 
@@ -97,8 +94,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.map_fragment, container, false);
-
-        mapWrapperLayout = (MapWrapperLayout) view.findViewById(R.id.map_wrapper_layout);
 
         mLatLngInterpolator = new LatLngInterpolator.Linear();
 
@@ -151,8 +146,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         isReady = true;
 
         mMap = googleMap;
-
-        mapWrapperLayout.init(mMap, getPixelsFromDp(context, 39 + 20));
 
         if (ActivityCompat
                 .checkSelfPermission(getActivity(),
@@ -279,20 +272,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
             }
         }
 
-    }
-
-    public static int getPixelsFromDp(Context context, float dp)
-    {
-        try
-        {
-            final float scale = context.getResources().getDisplayMetrics().density;
-            return (int) (dp * scale + 0.5f);
-        } catch (NullPointerException e)
-        {
-            e.printStackTrace();
-
-        }
-        return 0;
     }
 
     public void checkIfDriverOnTrip()

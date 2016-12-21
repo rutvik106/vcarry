@@ -114,14 +114,14 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
     public void tripAcceptedSuccessfully(String tripId)
     {
         Log.i(TAG, "TRIP ID: " + tripId + " WAS ACCEPTED SUCCESSFULLY");
-        Toast.makeText(context, "TRIP ACCEPTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "TRIP ACCEPTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void failedToAcceptTrip(String tripId, String location, String acceptedTime, DatabaseError databaseError)
     {
         Log.i(TAG, "TRIP ID: " + tripId + " FAILED TO ACCEPT");
-        Toast.makeText(context, "FAILED TO ACCEPT TRIP", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "FAILED TO ACCEPT TRIP", Toast.LENGTH_SHORT).show();
         //TransportRequestHandler.insertTripAcceptedDataUsingApi(tripId, location, acceptedTime);
     }
 }

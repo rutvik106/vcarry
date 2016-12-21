@@ -44,6 +44,10 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
 
     boolean mServiceBound = false;
 
+    FusedLocationApiCallbacks fusedLocationApiCallbacks;
+
+    PowerManager.WakeLock wl;
+
     ServiceConnection mServiceConnection = new ServiceConnection()
     {
         @Override
@@ -70,7 +74,7 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
 
 
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK, "My_App");
+        wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK, "My_App");
         wl.acquire();
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -148,8 +152,9 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
 
     private void acceptRequest()
     {
-        fusedLocation = new FusedLocation(this,
-                new FusedLocationApiCallbacks(this), this);
+        fusedLocationApiCallbacks = new FusedLocationApiCallbacks(this);
+        fusedLocation = new FusedLocation(this, fusedLocationApiCallbacks
+                , this);
 
         notificationManager.cancel(Integer.valueOf(requestId));
     }
@@ -190,7 +195,7 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     public void tripAcceptedSuccessfully(String tripId)
     {
         Log.i(TAG, "TRIP ID: " + tripId + " WAS ACCEPTED SUCCESSFULLY");
-        Toast.makeText(this, "TRIP ACCEPTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "TRIP ACCEPTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
         mService.startListeningForTripConfirmation(tripId);
     }
 
@@ -199,7 +204,7 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
             acceptedTime, DatabaseError databaseError)
     {
         Log.i(TAG, "TRIP ID: " + tripId + " FAILED TO ACCEPT");
-        Toast.makeText(this, "FAILED TO ACCEPT TRIP", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "FAILED TO ACCEPT TRIP", Toast.LENGTH_SHORT).show();
         //TransportRequestHandler.insertTripAcceptedDataUsingApi(tripId, location, acceptedTime);
     }
 
@@ -260,4 +265,10 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         }
     }
 
+    @Override
+    protected void onDestroy()
+    {
+        wl.release();
+        super.onDestroy();
+    }
 }

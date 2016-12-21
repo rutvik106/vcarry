@@ -92,6 +92,8 @@ public class ActivityTripDetails extends AppCompatActivity
 
         tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
 
+        Log.i(TAG, "TRIP ID IN ACTIVITY TRIP DETAILS IS: " + tripId);
+
     }
 
     @Override

@@ -255,7 +255,11 @@ public class TransportRequestHandlerService extends Service
         final Intent intent = new Intent(this, ActivityTripDetails.class);
         intent.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
 
-        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        Log.i(TAG, "SETTING TRIP ID: " + tripId + " IN PENDING INTENT");
+
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, Integer.valueOf(tripId),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         insertTripDataIntoRealmAndSetupAlarm(tripId);
 
@@ -321,7 +325,7 @@ public class TransportRequestHandlerService extends Service
                 PendingIntent pintent = PendingIntent.getBroadcast(this, 0, i, 0);
                 AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarm.set(AlarmManager.RTC_WAKEUP, tripDate.getTime() - (60 * (60 * 1000)), pintent);
-                Toast.makeText(this, "Trip Alarm was set!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Trip Alarm was set!", Toast.LENGTH_SHORT).show();
             }
         } catch (ParseException e)
         {
@@ -380,7 +384,8 @@ public class TransportRequestHandlerService extends Service
         tripAlertActivity.putExtra("REQUEST_ID", requestId);
 
         final PendingIntent showTripDetailsPendingIntent =
-                PendingIntent.getActivity(this, 0, tripAlertActivity, 0);
+                PendingIntent.getActivity(this, mRequestId, tripAlertActivity,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
         // build notification
         // the addAction re-use the same intent to keep the example short
@@ -426,16 +431,16 @@ public class TransportRequestHandlerService extends Service
                     @Override
                     public void onConnected(@Nullable Bundle bundle)
                     {
-                        Toast.makeText(TransportRequestHandlerService.this,
-                                "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();
+                        /**Toast.makeText(TransportRequestHandlerService.this,
+                                "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();*/
                         mFusedLocation.startGettingLocation(TransportRequestHandlerService.this);
                     }
 
                     @Override
                     public void onConnectionSuspended(int i)
                     {
-                        Toast.makeText(TransportRequestHandlerService.this,
-                                "Fused Location API Connection Suspended", Toast.LENGTH_SHORT).show();
+                        /**Toast.makeText(TransportRequestHandlerService.this,
+                                "Fused Location API Connection Suspended", Toast.LENGTH_SHORT).show();*/
                     }
                 }, this);
             }
@@ -489,13 +494,13 @@ public class TransportRequestHandlerService extends Service
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
     {
-        Toast.makeText(this, "Fused Location API FAILED TO CONNECT", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Fused Location API FAILED TO CONNECT", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onLocationChanged(Location location)
     {
-        Toast.makeText(this, "Location CHANGED!!!", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Location CHANGED!!!", Toast.LENGTH_SHORT).show();
         Log.i(TAG, "******LOCATION CHANGED******");
         Log.i(TAG, "LAT: " + location.getLatitude());
         Log.i(TAG, "LNG: " + location.getLongitude());
