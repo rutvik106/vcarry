@@ -17,7 +17,6 @@ import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -322,7 +321,8 @@ public class TransportRequestHandlerService extends Service
                 Intent i = new Intent(this, UpcomingTripNotificationReceiver.class);
                 i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
                 i.putExtra(Constants.INTENT_EXTRA_TIME, Utils.getDateFromMills(tripDate.getTime()));
-                PendingIntent pintent = PendingIntent.getBroadcast(this, 0, i, 0);
+                PendingIntent pintent = PendingIntent.getBroadcast(this, Integer.valueOf(tripId),
+                        i, PendingIntent.FLAG_UPDATE_CURRENT);
                 AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 alarm.set(AlarmManager.RTC_WAKEUP, tripDate.getTime() - (60 * (60 * 1000)), pintent);
                 //Toast.makeText(this, "Trip Alarm was set!", Toast.LENGTH_SHORT).show();
@@ -432,7 +432,7 @@ public class TransportRequestHandlerService extends Service
                     public void onConnected(@Nullable Bundle bundle)
                     {
                         /**Toast.makeText(TransportRequestHandlerService.this,
-                                "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();*/
+                         "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();*/
                         mFusedLocation.startGettingLocation(TransportRequestHandlerService.this);
                     }
 
@@ -440,7 +440,7 @@ public class TransportRequestHandlerService extends Service
                     public void onConnectionSuspended(int i)
                     {
                         /**Toast.makeText(TransportRequestHandlerService.this,
-                                "Fused Location API Connection Suspended", Toast.LENGTH_SHORT).show();*/
+                         "Fused Location API Connection Suspended", Toast.LENGTH_SHORT).show();*/
                     }
                 }, this);
             }

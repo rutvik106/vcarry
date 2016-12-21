@@ -92,12 +92,13 @@
     </LinearLayout>
 
 
-        <fragment
-            android:id="@+id/frag_map"
-            class="fragment.SyncedMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="fragment.FragmentMap"/>
+    <fragment
+        android:id="@+id/frag_map"
+        class="fragment.SyncedMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/ll_dashboardContainer"
+        tools:context="fragment.FragmentMap"/>
 
 
 </RelativeLayout>
