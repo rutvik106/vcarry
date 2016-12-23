@@ -32,6 +32,8 @@ public class Constants
     public static final String INTENT_EXTRA_TRIP_ID = "TRIP_ID";
 
     public static final String INTENT_EXTRA_TIME = "INTENT_EXTRA_TIME";
+    public static final String INTENT_EXTRA_FROM = "INTENT_EXTRA_FROM";
+    public static final String INTENT_EXTRA_TO = "INTENT_EXTRA_TO";
 
     public static final String TRIP_STATUS_NEW = "1";
     public static final String TRIP_STATUS_DRIVER_ALLOCATED = "2";

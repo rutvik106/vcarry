@@ -82,4 +82,15 @@ public class API
         call.enqueue(callback);
     }
 
+    public void getTripsByTripStatus(final String tripStatus, final String driverEmail,
+                                     final String customerId, final String fromDate,
+                                     final String toDate,
+                                     final RetrofitCallbacks<List<TripDetails>> callback)
+    {
+        Call<List<TripDetails>> call = apiService.getTripsByTripStatus("get_trips_by_trip_status", tripStatus,
+                driverEmail, customerId, fromDate, toDate);
+
+        call.enqueue(callback);
+    }
+
 }

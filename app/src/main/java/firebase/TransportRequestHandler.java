@@ -169,12 +169,14 @@ public class TransportRequestHandler
 
     public static void acceptRequest(final String requestId, final String latLng, final TripAcceptedCallback tripAcceptedCallback)
     {
-        final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-        dbRef.getRoot();
-
         final String acceptedTime = Calendar.getInstance().getTimeInMillis() + "";
 
         final Map data = new HashMap<>();
+
+        insertTripAcceptedDataUsingApi(requestId, latLng, acceptedTime);
+
+        final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+        dbRef.getRoot();
 
         data.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
         data.put("name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
@@ -182,8 +184,6 @@ public class TransportRequestHandler
         data.put("location", latLng);
         data.put("trip_id", requestId);
         data.put("confirm", 0);
-
-        insertTripAcceptedDataUsingApi(requestId, latLng, acceptedTime);
 
         dbRef.child("request").child(requestId).addListenerForSingleValueEvent(new ValueEventListener()
         {

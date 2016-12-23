@@ -109,10 +109,20 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
             }
         });
 
+        final String from = getIntent().getStringExtra(Constants.INTENT_EXTRA_FROM);
+        final String to = getIntent().getStringExtra(Constants.INTENT_EXTRA_TO);
+        final String time = getIntent().getStringExtra(Constants.INTENT_EXTRA_TIME);
+
         tvFrom = (TextView) findViewById(R.id.tv_from);
         tvTo = (TextView) findViewById(R.id.tv_to);
         tvTime = (TextView) findViewById(R.id.tv_time);
 
+        if (from != null && to != null && time != null)
+        {
+            tvTime.setText(Utils.convertDateToRequireFormat(time.toString()));
+            tvFrom.setText(from);
+            tvTo.setText(to);
+        }
 
         getRequestDetails();
 
@@ -183,10 +193,10 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     public void OnGetRequestDetails(DataSnapshot dataSnapshot)
     {
         Map details = (Map) dataSnapshot.getValue();
-        tvFrom.setText(getResources().getString(R.string.request_from) + ": " + details.get("from").toString());
-        tvTo.setText(getResources().getString(R.string.request_to) + ": " + details.get("to").toString());
-        if (details.get("date_time") != null)
+        if (details != null)
         {
+            tvFrom.setText(getResources().getString(R.string.request_from) + ": " + details.get("from").toString());
+            tvTo.setText(getResources().getString(R.string.request_to) + ": " + details.get("to").toString());
             tvTime.setText(getResources().getString(R.string.time) + ": " + Utils.convertDateToRequireFormat(details.get("date_time").toString()));
         }
     }

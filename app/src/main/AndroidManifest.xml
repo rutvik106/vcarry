@@ -43,7 +43,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-
         <receiver android:name="broadcastreceivers.UpcomingTripNotificationReceiver"/>
 
         <activity
@@ -100,6 +99,8 @@
             android:theme="@style/TripDetails">
         </activity>
         <activity android:name=".ActivityFinishedTripDetails">
+        </activity>
+        <activity android:name=".ActivityTripNotifications">
         </activity>
     </application>
 

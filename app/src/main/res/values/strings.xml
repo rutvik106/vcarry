@@ -95,5 +95,7 @@
     <string name="ok">OK</string>
 
     <string name="please_update">Please Update</string>
+    <string name="trip_notification">Trip Notification</string>
+    <string name="time_lest">Time Left</string>
 
 </resources>

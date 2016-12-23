@@ -19,6 +19,8 @@ import adapters.TripsAdapter;
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripsByDriverMail;
+import extra.Log;
+import io.fusionbit.vcarry.App;
 import io.fusionbit.vcarry.R;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -33,6 +35,7 @@ import retrofit2.Response;
 public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
 
+    private static final String TAG = App.APP_TAG + FragmentTrips.class.getSimpleName();
     Context context;
 
     RecyclerView rvTrips;
@@ -120,7 +123,11 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                             realm.beginTransaction();
                             for (final TripsByDriverMail trip : response.body())
                             {
-                                realm.copyToRealmOrUpdate(trip);
+                                if (trip instanceof TripsByDriverMail)
+                                {
+                                    Log.i(TAG,"TRIP ID: "+trip.getTripId());
+                                    realm.copyToRealmOrUpdate(trip);
+                                }
                             }
 
                             realm.commitTransaction();

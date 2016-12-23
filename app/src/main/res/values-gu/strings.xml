@@ -100,5 +100,7 @@
     <string name="ok">ઠીક છે</string>
 
     <string name="please_update">અપડેટ કરો</string>
+    <string name="trip_notification">ટ્રીપ નોટિફિકેશન્સ</string>
+    <string name="time_lest">સમય બાકી</string>
 
 </resources>

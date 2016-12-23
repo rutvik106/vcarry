@@ -34,7 +34,7 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
 
     TripsByDriverMail model;
 
-    TextView tvTripFrom, tvTripTo, tvTripTime, tvCurrentTripStatus;
+    TextView tvTripFrom, tvTripTo, tvTripTime, tvCurrentTripStatus, tvTripTimeCountdown, tvTimeLeft;
 
     LinearLayout llContainer;
 
@@ -43,6 +43,7 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
     final Handler handler;
 
     CountDownTimer countDownTimer;
+
 
     public VHSingleTrip(final Context context, View itemView)
     {
@@ -57,6 +58,8 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
         tvTripTo = (TextView) itemView.findViewById(R.id.tv_tripTo);
         tvTripTime = (TextView) itemView.findViewById(R.id.tv_tripTime);
         tvCurrentTripStatus = (TextView) itemView.findViewById(R.id.tv_currentTripStatus);
+        tvTripTimeCountdown = (TextView) itemView.findViewById(R.id.tv_tripTimeCountdown);
+        tvTimeLeft = (TextView) itemView.findViewById(R.id.tv_timeLeft);
 
         llContainer = (LinearLayout) itemView.findViewById(R.id.ll_singleTripContainer);
 
@@ -86,6 +89,8 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
         vh.tvTripTo.setText(model.getToShippingLocation());
         vh.tvCurrentTripStatus.setText(model.getStatus());
 
+        vh.tvTripTime.setText(Utils.convertDateToRequireFormat(model.getTripDatetime()));
+
         try
         {
             Date tripDate = vh.sdf.parse(model.getTripDatetime());
@@ -93,10 +98,11 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
             if (!currentDate.after(tripDate))
             {
                 vh.setupCountDown(tripDate);
+                vh.tvTimeLeft.setVisibility(View.VISIBLE);
             } else
             {
                 vh.removeCountDown();
-                vh.tvTripTime.setText(Utils.convertDateToRequireFormat(model.getTripDatetime()));
+                vh.tvTimeLeft.setVisibility(View.GONE);
             }
         } catch (ParseException e)
         {
@@ -155,7 +161,7 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
                         (minutes > 0 && seconds == 0 ? seconds + "s " :
                                 (seconds != 0 ? seconds + "s " : "")));
 
-        tvTripTime.setText(d + hr + m + s);
+        tvTripTimeCountdown.setText(d + hr + m + s);
 
     }
 

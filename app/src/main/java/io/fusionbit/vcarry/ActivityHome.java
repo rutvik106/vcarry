@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +42,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import java.util.ArrayList;
 import java.util.List;
 
+import apimodels.TripDetails;
 import extra.LocaleHelper;
 import extra.Log;
 import fragment.FragmentAccBalance;
@@ -87,6 +90,12 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     FirebaseRemoteConfig remoteConfig;
 
     FusedLocation fusedLocation;
+
+    RelativeLayout notifCount;
+
+    TextView notificationCount;
+
+    MenuItem notificationMenuItem;
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -191,6 +200,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
             showFragment(fragmentMap);
 
+            navigationView.getMenu().getItem(0).setChecked(true);
+
         } else
         {
             finish();
@@ -226,6 +237,27 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         //bind activity to service
         bindService(transportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
 
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        ((App) getApplication()).getTripNotifications(new App.TripNotificationListener()
+        {
+            @Override
+            public void onGetTripNotificationList(List<TripDetails> tripDetailsList)
+            {
+                if (tripDetailsList.size() > 0)
+                {
+                    notificationCount.setText(tripDetailsList.size() + "");
+                    notificationMenuItem.setVisible(true);
+                } else
+                {
+                    notificationMenuItem.setVisible(false);
+                }
+            }
+        });
     }
 
     private void setupFirebaseRemoteConfig()
@@ -285,6 +317,24 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_home, menu);
+
+        notificationMenuItem = menu.findItem(R.id.action_showTripNotifications);
+        MenuItemCompat.setActionView(notificationMenuItem, R.layout.trip_notification_badge);
+        RelativeLayout root = (RelativeLayout) MenuItemCompat.getActionView(notificationMenuItem);
+
+        notificationCount = (TextView) root.findViewById(R.id.actionbar_notifcation_textview);
+
+        root.findViewById(R.id.rl_tripNotificationContainer).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                startActivity(new Intent(ActivityHome.this, ActivityTripNotifications.class));
+            }
+        });
+
+        notificationMenuItem.setVisible(false);
+
         return true;
     }
 
@@ -296,11 +346,12 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
+        switch (id)
         {
-            startActivityForResult(new Intent(this, ActivitySettings.class), Constants.CHANGE_LANGUAGE);
-            return true;
+            case R.id.action_settings:
+                startActivityForResult(new Intent(this, ActivitySettings.class), Constants.CHANGE_LANGUAGE);
+                break;
+
         }
 
         return super.onOptionsItemSelected(item);

@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import io.fusionbit.vcarry.Constants;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * Created by rutvik on 11/27/2016 at 3:54 PM.

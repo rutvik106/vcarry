@@ -54,5 +54,14 @@ public interface ApiInterface
                                               @Field("location") String location,
                                               @Field("accepted_time") String acceptedTime);
 
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<TripDetails>> getTripsByTripStatus(@Field("method") String method,
+                                            @Field("trip_status") String tripStatus,
+                                            @Field("driver_email") String driverEmail,
+                                            @Field("customer_id") String customerId,
+                                            @Field("from_date") String fromDate,
+                                            @Field("to_date") String toDate);
+
 
 }
