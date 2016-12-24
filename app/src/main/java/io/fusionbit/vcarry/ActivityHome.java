@@ -377,6 +377,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         } else if (id == R.id.nav_accountBalance)
         {
             showFragment(fragmentAccBalance);
+            setActionBarTitle(getResources().getString(R.string.nav_accountBalance));
         } else if (id == R.id.nav_tripsOnOffer)
         {
             showFragment(fragmentTripsOnOffer);

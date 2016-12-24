@@ -11,7 +11,10 @@ import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +23,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
+import java.util.Calendar;
 import java.util.Map;
 
 import extra.Utils;
@@ -47,6 +51,10 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     FusedLocationApiCallbacks fusedLocationApiCallbacks;
 
     PowerManager.WakeLock wl;
+
+    Button btnAccept;
+
+    LinearLayout llAcceptRejectButtonContainer;
 
     ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -77,6 +85,8 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK, "My_App");
         wl.acquire();
 
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -90,21 +100,26 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+        llAcceptRejectButtonContainer = (LinearLayout) findViewById(R.id.ll_acceptRejectButtonContainer);
+
         findViewById(R.id.btn_accept).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
+                llAcceptRejectButtonContainer.setVisibility(View.GONE);
                 acceptRequest();
             }
         });
 
+        btnAccept = (Button) findViewById(R.id.btn_reject);
 
-        findViewById(R.id.btn_reject).setOnClickListener(new View.OnClickListener()
+        btnAccept.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
+                llAcceptRejectButtonContainer.setVisibility(View.GONE);
                 rejectRequest();
             }
         });
@@ -171,7 +186,8 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
 
     private void rejectRequest()
     {
-        TransportRequestHandler.rejectRequest();
+        TransportRequestHandler.insertTripRejectedDataUsingApi(requestId,
+                Calendar.getInstance().getTime() + "");
         notificationManager.cancel(Integer.valueOf(requestId));
         finish();
     }
@@ -186,6 +202,7 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
     {
+        Log.i(TAG, "FAILED TO GET LOCATION TRIP ACCEPTED");
         TransportRequestHandler.acceptRequest(requestId, null, this);
     }
 
@@ -232,6 +249,9 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
             @Override
             public void onLocationChanged(Location location)
             {
+
+                Log.i(TAG, "GOT LOCATION TRIP ACCEPTED");
+
                 TransportRequestHandler.acceptRequest(requestId, location.getLatitude() + "," + location.getLongitude()
                         , ActivityTransportRequest.this);
 
@@ -278,6 +298,13 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     @Override
     protected void onDestroy()
     {
+        Log.i(TAG, "ON DESTROY CALLED!!!!!!!!!!!!");
+        if (fusedLocation != null && fusedLocationApiCallbacks != null)
+        {
+            fusedLocation.stopGettingLocation();
+            fusedLocation = null;
+            fusedLocationApiCallbacks = null;
+        }
         wl.release();
         super.onDestroy();
     }

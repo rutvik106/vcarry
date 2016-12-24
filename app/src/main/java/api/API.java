@@ -2,9 +2,11 @@ package api;
 
 import java.util.List;
 
+import apimodels.AccountSummary;
 import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
 import io.fusionbit.vcarry.App;
+import io.fusionbit.vcarry.Constants;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 
@@ -82,6 +84,15 @@ public class API
         call.enqueue(callback);
     }
 
+    public void insertTripRejectedData(final String driverEmail, final String tripId,
+                                       final String acceptedTime,
+                                       final RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call = apiService.updateTripStatus("edit_trip_status", Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER, tripId);
+
+        call.enqueue(callback);
+    }
+
     public void getTripsByTripStatus(final String tripStatus, final String driverEmail,
                                      final String customerId, final String fromDate,
                                      final String toDate,
@@ -89,6 +100,13 @@ public class API
     {
         Call<List<TripDetails>> call = apiService.getTripsByTripStatus("get_trips_by_trip_status", tripStatus,
                 driverEmail, customerId, fromDate, toDate);
+
+        call.enqueue(callback);
+    }
+
+    public void getAccountSummary(final String email, final RetrofitCallbacks<AccountSummary> callback)
+    {
+        Call<AccountSummary> call = apiService.getAccountSummary("get_driver_balance", email);
 
         call.enqueue(callback);
     }

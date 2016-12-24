@@ -68,7 +68,7 @@ public class TransportRequestHandlerService extends Service
 
     private UpcomingTripNotificationReceiver upcomingTripNotificationReceiver;
 
-    private TransportRequestResponseReceiver transportRequestResponseReceiver;
+    //private TransportRequestResponseReceiver transportRequestResponseReceiver;
 
     public TransportRequestHandlerService()
     {
@@ -98,7 +98,7 @@ public class TransportRequestHandlerService extends Service
     @Override
     public void onCreate()
     {
-        transportRequestResponseReceiver = new TransportRequestResponseReceiver()
+        /*transportRequestResponseReceiver = new TransportRequestResponseReceiver()
         {
             @Override
             public void tripAcceptedSuccessfully(String tripId)
@@ -112,11 +112,11 @@ public class TransportRequestHandlerService extends Service
             {
                 super.failedToAcceptTrip(tripId, location, acceptedTime, databaseError);
             }
-        };
+        };*/
 
 
-        registerReceiver(transportRequestResponseReceiver,
-                new IntentFilter(Constants.TRANSPORT_REQUEST_RESPONSE));
+        /*registerReceiver(transportRequestResponseReceiver,
+                new IntentFilter(Constants.TRANSPORT_REQUEST_RESPONSE));*/
 
         upcomingTripNotificationReceiver = new UpcomingTripNotificationReceiver();
 
@@ -132,7 +132,7 @@ public class TransportRequestHandlerService extends Service
     @Override
     public void onDestroy()
     {
-        unregisterReceiver(transportRequestResponseReceiver);
+        //unregisterReceiver(transportRequestResponseReceiver);
         unregisterReceiver(upcomingTripNotificationReceiver);
         super.onDestroy();
     }
@@ -365,19 +365,19 @@ public class TransportRequestHandlerService extends Service
         final int mRequestId = Integer
                 .valueOf(requestId);
 
-        final Intent accept = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
+        /*final Intent accept = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
         accept.putExtra(Constants.T_RESPONSE, Constants.ACCEPT);
-        accept.putExtra(Constants.TRANSPORT_REQUEST_ID, requestId);
+        accept.putExtra(Constants.TRANSPORT_REQUEST_ID, requestId);*/
 
-        final PendingIntent pAccept = PendingIntent
-                .getBroadcast(this, mRequestId, accept, 0);
+        /*final PendingIntent pAccept = PendingIntent
+                .getBroadcast(this, mRequestId, accept, 0);*/
 
-        final Intent reject = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
+        /*final Intent reject = new Intent(Constants.TRANSPORT_REQUEST_RESPONSE);
         reject.putExtra(Constants.T_RESPONSE, Constants.REJECT);
-        reject.putExtra(Constants.TRANSPORT_REQUEST_ID, requestId);
+        reject.putExtra(Constants.TRANSPORT_REQUEST_ID, requestId);*/
 
-        final PendingIntent pReject = PendingIntent
-                .getBroadcast(this, mRequestId, reject, 0);
+        /*final PendingIntent pReject = PendingIntent
+                .getBroadcast(this, mRequestId, reject, 0);*/
 
         final Intent tripAlertActivity = new Intent(this, ActivityTransportRequest.class);
         tripAlertActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -394,11 +394,11 @@ public class TransportRequestHandlerService extends Service
                 .setContentText(getResources().getString(R.string.new_request))
                 .setSmallIcon(R.drawable.ic_local_shipping_black_24dp)
                 .setContentIntent(showTripDetailsPendingIntent)
-                .setAutoCancel(true)
+                .setAutoCancel(false)
                 .setVibrate(new long[]{0, 500, 200, 500})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .addAction(R.drawable.ic_done_black_24dp, getResources().getString(R.string.accept), pAccept)
-                .addAction(R.drawable.ic_clear_black_24dp, getResources().getString(R.string.reject), pReject)
+                /*.addAction(R.drawable.ic_done_black_24dp, getResources().getString(R.string.accept), pAccept)
+                .addAction(R.drawable.ic_clear_black_24dp, getResources().getString(R.string.reject), pReject)*/
                 .build();
 
 
@@ -468,7 +468,7 @@ public class TransportRequestHandlerService extends Service
                     @Override
                     public void execute(Realm realm)
                     {
-                        realm.copyToRealm(tripDistanceDetails);
+                        realm.copyToRealmOrUpdate(tripDistanceDetails);
                     }
                 }, new Realm.Transaction.OnSuccess()
                 {

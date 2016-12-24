@@ -213,6 +213,8 @@ public class FusedLocation implements LocationListener
         {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
+        mGoogleApiClient.unregisterConnectionCallbacks(connectionCallbacks);
+        mGoogleApiClient.unregisterConnectionFailedListener(onConnectionFailedListener);
     }
 
     private void connect()

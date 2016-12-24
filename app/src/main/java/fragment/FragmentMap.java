@@ -108,7 +108,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         tvDashTripTo = (TextView) view.findViewById(R.id.tv_dashTripTo);
 
         btnDashStopTrip = (Button) view.findViewById(R.id.btn_dashStopTrip);
-        btnDashStopTrip.setText(getResources().getString(R.string.stop_trip));
 
         loadMapNow();
 

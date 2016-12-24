@@ -41,7 +41,8 @@ public class Constants
     public static final String TRIP_STATUS_TRIP_STARTED = "4";
     public static final String TRIP_STATUS_UNLOADING = "5";
     public static final String TRIP_STATUS_FINISHED = "6";
-    public static final String TRIP_STATUS_CANCELLED = "7";
+    public static final String TRIP_STATUS_CANCELLED_BY_DRIVER = "7";
+    public static final String TRIP_STATUS_CANCELLED_BY_CUSTOMER = "8";
 
     public static final String IS_DRIVER_ON_TRIP = "IS_DRIVER_ON_TRIP";
 
@@ -85,6 +86,12 @@ public class Constants
         public static final String UPCOMING_TRIP_NOTIFICATION =
                 App.APP_TAG + Broadcast.class.getSimpleName() + "UPCOMING_TRIP_NOTIFICATION";
 
+    }
+
+    public static class PrimaryKey
+    {
+        public static final int FOR_TRIP_SUMMARY = 1;
+        public static final int FOR_ACCOUNT_SUMMARY = 11;
     }
 
 }

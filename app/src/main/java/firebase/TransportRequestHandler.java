@@ -9,6 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -235,11 +236,6 @@ public class TransportRequestHandler
 
     }
 
-    public static void rejectRequest()
-    {
-
-    }
-
     public interface TransportRequestListener
     {
 
@@ -321,6 +317,39 @@ public class TransportRequestHandler
         });
     }
 
+    public static void insertTripRejectedDataUsingApi(final String tripId,
+                                                      final String rejectedTime)
+    {
+        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        API.getInstance().insertTripRejectedData(driverEmail, tripId, rejectedTime,
+                new RetrofitCallbacks<ResponseBody>()
+                {
+
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            Log.i(TAG, "REJECTED TRIP DATA WAS INSERTED IN DATABASE");
+                            try
+                            {
+                                Log.i(TAG, "RESPONSE: " + response.body().string());
+                            } catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        Log.i(TAG, "FAILED TO INSERTED REJECTED TRIP DATA IN DATABASE");
+                    }
+                });
+    }
 
     private static void insertTripAcceptedDataUsingApi(final String tripId, final String location,
                                                        final String acceptedTime)
@@ -337,6 +366,13 @@ public class TransportRequestHandler
                         if (response.isSuccessful())
                         {
                             Log.i(TAG, "ACCEPTED TRIP DATA WAS INSERTED IN DATABASE");
+                            try
+                            {
+                                Log.i(TAG, "RESPONSE: " + response.body().string());
+                            } catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
                         }
                     }
 

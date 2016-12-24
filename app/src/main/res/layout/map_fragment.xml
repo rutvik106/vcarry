@@ -77,17 +77,37 @@
 
         </LinearLayout>
 
-
-        <Button
-            android:id="@+id/btn_dashStopTrip"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_margin="5dp"
-            android:background="#d50000"
-            android:text="STOP TRIP"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/reject_btn"
+                android:text="@string/cancel_trip"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/btn_dashStopTrip"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/accept_btn"
+                android:text="@string/finish_trip"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

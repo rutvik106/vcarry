@@ -57,6 +57,8 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
 
     TripStopDataInsertionCallback tripStopDataInsertionCallback;
 
+    double distance;
+
     RetrofitCallbacks OnInsertTripStopData = new RetrofitCallbacks<ResponseBody>()
     {
 
@@ -227,6 +229,7 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
             @Override
             protected void onPostExecute(Double aDouble)
             {
+                distance = aDouble;
                 tvCompletedTripDistance.setText(aDouble + " Km");
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -273,7 +276,7 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
                 tripDistanceDetails.getTripStopTime() + "",
                 tripDistanceDetails.getStartLatLng(),
                 tripDistanceDetails.getStopLatLng(),
-                tvCompletedTripDistance.getText().toString(),
+                distance + "",
                 etMemoAmount.getText().toString(),
                 etLaborAmount.getText().toString(),
                 etTotalAmount.getText().toString(), OnInsertTripStopData);

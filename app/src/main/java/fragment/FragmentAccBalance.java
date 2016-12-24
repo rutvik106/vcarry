@@ -10,8 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import adapters.TripsAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+
+import adapters.AccountBalanceAdapter;
+import api.API;
+import api.RetrofitCallbacks;
+import apimodels.AccountSummary;
 import io.fusionbit.vcarry.R;
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by rutvik on 11/17/2016 at 11:17 PM.
@@ -21,6 +28,10 @@ public class FragmentAccBalance extends Fragment
 {
 
     Context context;
+
+    RecyclerView rvAccountBalance;
+
+    AccountBalanceAdapter adapter;
 
     public static FragmentAccBalance newInstance(int index, Context context)
     {
@@ -39,7 +50,41 @@ public class FragmentAccBalance extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_account_balance, container, false);
 
+        rvAccountBalance = (RecyclerView) view.findViewById(R.id.rv_accountBalance);
+        rvAccountBalance.setHasFixedSize(true);
+        rvAccountBalance.setLayoutManager(new LinearLayoutManager(context));
+
+        adapter = new AccountBalanceAdapter(getActivity());
+
+        rvAccountBalance.setAdapter(adapter);
+
+        getAccountBalance();
+
         return view;
+    }
+
+    private void getAccountBalance()
+    {
+
+        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        final RetrofitCallbacks<AccountSummary> onGetAccountSummary =
+                new RetrofitCallbacks<AccountSummary>()
+                {
+
+                    @Override
+                    public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            adapter.addAccountSummaryCard(response.body());
+                        }
+                    }
+                };
+
+        API.getInstance().getAccountSummary(email, onGetAccountSummary);
+
     }
 
 }

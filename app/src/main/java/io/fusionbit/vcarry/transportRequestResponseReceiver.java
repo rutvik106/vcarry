@@ -67,7 +67,7 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
                                             , TransportRequestResponseReceiver.this);
                         } else if (response.equals(Constants.REJECT))
                         {
-                            TransportRequestHandler.rejectRequest();
+                            //TransportRequestHandler.rejectRequest();
                         }
 
                         fusedLocation.stopGettingLocation();
@@ -84,9 +84,8 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
                     TransportRequestHandler.acceptRequest(requestId, null, null);
                 } else if (response.equals(Constants.REJECT))
                 {
-                    TransportRequestHandler.rejectRequest();
+                    //TransportRequestHandler.rejectRequest();
                 }
-                TransportRequestHandler.acceptRequest(requestId, null, null);
                 notificationManager.cancel(Integer.valueOf(requestId));
             }
 
@@ -104,9 +103,8 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
             TransportRequestHandler.acceptRequest(requestId, null, null);
         } else if (response.equals(Constants.REJECT))
         {
-            TransportRequestHandler.rejectRequest();
+            //TransportRequestHandler.rejectRequest();
         }
-        TransportRequestHandler.acceptRequest(requestId, null, null);
         notificationManager.cancel(Integer.valueOf(requestId));
     }
 

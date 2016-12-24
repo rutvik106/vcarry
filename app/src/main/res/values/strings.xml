@@ -97,5 +97,10 @@
     <string name="please_update">Please Update</string>
     <string name="trip_notification">Trip Notification</string>
     <string name="time_lest">Time Left</string>
+    <string name="paid">Paid</string>
+    <string name="unpaid">Unpaid</string>
+    <string name="account_summary">Account Summary</string>
+    <string name="finish_trip">FINISH TRIP</string>
+    <string name="cancel_trip">CANCEL TRIP</string>
 
 </resources>

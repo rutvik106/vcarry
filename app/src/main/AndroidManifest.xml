@@ -98,9 +98,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/TripDetails">
         </activity>
-        <activity android:name=".ActivityFinishedTripDetails">
+        <activity
+            android:name=".ActivityFinishedTripDetails"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ActivityTripNotifications">
+        <activity
+            android:name=".ActivityTripNotifications"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
