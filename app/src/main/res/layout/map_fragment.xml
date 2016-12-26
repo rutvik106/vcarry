@@ -84,6 +84,7 @@
             android:weightSum="2">
 
             <Button
+                android:id="@+id/btn_dashCancelTrip"
                 android:layout_width="0dp"
                 android:layout_height="45dp"
                 android:layout_margin="5dp"

@@ -112,6 +112,7 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
         final int tripStatus = Integer.valueOf(model.getTripStatus());
         final int tripStatusStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
         final int tripStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
+        final int tripCanceledByDriver = Integer.valueOf(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER);
 
         if (tripStatus < tripStatusStarted)
         {
@@ -119,6 +120,9 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
         } else if (tripStatus == tripStarted)
         {
             vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#ffa726"));
+        } else if (tripStatus == tripCanceledByDriver)
+        {
+            vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#ef5350"));
         } else
         {
             vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#666666"));

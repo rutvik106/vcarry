@@ -73,7 +73,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
     TextView tvDashCustomerName, tvDashCustomerContact, tvDashTripTo, tvDashTripFrom;
 
-    Button btnDashStopTrip;
+    Button btnDashStopTrip, btnDashCancelTrip;
 
     OnTripStopListener onTripStopListener;
 
@@ -108,6 +108,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         tvDashTripTo = (TextView) view.findViewById(R.id.tv_dashTripTo);
 
         btnDashStopTrip = (Button) view.findViewById(R.id.btn_dashStopTrip);
+        btnDashCancelTrip = (Button) view.findViewById(R.id.btn_dashCancelTrip);
 
         loadMapNow();
 
@@ -321,6 +322,26 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         }
                     });
 
+                    btnDashCancelTrip.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View view)
+                        {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle(getResources().getString(R.string.cancel_trip))
+                                    .setMessage(R.string.trip_cancel_msg)
+                                    .setPositiveButton(getResources().getString(R.string.cancel_trip), new DialogInterface.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i)
+                                        {
+                                            cancelTrip(tripId);
+                                        }
+                                    }).setNegativeButton(getResources().getString(R.string.cancel), null)
+                                    .show();
+                        }
+                    });
+
                 }
 
             }
@@ -343,7 +364,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
                     llDashboardContainer.setVisibility(View.GONE);
 
-                    onTripStopListener.onStripStop(tripId);
+                    onTripStopListener.onTripStop(tripId);
 
                 }
 
@@ -352,9 +373,36 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         });
     }
 
+    private void cancelTrip(final String tripId)
+    {
+        API.getInstance().updateTripStatus(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER,
+                tripId, new RetrofitCallbacks<ResponseBody>()
+                {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                    {
+                        super.onResponse(call, response);
+
+                        if (response.isSuccessful())
+                        {
+
+                            llDashboardContainer.setVisibility(View.GONE);
+
+                            onTripStopListener.onTripCancel(tripId);
+
+                        }
+
+                    }
+
+                });
+
+    }
+
     public interface OnTripStopListener
     {
-        void onStripStop(String tripId);
+        void onTripStop(String tripId);
+
+        void onTripCancel(String tripId);
     }
 
 }

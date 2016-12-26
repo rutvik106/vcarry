@@ -52,6 +52,7 @@ import fragment.FragmentTrips;
 import fragment.FragmentTripsOnOffer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
+import static io.fusionbit.vcarry.Constants.ON_TRIP_CANCELED;
 import static io.fusionbit.vcarry.Constants.ON_TRIP_STOPPED;
 import static io.fusionbit.vcarry.Constants.WAS_LANGUAGE_CHANGED;
 
@@ -490,7 +491,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
 
     @Override
-    public void onStripStop(String tripId)
+    public void onTripStop(String tripId)
     {
         if (mService != null)
         {
@@ -499,7 +500,21 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                             getResources().getString(R.string.generating_trip_details), true, false);
             progressDialog.show();
 
-            mService.stopTrip();
+            mService.stopTrip(tripId);
+        }
+    }
+
+    @Override
+    public void onTripCancel(String tripId)
+    {
+        if (mService != null)
+        {
+            progressDialog = ProgressDialog
+                    .show(this, getResources().getString(R.string.please_wait),
+                            getResources().getString(R.string.please_wait), true, false);
+            progressDialog.show();
+
+            mService.cancelTrip(tripId);
         }
     }
 
@@ -617,6 +632,16 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                     if (tripId != null)
                     {
                         showCompletedTripDetails();
+                    }
+                    break;
+
+                case ON_TRIP_CANCELED:
+                    if (progressDialog != null)
+                    {
+                        if (progressDialog.isShowing())
+                        {
+                            progressDialog.dismiss();
+                        }
                     }
                     break;
 

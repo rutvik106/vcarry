@@ -52,6 +52,8 @@ public class Constants
 
     public static final int ON_TRIP_STOPPED = 3333;
 
+    public static final int ON_TRIP_CANCELED = 4444;
+
     public static class FirebaseNames
     {
         public static final String NODE_ACCEPTED = "accepted";

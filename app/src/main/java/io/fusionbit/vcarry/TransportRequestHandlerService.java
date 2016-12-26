@@ -22,7 +22,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -148,7 +147,7 @@ public class TransportRequestHandlerService extends Service
 
         Notification.Builder m_notificationBuilder = new Notification.Builder(this)
                 .setContentTitle("V-Carry")
-                .setContentText("Listening for Transport Request...")
+                .setContentText(getString(R.string.service_listening))
                 .setSmallIcon(R.drawable.logo_small);
 
 
@@ -215,14 +214,44 @@ public class TransportRequestHandlerService extends Service
         startCalculatingDistanceIfDriverOnTrip();
     }
 
-    public void stopTrip()
+    public void stopTrip(String tripId)
     {
+        Log.i(TAG, "STOPPING TRIP WITH TRIP ID: " + tripId);
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
                 .putBoolean(Constants.IS_DRIVER_ON_TRIP, false)
                 .apply();
         addNotification();
         startCalculatingDistanceIfDriverOnTrip();
+    }
+
+    public void cancelTrip(final String tripId)
+    {
+        Log.i(TAG, "CANCELING THIS TRIP ID: " + tripId);
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putBoolean(Constants.IS_DRIVER_ON_TRIP, false)
+                .apply();
+        addNotification();
+
+        if (!tripId.isEmpty())
+        {
+            if (mFusedLocation != null)
+            {
+                Log.i(TAG, "DESTROYING FUSED LOCATION PROVIDER");
+                mFusedLocation.stopGettingLocation();
+                mFusedLocation = null;
+            }
+            Log.i(TAG, "DESTROYING TRIP DISTANCE DETAILS OBJECT");
+            tripDistanceDetails = null;
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putString(Constants.CURRENT_TRIP_ID, "")
+                    .apply();
+            Log.i(TAG, "CURRENT TRIP ID SET TO EMPTY");
+            resultReceiver.send(Constants.ON_TRIP_STOPPED, null);
+        }
+
     }
 
     @Override

@@ -110,5 +110,7 @@
     <string name="today">આજે</string>
     <string name="this_month">આ મહિને</string>
     <string name="total">કુલ</string>
+    <string name="trip_cancel_msg">This trip is not finished, are you sure you want to cancel this trip?</string>
+    <string name="service_listening">Listening for Transport Request...</string>
 
 </resources>
