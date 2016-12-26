@@ -1,5 +1,7 @@
 package apimodels;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
 import io.fusionbit.vcarry.Constants;
@@ -294,7 +296,7 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     }
 
     @Override
-    public int compareTo(TripsByDriverMail tripDetails)
+    public int compareTo(@NonNull TripsByDriverMail tripDetails)
     {
         int status = Integer.valueOf(tripDetails.getTripStatus());
         if (status <= Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED))

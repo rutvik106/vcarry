@@ -18,15 +18,20 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder
 {
     private final Context context;
 
-    private TextView tvAccountPaid, tvAccountUnpaid;
+    private TextView tvAccountPaidToday, tvAccountUnpaidToday,
+            tvAccountPaidThisMonth, tvAccountUnpaidThisMonth, tvAccountPaidTotal, tvAccountUnpaidTotal;
 
     private VHAccountSummaryCard(Context context, View itemView)
     {
         super(itemView);
         this.context = context;
 
-        tvAccountPaid = (TextView) itemView.findViewById(R.id.tv_accountPaid);
-        tvAccountUnpaid = (TextView) itemView.findViewById(R.id.tv_accountUnpaid);
+        tvAccountPaidToday = (TextView) itemView.findViewById(R.id.tv_accountPaidToday);
+        tvAccountUnpaidToday = (TextView) itemView.findViewById(R.id.tv_accountUnpaidToday);
+        tvAccountPaidThisMonth = (TextView) itemView.findViewById(R.id.tv_accountPaidThisMonth);
+        tvAccountUnpaidThisMonth = (TextView) itemView.findViewById(R.id.tv_accountUnpaidThisMonth);
+        tvAccountPaidTotal = (TextView) itemView.findViewById(R.id.tv_accountPaidTotal);
+        tvAccountUnpaidTotal = (TextView) itemView.findViewById(R.id.tv_accountUnpaidTotal);
     }
 
     public static VHAccountSummaryCard create(final Context context, final ViewGroup parent)
@@ -37,11 +42,23 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder
 
     public static void bind(final VHAccountSummaryCard vh, AccountSummary accountSummary)
     {
-        vh.tvAccountPaid.setText(vh.context.getResources().getString(R.string.rs) + " " +
-                accountSummary.getReceived());
+        vh.tvAccountPaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getReceivedToday());
 
-        vh.tvAccountUnpaid.setText(vh.context.getResources().getString(R.string.rs) + " " +
-                (accountSummary.getReceivable() - accountSummary.getReceived()));
+        vh.tvAccountUnpaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                (accountSummary.getReceivableToday() - accountSummary.getReceivedToday()));
+
+        vh.tvAccountPaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getReceivedThisMonth());
+
+        vh.tvAccountUnpaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                (accountSummary.getReceivableThisMonth() - accountSummary.getReceivedThisMonth()));
+
+        vh.tvAccountPaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getTotalReceived());
+
+        vh.tvAccountUnpaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                (accountSummary.getTotalReceivable() - accountSummary.getTotalReceived()));
     }
 
 }

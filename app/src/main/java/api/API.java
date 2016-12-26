@@ -11,7 +11,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 /**
- * Created by rutvik on 11/27/2016 at 3:43 PM.
+ * Created by rutvik on 11/27/2016 at 3:43 PM at 7:13 PM.
  */
 
 public class API
@@ -104,9 +104,24 @@ public class API
         call.enqueue(callback);
     }
 
-    public void getAccountSummary(final String email, final RetrofitCallbacks<AccountSummary> callback)
+    public void getAccountSummary(final String email,
+                                  final String fromDate,
+                                  final String toDate, final RetrofitCallbacks<AccountSummary> callback)
     {
-        Call<AccountSummary> call = apiService.getAccountSummary("get_driver_balance", email);
+        Call<AccountSummary> call = apiService.getAccountSummary("get_driver_balance",
+                fromDate, toDate, email);
+
+        call.enqueue(callback);
+    }
+
+    public void getTripSummary(final String email,
+                               final String tripStatus,
+                               final String fromDate,
+                               final String toDate,
+                               final RetrofitCallbacks<List<TripsByDriverMail>> callback)
+    {
+        Call<List<TripsByDriverMail>> call = apiService.getTripSummary("get_trips_by_trip_status",
+                email, tripStatus, fromDate, toDate);
 
         call.enqueue(callback);
     }

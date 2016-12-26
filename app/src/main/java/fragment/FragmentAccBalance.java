@@ -12,10 +12,14 @@ import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import adapters.AccountBalanceAdapter;
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.AccountSummary;
+import extra.Utils;
 import io.fusionbit.vcarry.R;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -32,6 +36,10 @@ public class FragmentAccBalance extends Fragment
     RecyclerView rvAccountBalance;
 
     AccountBalanceAdapter adapter;
+
+    final AccountSummary accountSummary = new AccountSummary();
+
+    String email;
 
     public static FragmentAccBalance newInstance(int index, Context context)
     {
@@ -58,16 +66,23 @@ public class FragmentAccBalance extends Fragment
 
         rvAccountBalance.setAdapter(adapter);
 
+        adapter.addAccountSummaryCard(accountSummary);
+
         getAccountBalance();
 
         return view;
     }
 
-    private void getAccountBalance()
+    public void getAccountBalance()
     {
+        email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        getAccountBalanceForToday();
+        getAccountBalanceForThisMonth();
+        getTotalAccountBalance();
+    }
 
-        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
+    private void getAccountBalanceForToday()
+    {
         final RetrofitCallbacks<AccountSummary> onGetAccountSummary =
                 new RetrofitCallbacks<AccountSummary>()
                 {
@@ -78,13 +93,73 @@ public class FragmentAccBalance extends Fragment
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
-                            adapter.addAccountSummaryCard(response.body());
+                            if (response.body() != null)
+                            {
+                                accountSummary.setReceivedToday(response.body().getReceived());
+                                accountSummary.setReceivableToday(response.body().getReceivable());
+                            }
                         }
                     }
                 };
 
-        API.getInstance().getAccountSummary(email, onGetAccountSummary);
+        final String today = Utils.getDate(Calendar.getInstance().getTime());
 
+        API.getInstance().getAccountSummary(email, today, today, onGetAccountSummary);
+
+    }
+
+    private void getAccountBalanceForThisMonth()
+    {
+        final RetrofitCallbacks<AccountSummary> onGetAccountSummary =
+                new RetrofitCallbacks<AccountSummary>()
+                {
+
+                    @Override
+                    public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() != null)
+                            {
+                                accountSummary.setReceivedThisMonth(response.body().getReceived());
+                                accountSummary.setReceivableThisMonth(response.body().getReceivable());
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                };
+
+        final String today = Utils.getDate(Calendar.getInstance().getTime());
+        final Date month = Utils.addDays(Calendar.getInstance().getTime(), -30);
+        final String monthInString = Utils.getDate(month);
+
+        API.getInstance().getAccountSummary(email, monthInString, today, onGetAccountSummary);
+    }
+
+    private void getTotalAccountBalance()
+    {
+        final RetrofitCallbacks<AccountSummary> onGetAccountSummary =
+                new RetrofitCallbacks<AccountSummary>()
+                {
+
+                    @Override
+                    public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() != null)
+                            {
+                                accountSummary.setTotalReceived(response.body().getReceived());
+                                accountSummary.setTotalReceivable(response.body().getReceivable());
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                };
+
+        API.getInstance().getAccountSummary(email, null, null, onGetAccountSummary);
     }
 
 }

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import apimodels.TripDetails;
@@ -17,9 +18,9 @@ import viewholders.VHSingleTripNotification;
 public class TripNotificationAdapter extends RecyclerView.Adapter
 {
 
-    final List<TripDetails> tripDetailsList;
+    private final List<TripDetails> tripDetailsList;
 
-    final Context context;
+    private final Context context;
 
     public TripNotificationAdapter(final Context context)
     {
@@ -30,6 +31,7 @@ public class TripNotificationAdapter extends RecyclerView.Adapter
     public void addTripDetails(final TripDetails tripDetails)
     {
         tripDetailsList.add(tripDetails);
+        Collections.sort(tripDetailsList);
         notifyItemInserted(tripDetailsList.size());
     }
 

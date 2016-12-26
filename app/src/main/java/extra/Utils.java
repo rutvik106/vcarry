@@ -88,6 +88,22 @@ public class Utils
         return null;
     }
 
+    public static Date convertToDate(String stringDate)
+    {
+        Date date = null;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        try
+        {
+            date = sdf.parse(stringDate);
+        } catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+
+        return date;
+    }
+
     public static String getDateFromMills(long milliSeconds)
     {
         // Create a DateFormatter object for displaying date in specified format.
@@ -117,6 +133,21 @@ public class Utils
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
         notificationManager.notify(tripId, n);
+    }
+
+    public static Date addDays(Date date, int days)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, days); //minus number would decrement the days
+        return cal.getTime();
+    }
+
+    public static String getDate(Date d)
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+        return sdf.format(d);
     }
 
 }

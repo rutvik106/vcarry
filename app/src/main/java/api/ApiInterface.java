@@ -10,7 +10,6 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 
 /**
  * Created by rutvik on 11/27/2016 at 3:47 PM.
@@ -68,7 +67,17 @@ public interface ApiInterface
     @FormUrlEncoded
     @POST("webservice.php")
     Call<AccountSummary> getAccountSummary(@Field("method") String method,
+                                           @Field("from_date") String fromDate,
+                                           @Field("to_date") String toDate,
                                            @Field("driver_email") String email);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<TripsByDriverMail>> getTripSummary(@Field("method") String method,
+                                                 @Field("driver_email") String email,
+                                                 @Field("trip_status") String tripStatus,
+                                                 @Field("from_date") String fromDate,
+                                                 @Field("to_date") String toDate);
 
 
 }

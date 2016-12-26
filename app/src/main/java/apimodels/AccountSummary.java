@@ -23,9 +23,12 @@ public class AccountSummary extends RealmObject
     private int key;
 
     @SerializedName("received")
-    private int received;
+    private int received = 0;
     @SerializedName("receivable")
-    private int receivable;
+    private int receivable = 0;
+
+    private int receivedToday = 0, receivableToday = 0, receivedThisMonth = 0, receivableThisMonth = 0,
+            totalReceived = 0, totalReceivable = 0;
 
     public int getReceived()
     {
@@ -45,5 +48,65 @@ public class AccountSummary extends RealmObject
     public void setReceivable(int receivable)
     {
         this.receivable = receivable;
+    }
+
+    public int getReceivedToday()
+    {
+        return receivedToday;
+    }
+
+    public void setReceivedToday(int receivedToday)
+    {
+        this.receivedToday = receivedToday;
+    }
+
+    public int getReceivableToday()
+    {
+        return receivableToday;
+    }
+
+    public void setReceivableToday(int receivableToday)
+    {
+        this.receivableToday = receivableToday;
+    }
+
+    public int getReceivedThisMonth()
+    {
+        return receivedThisMonth;
+    }
+
+    public void setReceivedThisMonth(int receivedThisMonth)
+    {
+        this.receivedThisMonth = receivedThisMonth;
+    }
+
+    public int getReceivableThisMonth()
+    {
+        return receivableThisMonth;
+    }
+
+    public void setReceivableThisMonth(int receivableThisMonth)
+    {
+        this.receivableThisMonth = receivableThisMonth;
+    }
+
+    public int getTotalReceived()
+    {
+        return totalReceived;
+    }
+
+    public void setTotalReceived(int totalReceived)
+    {
+        this.totalReceived = totalReceived;
+    }
+
+    public int getTotalReceivable()
+    {
+        return totalReceivable;
+    }
+
+    public void setTotalReceivable(int totalReceivable)
+    {
+        this.totalReceivable = totalReceivable;
     }
 }

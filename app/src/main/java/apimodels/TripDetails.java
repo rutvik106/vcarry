@@ -1,7 +1,12 @@
 package apimodels;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
+import extra.Utils;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -9,7 +14,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by rutvik on 11/27/2016 at 4:01 PM.
  */
 
-public class TripDetails extends RealmObject
+public class TripDetails extends RealmObject implements Comparable<TripDetails>
 {
 
 
@@ -302,5 +307,13 @@ public class TripDetails extends RealmObject
     public void setCustomerName(String customerName)
     {
         this.customerName = customerName;
+    }
+
+    @Override
+    public int compareTo(@NonNull TripDetails tripDetails)
+    {
+        Date date1 = Utils.convertToDate(tripDetails.getTripDatetime());
+        Date date2 = Utils.convertToDate(getTripDatetime());
+        return date1.compareTo(date2);
     }
 }

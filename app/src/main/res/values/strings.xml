@@ -102,5 +102,8 @@
     <string name="account_summary">Account Summary</string>
     <string name="finish_trip">FINISH TRIP</string>
     <string name="cancel_trip">CANCEL TRIP</string>
+    <string name="today">Today</string>
+    <string name="this_month">This Month</string>
+    <string name="total">Total</string>
 
 </resources>

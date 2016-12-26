@@ -144,7 +144,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
         setActionBarTitle("V-Carry");
 
-/*        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+/*       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -675,7 +675,6 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         } else
         {
             alert.dismiss();
-            alert = null;
         }
     }
 

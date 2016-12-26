@@ -6,9 +6,12 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import apimodels.TripsByDriverMail;
+import extra.Utils;
 import viewholders.VHSingleTrip;
 
 /**
@@ -37,8 +40,18 @@ public class TripsAdapter extends RecyclerView.Adapter
         {
             tripsByDriverMailList.add(tripsByDriverMail);
             //tripsByDriverMailList.put(Integer.valueOf(tripsByDriverMail.getTripId()), tripsByDriverMail);
-            notifyItemInserted(tripsByDriverMailList.size());
             Collections.sort(tripsByDriverMailList);
+            Collections.sort(tripsByDriverMailList, new Comparator<TripsByDriverMail>()
+            {
+                @Override
+                public int compare(TripsByDriverMail tripsByDriverMail, TripsByDriverMail t1)
+                {
+                    Date date1 = Utils.convertToDate(tripsByDriverMail.getTripDatetime());
+                    Date date2 = Utils.convertToDate(t1.getTripDatetime());
+                    return date2.compareTo(date1);
+                }
+            });
+            notifyItemInserted(tripsByDriverMailList.size());
         }
     }
 

@@ -107,5 +107,8 @@
     <string name="account_summary">એકાઉન્ટ સારાંશ</string>
     <string name="finish_trip">ટ્રીપ સમાપ્ત કરો</string>
     <string name="cancel_trip">ટ્રીપ રદ કરો</string>
+    <string name="today">આજે</string>
+    <string name="this_month">આ મહિને</string>
+    <string name="total">કુલ</string>
 
 </resources>
