@@ -110,7 +110,12 @@
     <string name="today">આજે</string>
     <string name="this_month">આ મહિને</string>
     <string name="total">કુલ</string>
-    <string name="trip_cancel_msg">This trip is not finished, are you sure you want to cancel this trip?</string>
+    <string name="trip_cancel_msg">આ સફર સમાપ્ત થયેલ નથી, શું તમે ખરેખર આ સફર રદ કરવા માગો છો?</string>
     <string name="service_listening">Listening for Transport Request...</string>
+    <string name="clear_offline_data">ઑફલાઇન ડેટા કાઢી નાખો</string>
+    <string name="trip_completed">પૂર્ણ  ટ્રીપ:</string>
+    <string name="incomplete_trip">અધૂરું:</string>
+    <string name="enter_memo_amount">Please Enter Labour Amount</string>
+    <string name="enter_labour_amount">Please Enter Memo Amount</string>
 
 </resources>

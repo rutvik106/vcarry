@@ -19,7 +19,10 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder
     private final Context context;
 
     private TextView tvAccountPaidToday, tvAccountUnpaidToday,
-            tvAccountPaidThisMonth, tvAccountUnpaidThisMonth, tvAccountPaidTotal, tvAccountUnpaidTotal;
+            tvAccountPaidThisMonth, tvAccountUnpaidThisMonth, tvAccountPaidTotal,
+            tvAccountUnpaidTotal, tvCompletedTripToday, tvCompletedTripThisMonth,
+            tvCompletedTripTotal, tvIncompleteTripToday, tvIncompleteTripThisMonth,
+            tvIncompleteTripTotal;
 
     private VHAccountSummaryCard(Context context, View itemView)
     {
@@ -32,6 +35,14 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder
         tvAccountUnpaidThisMonth = (TextView) itemView.findViewById(R.id.tv_accountUnpaidThisMonth);
         tvAccountPaidTotal = (TextView) itemView.findViewById(R.id.tv_accountPaidTotal);
         tvAccountUnpaidTotal = (TextView) itemView.findViewById(R.id.tv_accountUnpaidTotal);
+
+        tvCompletedTripToday = (TextView) itemView.findViewById(R.id.tv_completedTripToday);
+        tvCompletedTripThisMonth = (TextView) itemView.findViewById(R.id.tv_completedTripThisMonth);
+        tvCompletedTripTotal = (TextView) itemView.findViewById(R.id.tv_completedTripTotal);
+
+        tvIncompleteTripToday = (TextView) itemView.findViewById(R.id.tv_incompleteTripToday);
+        tvIncompleteTripThisMonth = (TextView) itemView.findViewById(R.id.tv_incompleteTripThisMonth);
+        tvIncompleteTripTotal = (TextView) itemView.findViewById(R.id.tv_incompleteTripTotal);
     }
 
     public static VHAccountSummaryCard create(final Context context, final ViewGroup parent)
@@ -59,6 +70,26 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder
 
         vh.tvAccountUnpaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 (accountSummary.getTotalReceivable() - accountSummary.getTotalReceived()));
+
+        vh.tvCompletedTripToday.setText(vh.context.getResources().getString(R.string.trip_completed) + " " +
+                accountSummary.getTodayCompletedTrips());
+
+        vh.tvCompletedTripThisMonth.setText(vh.context.getResources().getString(R.string.trip_completed) + " " +
+                accountSummary.getThisMonthCompletedTrips());
+
+        vh.tvCompletedTripTotal.setText(vh.context.getResources().getString(R.string.trip_completed) + " " +
+                accountSummary.getTotalCompletedTrips());
+
+
+        vh.tvIncompleteTripToday.setText(vh.context.getResources().getString(R.string.incomplete_trip) + " " +
+                accountSummary.getTodayIncompleteTrips());
+
+        vh.tvIncompleteTripThisMonth.setText(vh.context.getResources().getString(R.string.incomplete_trip) + " " +
+                accountSummary.getThisMonthIncompleteTrips());
+
+        vh.tvIncompleteTripTotal.setText(vh.context.getResources().getString(R.string.incomplete_trip) + " " +
+                accountSummary.getTotalIncompleteTrips());
+
     }
 
 }

@@ -1,7 +1,9 @@
 package io.fusionbit.vcarry;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +15,7 @@ import java.util.List;
 
 import extra.LocaleHelper;
 import extra.Log;
+import io.realm.Realm;
 
 public class ActivitySettings extends VCarryActivity
 {
@@ -24,6 +27,8 @@ public class ActivitySettings extends VCarryActivity
     List<String> languageList;
 
     boolean isChanged = false;
+
+    boolean isRealmCleared = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,7 +59,7 @@ public class ActivitySettings extends VCarryActivity
         Log.i(TAG, "LANGUAGE: " + language);
 
 
-        if (language.equals("en"))
+        if (language.equalsIgnoreCase("en"))
         {
             spinSelectLanguage.setSelection(0);
         } else if (language.equals("gu"))
@@ -68,6 +73,34 @@ public class ActivitySettings extends VCarryActivity
             public void run()
             {
                 spinSelectLanguage.setOnItemSelectedListener(new ChangeLanguage());
+            }
+        });
+
+        findViewById(R.id.btn_clearRealmData).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                new AlertDialog.Builder(ActivitySettings.this)
+                        .setTitle("Clear Offline Data")
+                        .setMessage("Are you sure you want to clear offline data?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton("CLEAR", new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i)
+                            {
+                                Realm mRealm = Realm.getDefaultInstance();
+                                while (!mRealm.isClosed())
+                                {
+                                    mRealm.close();
+                                }
+                                Realm.deleteRealm(((App) getApplication()).realmConfig);
+                                isRealmCleared = true;
+                            }
+                        })
+                        .setNegativeButton(getResources().getString(R.string.cancel), null)
+                        .show();
             }
         });
 
@@ -124,6 +157,7 @@ public class ActivitySettings extends VCarryActivity
     {
         Intent output = new Intent();
         output.putExtra(Constants.WAS_LANGUAGE_CHANGED, isChanged);
+        output.putExtra(Constants.WAS_REALM_DATABASE_CLEARED, isRealmCleared);
         setResult(RESULT_OK, output);
         super.finish();
     }

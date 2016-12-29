@@ -21,7 +21,7 @@ public interface ApiInterface
     @FormUrlEncoded
     @POST("webservice.php")
     Call<List<TripsByDriverMail>> getTripsByDriverEmail(@Field("method") String method,
-                                                        @Field(value = "driver_email", encoded = false) String driverEmail);
+                                                        @Field("driver_email") String driverEmail);
 
     @FormUrlEncoded
     @POST("webservice.php")
@@ -50,25 +50,26 @@ public interface ApiInterface
     @FormUrlEncoded
     @POST("webservice.php")
     Call<ResponseBody> insertTripAcceptedData(@Field("method") String method,
-                                              @Field(value = "driver_email", encoded = false) String driverEmail,
+                                              @Field("driver_email") String driverEmail,
                                               @Field("trip_id") String tripId,
-                                              @Field(value = "location", encoded = false) String location,
+                                              @Field("location") String location,
                                               @Field("accepted_time") String acceptedTime);
 
     @FormUrlEncoded
     @POST("webservice.php")
     Call<List<TripDetails>> getTripsByTripStatus(@Field("method") String method,
                                                  @Field("trip_status") String tripStatus,
-                                                 @Field(value = "driver_email", encoded = false) String driverEmail,
+                                                 @Field("driver_email") String driverEmail,
                                                  @Field("customer_id") String customerId,
                                                  @Field("from_date") String fromDate,
-                                                 @Field("to_date") String toDate);
+                                                 @Field("to_date") String toDate,
+                                                 @Field("unactioned_driver_email") String unActionedByEmail);
 
     @FormUrlEncoded
     @POST("webservice.php")
     Call<AccountSummary> getAccountSummary(@Field("method") String method,
-                                           @Field("from_date") String fromDate,
-                                           @Field("to_date") String toDate,
+                                           @Field("from") String fromDate,
+                                           @Field("to") String toDate,
                                            @Field("driver_email") String email);
 
     @FormUrlEncoded
@@ -77,7 +78,22 @@ public interface ApiInterface
                                                  @Field("driver_email") String email,
                                                  @Field("trip_status") String tripStatus,
                                                  @Field("from_date") String fromDate,
-                                                 @Field("to_date") String toDate);
+                                                 @Field("to_date") String toDate,
+                                                 @Field("unactioned_driver_email") String unActionedByEmail);
 
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> insertTripRejectedData(@Field("method") String method,
+                                              @Field("driver_email") String driverEmail,
+                                              @Field("trip_id") String tripId,
+                                              @Field("location") String location,
+                                              @Field("accepted_time") String acceptedTime);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> getAcceptedRejectedStatus(@Field("method") String method,
+                                                 @Field("driver_email") String driverEmail,
+                                                 @Field("trip_id") String tripId);
 
 }

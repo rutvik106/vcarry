@@ -252,7 +252,7 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
         {
             if (etLaborAmount.getText().toString().trim().isEmpty())
             {
-                Toast.makeText(context, "Please Enter Labour Amount", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.enter_memo_amount, Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -261,7 +261,7 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
         {
             if (etMemoAmount.getText().toString().trim().isEmpty())
             {
-                Toast.makeText(context, "Please Enter Memo Amount", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.enter_labour_amount, Toast.LENGTH_SHORT).show();
                 return;
             }
         }

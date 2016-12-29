@@ -12,6 +12,7 @@ import android.widget.TextView;
 import apimodels.TripDetails;
 import extra.Utils;
 import io.fusionbit.vcarry.ActivityTransportRequest;
+import io.fusionbit.vcarry.App;
 import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.R;
 
@@ -21,6 +22,8 @@ import io.fusionbit.vcarry.R;
 
 public class VHSingleTripNotification extends RecyclerView.ViewHolder
 {
+
+    private static final String TAG = App.APP_TAG + VHSingleTripNotification.class.getSimpleName();
 
     final Context context;
 
@@ -46,15 +49,63 @@ public class VHSingleTripNotification extends RecyclerView.ViewHolder
             @Override
             public void onClick(View view)
             {
-                Intent i = new Intent(context, ActivityTransportRequest.class);
-                i.putExtra("REQUEST_ID", model.getTripId());
-                i.putExtra(Constants.INTENT_EXTRA_TIME, model.getTripDatetime());
-                i.putExtra(Constants.INTENT_EXTRA_FROM, model.getFromShippingLocation());
-                i.putExtra(Constants.INTENT_EXTRA_TO, model.getToShippingLocation());
-                context.startActivity(i);
+                openTripAlertActivity();
             }
         });
 
+    }
+
+    /**
+     * private void checkIfTripAcceptedOrRejected()
+     * {
+     * final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+     * <p>
+     * RetrofitCallbacks<ResponseBody> onGetTripAcceptedRejectedStatus = new RetrofitCallbacks<ResponseBody>()
+     * {
+     *
+     * @Override public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+     * {
+     * super.onResponse(call, response);
+     * if (response.isSuccessful())
+     * {
+     * try
+     * {
+     * if (response.body().string().equals("accepted"))
+     * {
+     * Toast.makeText(context, "Trip already accepted", Toast.LENGTH_SHORT).show();
+     * } else if (response.body().string().equals("rejected"))
+     * {
+     * Toast.makeText(context, "You have already rejected this trip", Toast.LENGTH_SHORT).show();
+     * } else if (response.body().string().contains("no action"))
+     * {
+     * Log.i(TAG, "OPENING ALERT ACTIVITY!!!");
+     * openTripAlertActivity();
+     * } else
+     * {
+     * openTripAlertActivity();
+     * }
+     * } catch (IOException e)
+     * {
+     * e.printStackTrace();
+     * }
+     * }
+     * }
+     * };
+     * <p>
+     * API.getInstance().getAcceptedRejectedStatus(email, model.getTripId(),
+     * onGetTripAcceptedRejectedStatus);
+     * <p>
+     * }
+     */
+
+    private void openTripAlertActivity()
+    {
+        Intent i = new Intent(context, ActivityTransportRequest.class);
+        i.putExtra("REQUEST_ID", model.getTripId());
+        i.putExtra(Constants.INTENT_EXTRA_TIME, model.getTripDatetime());
+        i.putExtra(Constants.INTENT_EXTRA_FROM, model.getFromShippingLocation());
+        i.putExtra(Constants.INTENT_EXTRA_TO, model.getToShippingLocation());
+        context.startActivity(i);
     }
 
     public static VHSingleTripNotification create(final Context context, final ViewGroup parent)

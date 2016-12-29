@@ -55,6 +55,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import static io.fusionbit.vcarry.Constants.ON_TRIP_CANCELED;
 import static io.fusionbit.vcarry.Constants.ON_TRIP_STOPPED;
 import static io.fusionbit.vcarry.Constants.WAS_LANGUAGE_CHANGED;
+import static io.fusionbit.vcarry.Constants.WAS_REALM_DATABASE_CLEARED;
 
 public class ActivityHome extends FusedLocation.LocationAwareActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -459,8 +460,10 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
 
                 case Constants.CHANGE_LANGUAGE:
-                    boolean wasChanged = data.getExtras().getBoolean(WAS_LANGUAGE_CHANGED, false);
-                    if (wasChanged)
+                    boolean wasLanguageChanged = data.getExtras().getBoolean(WAS_LANGUAGE_CHANGED, false);
+                    boolean wasRealmDatabaseCleared = data.getExtras()
+                            .getBoolean(WAS_REALM_DATABASE_CLEARED, false);
+                    if (wasLanguageChanged || wasRealmDatabaseCleared)
                     {
                         Intent refresh = new Intent(this, ActivityHome.class);
                         refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

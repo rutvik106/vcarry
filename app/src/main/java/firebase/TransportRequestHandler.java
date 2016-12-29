@@ -106,13 +106,13 @@ public class TransportRequestHandler
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
-                callback.OnGetRequestDetails(dataSnapshot);
+                callback.onGetRequestDetails(dataSnapshot);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError)
             {
-
+                callback.onRequestDetailsNotFound(databaseError);
             }
         });
 
@@ -257,7 +257,9 @@ public class TransportRequestHandler
 
     public interface RequestDetailsCallback
     {
-        void OnGetRequestDetails(DataSnapshot dataSnapshot);
+        void onGetRequestDetails(DataSnapshot dataSnapshot);
+
+        void onRequestDetailsNotFound(DatabaseError databaseError);
     }
 
     public interface ConfirmationListener
@@ -317,11 +319,10 @@ public class TransportRequestHandler
         });
     }
 
-    public static void insertTripRejectedDataUsingApi(final String tripId,
-                                                      final String rejectedTime)
+    public static void insertTripRejectedDataUsingApi(final String tripId)
     {
         final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        API.getInstance().insertTripRejectedData(driverEmail, tripId, rejectedTime,
+        API.getInstance().insertTripRejectedData(driverEmail, tripId,
                 new RetrofitCallbacks<ResponseBody>()
                 {
 

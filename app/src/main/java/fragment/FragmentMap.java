@@ -3,9 +3,11 @@ package fragment;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -289,13 +291,33 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
             if (!tripId.isEmpty())
             {
 
-                final TripDetails tripDetails = Realm.getDefaultInstance()
+                final Realm realm = Realm.getDefaultInstance();
+
+
+                final TripDetails tripDetails = realm
                         .where(TripDetails.class).equalTo("tripId", tripId).findFirst();
+
 
                 if (tripDetails != null)
                 {
                     llDashboardContainer.setVisibility(View.VISIBLE);
-                    tvDashCustomerContact.setText(tripDetails.getCustomerId());
+                    if (tripDetails.getCustomerContactNo() != null)
+                    {
+                        tvDashCustomerContact.setText(tripDetails.getCustomerContactNo());
+                        tvDashCustomerContact.setOnClickListener(new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View view)
+                            {
+                                Intent intent = new Intent(Intent.ACTION_CALL,
+                                        Uri.parse("tel:" + tripDetails.getCustomerContactNo()));
+                                startActivity(intent);
+                            }
+                        });
+                    } else
+                    {
+                        tvDashCustomerContact.setText("");
+                    }
                     tvDashTripTo.setText(tripDetails.getToShippingLocation());
                     tvDashTripFrom.setText(tripDetails.getFromShippingLocation());
                     tvDashCustomerName.setText(tripDetails.getCustomerName());

@@ -2,14 +2,16 @@ package apimodels;
 
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.fusionbit.vcarry.Constants;
 
 /**
  * Created by rutvik on 12/24/2016 at 9:11 AM.
  */
 
-public class AccountSummary extends RealmObject
+public class AccountSummary
 {
 
 
@@ -18,10 +20,6 @@ public class AccountSummary extends RealmObject
      * receivable : 320
      */
 
-    @PrimaryKey
-    @SerializedName("key")
-    private int key;
-
     @SerializedName("received")
     private int received = 0;
     @SerializedName("receivable")
@@ -29,6 +27,25 @@ public class AccountSummary extends RealmObject
 
     private int receivedToday = 0, receivableToday = 0, receivedThisMonth = 0, receivableThisMonth = 0,
             totalReceived = 0, totalReceivable = 0;
+
+    private final List<TripsByDriverMail> tripToday = new ArrayList<>();
+    private final List<TripsByDriverMail> tripThisMonth = new ArrayList<>();
+    private final List<TripsByDriverMail> totalTrips = new ArrayList<>();
+
+    public List<TripsByDriverMail> getTripToday()
+    {
+        return tripToday;
+    }
+
+    public List<TripsByDriverMail> getTripThisMonth()
+    {
+        return tripThisMonth;
+    }
+
+    public List<TripsByDriverMail> getTotalTrips()
+    {
+        return totalTrips;
+    }
 
     public int getReceived()
     {
@@ -109,4 +126,98 @@ public class AccountSummary extends RealmObject
     {
         this.totalReceivable = totalReceivable;
     }
+
+
+    //TOTAL
+    public int getTotalIncompleteTrips()
+    {
+        int count = 0;
+        for (int i = 0; i < totalTrips.size(); i++)
+        {
+            if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
+                    totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int getTotalCompletedTrips()
+    {
+        int count = 0;
+        for (int i = 0; i < totalTrips.size(); i++)
+        {
+            if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+
+    //TODAY
+    public int getTodayIncompleteTrips()
+    {
+        int count = 0;
+        for (int i = 0; i < tripToday.size(); i++)
+        {
+            if (tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
+                    tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int getTodayCompletedTrips()
+    {
+        int count = 0;
+        for (int i = 0; i < tripToday.size(); i++)
+        {
+            if (tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+
+    //THIS MONTH
+    public int getThisMonthIncompleteTrips()
+    {
+        int count = 0;
+        for (int i = 0; i < tripThisMonth.size(); i++)
+        {
+            if (tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
+                    tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int getThisMonthCompletedTrips()
+    {
+        int count = 0;
+        for (int i = 0; i < tripThisMonth.size(); i++)
+        {
+            if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
 }

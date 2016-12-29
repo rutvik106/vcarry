@@ -14,12 +14,15 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import adapters.AccountBalanceAdapter;
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.AccountSummary;
+import apimodels.TripsByDriverMail;
 import extra.Utils;
+import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.R;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -40,6 +43,10 @@ public class FragmentAccBalance extends Fragment
     final AccountSummary accountSummary = new AccountSummary();
 
     String email;
+
+    final String tripStatus = Constants.TRIP_STATUS_FINISHED + ","
+            + Constants.TRIP_STATUS_CANCELLED_BY_DRIVER + ","
+            + Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER;
 
     public static FragmentAccBalance newInstance(int index, Context context)
     {
@@ -79,6 +86,10 @@ public class FragmentAccBalance extends Fragment
         getAccountBalanceForToday();
         getAccountBalanceForThisMonth();
         getTotalAccountBalance();
+
+        getTripForToday();
+        getTripForThisMonth();
+        getTotalTrips();
     }
 
     private void getAccountBalanceForToday()
@@ -161,5 +172,98 @@ public class FragmentAccBalance extends Fragment
 
         API.getInstance().getAccountSummary(email, null, null, onGetAccountSummary);
     }
+
+
+    private void getTripForToday()
+    {
+        final RetrofitCallbacks<List<TripsByDriverMail>> onGetTripSummary =
+                new RetrofitCallbacks<List<TripsByDriverMail>>()
+                {
+
+                    @Override
+                    public void onResponse(Call<List<TripsByDriverMail>> call, Response<List<TripsByDriverMail>> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() != null)
+                            {
+                                for (TripsByDriverMail tripsByDriverMail : response.body())
+                                {
+                                    accountSummary.getTripToday().add(tripsByDriverMail);
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                };
+
+        final String today = Utils.getDate(Calendar.getInstance().getTime());
+
+        API.getInstance().getTripSummary(email, tripStatus, today, today, null,
+                onGetTripSummary);
+
+    }
+
+    private void getTripForThisMonth()
+    {
+        final RetrofitCallbacks<List<TripsByDriverMail>> onGetTripSummary =
+                new RetrofitCallbacks<List<TripsByDriverMail>>()
+                {
+
+                    @Override
+                    public void onResponse(Call<List<TripsByDriverMail>> call, Response<List<TripsByDriverMail>> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() != null)
+                            {
+                                for (TripsByDriverMail tripsByDriverMail : response.body())
+                                {
+                                    accountSummary.getTripThisMonth().add(tripsByDriverMail);
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                };
+
+        final String today = Utils.getDate(Calendar.getInstance().getTime());
+        final Date month = Utils.addDays(Calendar.getInstance().getTime(), -30);
+        final String monthInString = Utils.getDate(month);
+
+        API.getInstance().getTripSummary(email, tripStatus, monthInString, today, null,
+                onGetTripSummary);
+    }
+
+    private void getTotalTrips()
+    {
+        final RetrofitCallbacks<List<TripsByDriverMail>> onGetTripSummary =
+                new RetrofitCallbacks<List<TripsByDriverMail>>()
+                {
+
+                    @Override
+                    public void onResponse(Call<List<TripsByDriverMail>> call, Response<List<TripsByDriverMail>> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() != null)
+                            {
+                                for (TripsByDriverMail tripsByDriverMail : response.body())
+                                {
+                                    accountSummary.getTotalTrips().add(tripsByDriverMail);
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                };
+
+        API.getInstance().getTripSummary(email, tripStatus, null, null, null,
+                onGetTripSummary);
+    }
+
 
 }

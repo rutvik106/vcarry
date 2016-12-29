@@ -314,6 +314,7 @@ public class TransportRequestHandlerService extends Service
                         public void execute(Realm realm)
                         {
                             realm.copyToRealmOrUpdate(response.body());
+
                         }
                     }, new Realm.Transaction.OnSuccess()
                     {
@@ -338,6 +339,7 @@ public class TransportRequestHandlerService extends Service
                 realm.where(TripDetails.class)
                         .equalTo("tripId", tripId)
                         .findFirst();
+
 
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
@@ -383,6 +385,9 @@ public class TransportRequestHandlerService extends Service
 
     private void showAlert(String requestId)
     {
+        Intent newTripRequestIntent = new Intent(Constants.NEW_TRIP_REQUEST);
+        newTripRequestIntent.putExtra("REQUEST_ID", requestId);
+        sendBroadcast(newTripRequestIntent);
         Intent i = new Intent(this, ActivityTransportRequest.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.putExtra("REQUEST_ID", requestId);
@@ -423,7 +428,7 @@ public class TransportRequestHandlerService extends Service
                 .setContentText(getResources().getString(R.string.new_request))
                 .setSmallIcon(R.drawable.ic_local_shipping_black_24dp)
                 .setContentIntent(showTripDetailsPendingIntent)
-                .setAutoCancel(false)
+                .setAutoCancel(true)
                 .setVibrate(new long[]{0, 500, 200, 500})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 /*.addAction(R.drawable.ic_done_black_24dp, getResources().getString(R.string.accept), pAccept)
@@ -504,10 +509,18 @@ public class TransportRequestHandlerService extends Service
                     @Override
                     public void onSuccess()
                     {
+
                         Log.i(TAG, "TRANSACTION SUCCESSFUL");
                         Bundle b = new Bundle();
                         b.putString(Constants.CURRENT_TRIP_ID, tripId);
                         resultReceiver.send(Constants.ON_TRIP_STOPPED, b);
+                    }
+                }, new Realm.Transaction.OnError()
+                {
+                    @Override
+                    public void onError(Throwable error)
+                    {
+
                     }
                 });
 

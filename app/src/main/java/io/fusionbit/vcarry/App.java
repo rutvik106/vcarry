@@ -34,6 +34,8 @@ public class App extends MultiDexApplication
 
     private TripNotificationListener tripNotificationListener;
 
+    public RealmConfiguration realmConfig;
+
     @Override
 
     public void onCreate()
@@ -44,12 +46,13 @@ public class App extends MultiDexApplication
 
         Realm.init(this);
 
-        RealmConfiguration config = new RealmConfiguration
+        realmConfig = new RealmConfiguration
                 .Builder()
+                .name(Constants.REALM_DATABASE_NAME)
                 .deleteRealmIfMigrationNeeded()
                 .build();
 
-        Realm.setDefaultConfiguration(config);
+        Realm.setDefaultConfiguration(realmConfig);
 
         Log.i(TAG, "Application Created!!!");
     }
@@ -87,7 +90,7 @@ public class App extends MultiDexApplication
         final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
         API.getInstance().getTripsByTripStatus(Constants.TRIP_STATUS_NEW,
-                null, null, null, null, TripsCallback);
+                null, null, null, null, email, TripsCallback);
 
     }
 

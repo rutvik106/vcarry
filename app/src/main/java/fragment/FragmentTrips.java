@@ -77,8 +77,6 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
         rvTrips.setAdapter(adapter);
 
-        getTrips();
-
         return view;
     }
 
@@ -120,12 +118,13 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
+                            realm = Realm.getDefaultInstance();
                             realm.beginTransaction();
                             for (final TripsByDriverMail trip : response.body())
                             {
                                 if (trip instanceof TripsByDriverMail)
                                 {
-                                    Log.i(TAG,"TRIP ID: "+trip.getTripId());
+                                    Log.i(TAG, "TRIP ID: " + trip.getTripId());
                                     realm.copyToRealmOrUpdate(trip);
                                 }
                             }
@@ -143,9 +142,11 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
     }
 
+
     @Override
     public void onRefresh()
     {
         getTrips();
     }
+
 }

@@ -88,6 +88,25 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     private String status;
     @SerializedName("customer_name")
     private String customerName;
+    /**
+     * from_city_name : Ahmedabad
+     * from_area_name : S g highway
+     * to_city_name : Ahmedabad
+     * to_area_name : Vatva
+     * customer_contact_no : 9824143009
+     */
+
+    @SerializedName("from_city_name")
+    private String fromCityName;
+    @SerializedName("from_area_name")
+    private String fromAreaName;
+    @SerializedName("to_city_name")
+    private String toCityName;
+    @SerializedName("to_area_name")
+    private String toAreaName;
+    @SerializedName("customer_contact_no")
+    private String customerContactNo;
+
 
     public String getTripId()
     {
@@ -315,5 +334,55 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
         Date date1 = Utils.convertToDate(tripDetails.getTripDatetime());
         Date date2 = Utils.convertToDate(getTripDatetime());
         return date1.compareTo(date2);
+    }
+
+    public String getFromCityName()
+    {
+        return fromCityName;
+    }
+
+    public void setFromCityName(String fromCityName)
+    {
+        this.fromCityName = fromCityName;
+    }
+
+    public String getFromAreaName()
+    {
+        return fromAreaName;
+    }
+
+    public void setFromAreaName(String fromAreaName)
+    {
+        this.fromAreaName = fromAreaName;
+    }
+
+    public String getToCityName()
+    {
+        return toCityName;
+    }
+
+    public void setToCityName(String toCityName)
+    {
+        this.toCityName = toCityName;
+    }
+
+    public String getToAreaName()
+    {
+        return toAreaName;
+    }
+
+    public void setToAreaName(String toAreaName)
+    {
+        this.toAreaName = toAreaName;
+    }
+
+    public String getCustomerContactNo()
+    {
+        return customerContactNo;
+    }
+
+    public void setCustomerContactNo(String customerContactNo)
+    {
+        this.customerContactNo = customerContactNo;
     }
 }

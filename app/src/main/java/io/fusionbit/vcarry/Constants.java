@@ -21,6 +21,8 @@ public class Constants
 
     public static final String T_RESPONSE = "T_RESPONSE";
 
+    public static final String REQUEST_ID = "REQUEST_ID";
+
     public static final String ACCEPT = "ACCEPT";
 
     public static final String REJECT = "REJECT";
@@ -28,6 +30,7 @@ public class Constants
     public static final String TRANSPORT_REQUEST_ID = "TRANSPORT_REQUEST_ID";
 
     public static final String WAS_LANGUAGE_CHANGED = "WAS_LANGUAGE_CHANGED";
+    public static final String WAS_REALM_DATABASE_CLEARED = "WAS_REALM_DATABASE_CLEARED";
 
     public static final String INTENT_EXTRA_TRIP_ID = "TRIP_ID";
 
@@ -53,6 +56,10 @@ public class Constants
     public static final int ON_TRIP_STOPPED = 3333;
 
     public static final int ON_TRIP_CANCELED = 4444;
+
+    public static final String REALM_DATABASE_NAME = "vcarryrealmdb";
+
+    public static final String NEW_TRIP_REQUEST = "NEW_TRIP_REQUEST";
 
     public static class FirebaseNames
     {

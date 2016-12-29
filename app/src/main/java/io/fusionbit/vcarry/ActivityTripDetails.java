@@ -119,7 +119,7 @@ public class ActivityTripDetails extends AppCompatActivity
     private void tryToGetFromRealm()
     {
         tripDetails = realm.where(TripDetails.class).equalTo("tripId", tripId).findFirst();
-        realm.close();
+
 
         if (tripDetails != null)
         {
@@ -151,6 +151,7 @@ public class ActivityTripDetails extends AppCompatActivity
                     realm.beginTransaction();
                     realm.copyToRealmOrUpdate(response.body());
                     realm.commitTransaction();
+
                     bindDataToUi();
                 }
             }

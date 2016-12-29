@@ -68,6 +68,7 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
                         Manifest.permission.VIBRATE,
                         Manifest.permission.WAKE_LOCK,
                         Manifest.permission.DISABLE_KEYGUARD,
+                        Manifest.permission.CALL_PHONE,
                         Manifest.permission.RECEIVE_BOOT_COMPLETED)
                 .check();
     }
@@ -236,7 +237,6 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
     @Override
     public void onClick(View view)
     {
-        Toast.makeText(ActivityLogin.this, "CLICKED!!!", Toast.LENGTH_SHORT).show();
         if (isConnected)
         {
             tryLogin();

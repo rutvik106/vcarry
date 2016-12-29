@@ -1,48 +1,43 @@
 package io.fusionbit.vcarry;
 
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
-import java.util.Calendar;
-import java.util.Map;
-
-import extra.Utils;
+import adapters.NewTripPagerAdapter;
 import firebase.TransportRequestHandler;
+import view.NewTripAlert;
 
 public class ActivityTransportRequest extends FusedLocation.LocationAwareActivity
-        implements GoogleApiClient.OnConnectionFailedListener,
-        TransportRequestHandler.RequestDetailsCallback, TransportRequestHandler.TripAcceptedCallback
+        implements GoogleApiClient.OnConnectionFailedListener, TransportRequestHandler.TripAcceptedCallback
 {
 
     private static final String TAG = App.APP_TAG + ActivityTransportRequest.class.getSimpleName();
 
-    private String requestId;
 
     NotificationManager notificationManager;
 
     FusedLocation fusedLocation;
-
-    TextView tvFrom, tvTo, tvTime;
 
     TransportRequestHandlerService mService;
 
@@ -52,9 +47,15 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
 
     PowerManager.WakeLock wl;
 
-    Button btnAccept;
+    String requestId = null;
 
-    LinearLayout llAcceptRejectButtonContainer;
+    private ViewPager vpNewTripPager = null;
+    private NewTripPagerAdapter adapter = null;
+
+    NewTripRequestReceiver newTripRequestReceiver;
+
+    ImageView ivPreviousTrip;
+    ImageView ivNextTrip;
 
     ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -79,13 +80,12 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK, "My_App");
         wl.acquire();
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
@@ -95,52 +95,40 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
 
         setContentView(R.layout.activity_transport_request);
 
-        requestId = getIntent().getStringExtra("REQUEST_ID");
+        newTripRequestReceiver = new NewTripRequestReceiver();
+
+        adapter = new NewTripPagerAdapter();
+        vpNewTripPager = (ViewPager) findViewById(R.id.vp_newTripPager);
+        vpNewTripPager.setAdapter(adapter);
+
+        final String initialRequestId = getIntent().getStringExtra("REQUEST_ID");
 
         notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        llAcceptRejectButtonContainer = (LinearLayout) findViewById(R.id.ll_acceptRejectButtonContainer);
 
-        findViewById(R.id.btn_accept).setOnClickListener(new View.OnClickListener()
+        addView(new NewTripAlert(initialRequestId, this, this));
+
+        ivNextTrip = (ImageView) findViewById(R.id.iv_nextTrip);
+        ivPreviousTrip = (ImageView) findViewById(R.id.iv_previousTrip);
+
+        ivNextTrip.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                llAcceptRejectButtonContainer.setVisibility(View.GONE);
-                acceptRequest();
+                showNextTrip();
             }
         });
 
-        btnAccept = (Button) findViewById(R.id.btn_reject);
-
-        btnAccept.setOnClickListener(new View.OnClickListener()
+        ivPreviousTrip.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                llAcceptRejectButtonContainer.setVisibility(View.GONE);
-                rejectRequest();
+                showPreviousTrip();
             }
         });
-
-        final String from = getIntent().getStringExtra(Constants.INTENT_EXTRA_FROM);
-        final String to = getIntent().getStringExtra(Constants.INTENT_EXTRA_TO);
-        final String time = getIntent().getStringExtra(Constants.INTENT_EXTRA_TIME);
-
-        tvFrom = (TextView) findViewById(R.id.tv_from);
-        tvTo = (TextView) findViewById(R.id.tv_to);
-        tvTime = (TextView) findViewById(R.id.tv_time);
-
-        if (from != null && to != null && time != null)
-        {
-            tvTime.setText(Utils.convertDateToRequireFormat(time.toString()));
-            tvFrom.setText(from);
-            tvTo.setText(to);
-        }
-
-        getRequestDetails();
-
 
     }
 
@@ -158,6 +146,18 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     }
 
     @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        if (newTripRequestReceiver == null)
+        {
+            newTripRequestReceiver = new NewTripRequestReceiver();
+        }
+        registerReceiver(newTripRequestReceiver, new IntentFilter(Constants.NEW_TRIP_REQUEST));
+    }
+
+    @Override
     protected void onStop()
     {
         if (mServiceBound)
@@ -166,17 +166,18 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
             mServiceBound = false;
         }
 
+        if (newTripRequestReceiver != null)
+        {
+            unregisterReceiver(newTripRequestReceiver);
+        }
+
         super.onStop();
     }
 
-    private void getRequestDetails()
-    {
-        TransportRequestHandler.getRequestDetails(requestId, this);
-    }
 
-
-    private void acceptRequest()
+    public void acceptRequest(final String requestId)
     {
+        this.requestId = requestId;
         fusedLocationApiCallbacks = new FusedLocationApiCallbacks(this);
         fusedLocation = new FusedLocation(this, fusedLocationApiCallbacks
                 , this);
@@ -184,12 +185,12 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         notificationManager.cancel(Integer.valueOf(requestId));
     }
 
-    private void rejectRequest()
+    public void rejectRequest(final String requestId)
     {
-        TransportRequestHandler.insertTripRejectedDataUsingApi(requestId,
-                Calendar.getInstance().getTime() + "");
+        this.requestId = requestId;
+        TransportRequestHandler.insertTripRejectedDataUsingApi(requestId);
         notificationManager.cancel(Integer.valueOf(requestId));
-        finish();
+        removeView(getCurrentPage());
     }
 
     @Override
@@ -206,17 +207,6 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         TransportRequestHandler.acceptRequest(requestId, null, this);
     }
 
-    @Override
-    public void OnGetRequestDetails(DataSnapshot dataSnapshot)
-    {
-        Map details = (Map) dataSnapshot.getValue();
-        if (details != null)
-        {
-            tvFrom.setText(getResources().getString(R.string.request_from) + ": " + details.get("from").toString());
-            tvTo.setText(getResources().getString(R.string.request_to) + ": " + details.get("to").toString());
-            tvTime.setText(getResources().getString(R.string.time) + ": " + Utils.convertDateToRequireFormat(details.get("date_time").toString()));
-        }
-    }
 
     @Override
     public void tripAcceptedSuccessfully(String tripId)
@@ -256,7 +246,7 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
                         , ActivityTransportRequest.this);
 
                 fusedLocation.stopGettingLocation();
-                finish();
+                removeView(getCurrentPage());
             }
         });
     }
@@ -278,7 +268,6 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     {
         Toast.makeText(mService, "Please turn on location service", Toast.LENGTH_SHORT).show();
     }
-
 
     private class FusedLocationApiCallbacks extends FusedLocation.ApiConnectionCallbacks
     {
@@ -308,4 +297,87 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         wl.release();
         super.onDestroy();
     }
+
+    //-----------------------------------------------------------------------------
+    // Here's what the app should do to add a view to the ViewPager.
+    public void addView(View newPage)
+    {
+        int pageIndex = adapter.addView(newPage);
+        adapter.notifyDataSetChanged();
+        // You might want to make "newPage" the currently displayed page:
+        vpNewTripPager.setCurrentItem(pageIndex, true);
+    }
+
+    //-----------------------------------------------------------------------------
+    // Here's what the app should do to remove a view from the ViewPager.
+    public void removeView(View defunctPage)
+    {
+        int pageIndex = adapter.removeView(vpNewTripPager, defunctPage);
+        // You might want to choose what page to display, if the current page was "defunctPage".
+        if (pageIndex == adapter.getCount())
+        {
+            pageIndex--;
+        }
+        vpNewTripPager.setCurrentItem(pageIndex);
+        adapter.notifyDataSetChanged();
+
+        if (adapter.getCount() == 0)
+        {
+            finish();
+        }
+    }
+
+    //-----------------------------------------------------------------------------
+    // Here's what the app should do to get the currently displayed page.
+    public View getCurrentPage()
+    {
+        return adapter.getView(vpNewTripPager.getCurrentItem());
+    }
+
+    //-----------------------------------------------------------------------------
+    // Here's what the app should do to set the currently displayed page.  "pageToShow" must
+    // currently be in the adapter, or this will crash.
+    public void setCurrentPage(View pageToShow)
+    {
+        vpNewTripPager.setCurrentItem(adapter.getItemPosition(pageToShow), true);
+    }
+
+    class NewTripRequestReceiver extends BroadcastReceiver
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            ivPreviousTrip.setVisibility(View.VISIBLE);
+            ivNextTrip.setVisibility(View.VISIBLE);
+            Log.i(TAG, "BROADCAST RECEIVED FOR NEW TRIP REQUEST");
+            final String requestId = intent.getStringExtra("REQUEST_ID");
+            NewTripAlert newTripAlert = new NewTripAlert(requestId, ActivityTransportRequest.this,
+                    ActivityTransportRequest.this);
+            addView(newTripAlert);
+            setCurrentPage(newTripAlert);
+        }
+    }
+
+
+    private void showNextTrip()
+    {
+        if (vpNewTripPager.getCurrentItem() < adapter.getCount() - 1)
+        {
+            vpNewTripPager.setCurrentItem(getItem(+1), true);
+        }
+    }
+
+    private void showPreviousTrip()
+    {
+        if (vpNewTripPager.getCurrentItem() > 0)
+        {
+            vpNewTripPager.setCurrentItem(getItem(-1), true);
+        }
+    }
+
+    private int getItem(int i)
+    {
+        return vpNewTripPager.getCurrentItem() + i;
+    }
+
 }
