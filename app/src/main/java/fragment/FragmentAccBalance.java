@@ -2,8 +2,10 @@ package fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,7 +33,7 @@ import retrofit2.Response;
  * Created by rutvik on 11/17/2016 at 11:17 PM.
  */
 
-public class FragmentAccBalance extends Fragment
+public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
 
     Context context;
@@ -40,6 +42,8 @@ public class FragmentAccBalance extends Fragment
 
     AccountBalanceAdapter adapter;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
     final AccountSummary accountSummary = new AccountSummary();
 
     String email;
@@ -47,6 +51,8 @@ public class FragmentAccBalance extends Fragment
     final String tripStatus = Constants.TRIP_STATUS_FINISHED + ","
             + Constants.TRIP_STATUS_CANCELLED_BY_DRIVER + ","
             + Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER;
+
+    boolean busyLoadingData = false;
 
     public static FragmentAccBalance newInstance(int index, Context context)
     {
@@ -65,6 +71,10 @@ public class FragmentAccBalance extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_account_balance, container, false);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.srl_refreshAccountBalance);
+
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         rvAccountBalance = (RecyclerView) view.findViewById(R.id.rv_accountBalance);
         rvAccountBalance.setHasFixedSize(true);
         rvAccountBalance.setLayoutManager(new LinearLayoutManager(context));
@@ -82,14 +92,20 @@ public class FragmentAccBalance extends Fragment
 
     public void getAccountBalance()
     {
-        email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        getAccountBalanceForToday();
-        getAccountBalanceForThisMonth();
-        getTotalAccountBalance();
+        if (!busyLoadingData)
+        {
+            busyLoadingData = true;
+            accountSummary.clearData();
+            //adapter.notifyDataSetChanged();
+            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            getAccountBalanceForToday();
+            getAccountBalanceForThisMonth();
+            getTotalAccountBalance();
 
-        getTripForToday();
-        getTripForThisMonth();
-        getTotalTrips();
+            getTripForToday();
+            getTripForThisMonth();
+            getTotalTrips();
+        }
     }
 
     private void getAccountBalanceForToday()
@@ -108,6 +124,14 @@ public class FragmentAccBalance extends Fragment
                             {
                                 accountSummary.setReceivedToday(response.body().getReceived());
                                 accountSummary.setReceivableToday(response.body().getReceivable());
+                                if (busyLoadingData)
+                                {
+                                    if (swipeRefreshLayout.isRefreshing())
+                                    {
+                                        swipeRefreshLayout.setRefreshing(false);
+                                    }
+                                    busyLoadingData = false;
+                                }
                             }
                         }
                     }
@@ -170,7 +194,7 @@ public class FragmentAccBalance extends Fragment
                     }
                 };
 
-        API.getInstance().getAccountSummary(email, null, null, onGetAccountSummary);
+        API.getInstance().getAccountSummary(email, "", "", onGetAccountSummary);
     }
 
 
@@ -265,5 +289,11 @@ public class FragmentAccBalance extends Fragment
                 onGetTripSummary);
     }
 
+
+    @Override
+    public void onRefresh()
+    {
+        getAccountBalance();
+    }
 
 }

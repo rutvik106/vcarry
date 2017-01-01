@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -48,6 +49,8 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
     private SwipeRefreshLayout srlRefreshTrips;
 
+    FrameLayout flTripListEmptyView;
+
     public static FragmentTrips newInstance(int index, Context context)
     {
         FragmentTrips fragmentTrips = new FragmentTrips();
@@ -64,6 +67,8 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_trips, container, false);
+
+        flTripListEmptyView = (FrameLayout) view.findViewById(R.id.fl_tripListEmptyView);
 
         srlRefreshTrips = (SwipeRefreshLayout) view.findViewById(R.id.srl_refreshTrips);
 
@@ -92,6 +97,14 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
         }
         adapter.notifyDataSetChanged();
 
+        if (adapter.getItemCount() > 0)
+        {
+            flTripListEmptyView.setVisibility(View.GONE);
+        } else
+        {
+            flTripListEmptyView.setVisibility(View.VISIBLE);
+        }
+
         tripResults
                 .addChangeListener(new RealmChangeListener<RealmResults<TripsByDriverMail>>()
                                    {
@@ -103,6 +116,13 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                                                adapter.addTrip(trip);
                                            }
                                            adapter.notifyDataSetChanged();
+                                           if (adapter.getItemCount() > 0)
+                                           {
+                                               flTripListEmptyView.setVisibility(View.GONE);
+                                           } else
+                                           {
+                                               flTripListEmptyView.setVisibility(View.VISIBLE);
+                                           }
                                        }
                                    }
 

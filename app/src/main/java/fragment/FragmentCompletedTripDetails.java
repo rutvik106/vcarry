@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripDetails;
@@ -57,6 +59,8 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
 
     TripStopDataInsertionCallback tripStopDataInsertionCallback;
 
+    String memoAmount = "0", labourAmount = "0";
+
     double distance;
 
     RetrofitCallbacks OnInsertTripStopData = new RetrofitCallbacks<ResponseBody>()
@@ -68,7 +72,19 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
             super.onResponse(call, response);
             if (response.isSuccessful())
             {
-                tripStopDataInsertionCallback.dataInsertedSuccessfully();
+                try
+                {
+                    if (response.body().string().contains("error"))
+                    {
+                        tripStopDataInsertionCallback.failedToInsertTripStopData();
+                    } else
+                    {
+                        tripStopDataInsertionCallback.dataInsertedSuccessfully();
+                    }
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             } else
             {
                 tripStopDataInsertionCallback.failedToInsertTripStopData();
@@ -272,13 +288,31 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
             return;
         }
 
+
+        if (etMemoAmount.getText() != null)
+        {
+            if (!etMemoAmount.getText().toString().isEmpty())
+            {
+                memoAmount = etMemoAmount.getText().toString();
+            }
+        }
+
+        if (etLaborAmount.getText() != null)
+        {
+            if (!etLaborAmount.getText().toString().isEmpty())
+            {
+                labourAmount = etLaborAmount.getText().toString();
+            }
+        }
+
+
         API.getInstance().stopTripAndSendDetails(tripId, tripDistanceDetails.getTripStartTime() + "",
                 tripDistanceDetails.getTripStopTime() + "",
                 tripDistanceDetails.getStartLatLng(),
                 tripDistanceDetails.getStopLatLng(),
                 distance + "",
-                etMemoAmount.getText().toString(),
-                etLaborAmount.getText().toString(),
+                memoAmount,
+                labourAmount,
                 etTotalAmount.getText().toString(), OnInsertTripStopData);
     }
 

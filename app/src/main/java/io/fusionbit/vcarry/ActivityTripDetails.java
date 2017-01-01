@@ -147,12 +147,15 @@ public class ActivityTripDetails extends AppCompatActivity
                 super.onResponse(call, response);
                 if (response.isSuccessful())
                 {
-                    tripDetails = response.body();
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(response.body());
-                    realm.commitTransaction();
+                    if (response.body() != null)
+                    {
+                        tripDetails = response.body();
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(response.body());
+                        realm.commitTransaction();
 
-                    bindDataToUi();
+                        bindDataToUi();
+                    }
                 }
             }
         });

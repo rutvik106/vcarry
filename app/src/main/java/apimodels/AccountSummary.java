@@ -21,16 +21,31 @@ public class AccountSummary
      */
 
     @SerializedName("received")
-    private int received = 0;
+    private float received = 0;
     @SerializedName("receivable")
-    private int receivable = 0;
+    private float receivable = 0;
 
-    private int receivedToday = 0, receivableToday = 0, receivedThisMonth = 0, receivableThisMonth = 0,
+    private float receivedToday = 0, receivableToday = 0, receivedThisMonth = 0, receivableThisMonth = 0,
             totalReceived = 0, totalReceivable = 0;
 
     private final List<TripsByDriverMail> tripToday = new ArrayList<>();
     private final List<TripsByDriverMail> tripThisMonth = new ArrayList<>();
     private final List<TripsByDriverMail> totalTrips = new ArrayList<>();
+
+    public void clearData()
+    {
+        tripToday.clear();
+        tripThisMonth.clear();
+        totalTrips.clear();
+        receivable = 0;
+        received = 0;
+        receivedToday = 0;
+        receivableToday = 0;
+        receivedThisMonth = 0;
+        receivableThisMonth = 0;
+        totalReceived = 0;
+        totalReceivable = 0;
+    }
 
     public List<TripsByDriverMail> getTripToday()
     {
@@ -47,82 +62,82 @@ public class AccountSummary
         return totalTrips;
     }
 
-    public int getReceived()
+    public float getReceived()
     {
         return received;
     }
 
-    public void setReceived(int received)
+    public void setReceived(float received)
     {
         this.received = received;
     }
 
-    public int getReceivable()
+    public float getReceivable()
     {
         return receivable;
     }
 
-    public void setReceivable(int receivable)
+    public void setReceivable(float receivable)
     {
         this.receivable = receivable;
     }
 
-    public int getReceivedToday()
+    public float getReceivedToday()
     {
         return receivedToday;
     }
 
-    public void setReceivedToday(int receivedToday)
+    public void setReceivedToday(float receivedToday)
     {
         this.receivedToday = receivedToday;
     }
 
-    public int getReceivableToday()
+    public float getReceivableToday()
     {
         return receivableToday;
     }
 
-    public void setReceivableToday(int receivableToday)
+    public void setReceivableToday(float receivableToday)
     {
         this.receivableToday = receivableToday;
     }
 
-    public int getReceivedThisMonth()
+    public float getReceivedThisMonth()
     {
         return receivedThisMonth;
     }
 
-    public void setReceivedThisMonth(int receivedThisMonth)
+    public void setReceivedThisMonth(float receivedThisMonth)
     {
         this.receivedThisMonth = receivedThisMonth;
     }
 
-    public int getReceivableThisMonth()
+    public float getReceivableThisMonth()
     {
         return receivableThisMonth;
     }
 
-    public void setReceivableThisMonth(int receivableThisMonth)
+    public void setReceivableThisMonth(float receivableThisMonth)
     {
         this.receivableThisMonth = receivableThisMonth;
     }
 
-    public int getTotalReceived()
+    public float getTotalReceived()
     {
         return totalReceived;
     }
 
-    public void setTotalReceived(int totalReceived)
+    public void setTotalReceived(float totalReceived)
     {
         this.totalReceived = totalReceived;
     }
 
-    public int getTotalReceivable()
+    public float getTotalReceivable()
     {
         return totalReceivable;
     }
 
-    public void setTotalReceivable(int totalReceivable)
+    public void setTotalReceivable(float totalReceivable)
     {
         this.totalReceivable = totalReceivable;
     }
@@ -132,12 +147,15 @@ public class AccountSummary
     public int getTotalIncompleteTrips()
     {
         int count = 0;
-        for (int i = 0; i < totalTrips.size(); i++)
+        if(totalTrips.size()>0)
         {
-            if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
-                    totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+            for (int i = 0; i < totalTrips.size(); i++)
             {
-                count++;
+                if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
+                        totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+                {
+                    count++;
+                }
             }
         }
 
@@ -147,11 +165,14 @@ public class AccountSummary
     public int getTotalCompletedTrips()
     {
         int count = 0;
-        for (int i = 0; i < totalTrips.size(); i++)
+        if(totalTrips.size()>0)
         {
-            if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+            for (int i = 0; i < totalTrips.size(); i++)
             {
-                count++;
+                if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+                {
+                    count++;
+                }
             }
         }
 
@@ -163,12 +184,15 @@ public class AccountSummary
     public int getTodayIncompleteTrips()
     {
         int count = 0;
-        for (int i = 0; i < tripToday.size(); i++)
+        if(tripToday.size()>0)
         {
-            if (tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
-                    tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+            for (int i = 0; i < tripToday.size(); i++)
             {
-                count++;
+                if (tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
+                        tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+                {
+                    count++;
+                }
             }
         }
 
@@ -178,11 +202,14 @@ public class AccountSummary
     public int getTodayCompletedTrips()
     {
         int count = 0;
-        for (int i = 0; i < tripToday.size(); i++)
+        if(tripToday.size()>0)
         {
-            if (tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+            for (int i = 0; i < tripToday.size(); i++)
             {
-                count++;
+                if (tripToday.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+                {
+                    count++;
+                }
             }
         }
 
@@ -194,12 +221,15 @@ public class AccountSummary
     public int getThisMonthIncompleteTrips()
     {
         int count = 0;
-        for (int i = 0; i < tripThisMonth.size(); i++)
+        if(tripThisMonth.size()>0)
         {
-            if (tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
-                    tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+            for (int i = 0; i < tripThisMonth.size(); i++)
             {
-                count++;
+                if (tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER) ||
+                        tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER))
+                {
+                    count++;
+                }
             }
         }
 
@@ -209,11 +239,14 @@ public class AccountSummary
     public int getThisMonthCompletedTrips()
     {
         int count = 0;
-        for (int i = 0; i < tripThisMonth.size(); i++)
+        if(tripThisMonth.size()>0)
         {
-            if (totalTrips.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+            for (int i = 0; i < tripThisMonth.size(); i++)
             {
-                count++;
+                if (tripThisMonth.get(i).getTripStatus().equals(Constants.TRIP_STATUS_FINISHED))
+                {
+                    count++;
+                }
             }
         }
 
