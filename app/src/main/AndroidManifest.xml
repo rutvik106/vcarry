@@ -108,6 +108,8 @@
             android:name=".ActivityTripNotifications"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".ActivityTrips">
+        </activity>
     </application>
 
 </manifest>

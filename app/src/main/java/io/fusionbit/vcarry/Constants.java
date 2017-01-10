@@ -61,6 +61,10 @@ public class Constants
 
     public static final String NEW_TRIP_REQUEST = "NEW_TRIP_REQUEST";
 
+    public static final String ACCOUNT_TRIP_TYPE = "ACCOUNT_TRIP_TYPE";
+
+    public static final String PARCELABLE_TRIP_LIST = "PARCELABLE_TRIP_LIST";
+
     public static class FirebaseNames
     {
         public static final String NODE_ACCEPTED = "accepted";
@@ -101,6 +105,13 @@ public class Constants
     {
         public static final int FOR_TRIP_SUMMARY = 1;
         public static final int FOR_ACCOUNT_SUMMARY = 11;
+    }
+
+    public static class AccountTripType
+    {
+        public static final String TODAY = "TODAY";
+        public static final String THIS_MONTH = "THIS_MONTH";
+        public static final String TOTAL = "TOTAL";
     }
 
 }

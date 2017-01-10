@@ -112,5 +112,8 @@
     <string name="incomplete_trip">Incomplete:</string>
     <string name="enter_memo_amount">Please Enter Labour Amount</string>
     <string name="enter_labour_amount">Please Enter Memo Amount</string>
+    <string name="trips_today">Trips Today</string>
+    <string name="trips_this_month">Trips This Month</string>
+    <string name="total_trips">Total Trips</string>
 
 </resources>

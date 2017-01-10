@@ -1,5 +1,7 @@
 package apimodels;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -13,7 +15,7 @@ import io.realm.annotations.RealmClass;
  * Created by rutvik on 11/27/2016 at 3:54 PM.
  */
 
-public class TripsByDriverMail extends RealmObject implements Comparable<TripsByDriverMail>
+public class TripsByDriverMail extends RealmObject implements Comparable<TripsByDriverMail>,Parcelable
 {
 
 
@@ -320,4 +322,79 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         return this.getTripId().equals(that.getTripId());
     }*/
 
+    @Override
+    public int describeContents()
+    {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
+    {
+        dest.writeString(this.tripId);
+        dest.writeString(this.tripDatetime);
+        dest.writeString(this.fromShippingLocationId);
+        dest.writeString(this.fromShippingLocation);
+        dest.writeString(this.fromCityId);
+        dest.writeString(this.fromAreaId);
+        dest.writeString(this.toShippingLocationId);
+        dest.writeString(this.toShippingLocation);
+        dest.writeString(this.toCityId);
+        dest.writeString(this.toAreaId);
+        dest.writeString(this.vehicleTypeId);
+        dest.writeString(this.driverId);
+        dest.writeString(this.fare);
+        dest.writeString(this.createdBy);
+        dest.writeString(this.lastModifiedBy);
+        dest.writeString(this.dateAdded);
+        dest.writeString(this.dateModified);
+        dest.writeString(this.tripStatus);
+        dest.writeString(this.customerId);
+        dest.writeString(this.status);
+        dest.writeString(this.customerName);
+    }
+
+    public TripsByDriverMail()
+    {
+    }
+
+    protected TripsByDriverMail(Parcel in)
+    {
+        this.tripId = in.readString();
+        this.tripDatetime = in.readString();
+        this.fromShippingLocationId = in.readString();
+        this.fromShippingLocation = in.readString();
+        this.fromCityId = in.readString();
+        this.fromAreaId = in.readString();
+        this.toShippingLocationId = in.readString();
+        this.toShippingLocation = in.readString();
+        this.toCityId = in.readString();
+        this.toAreaId = in.readString();
+        this.vehicleTypeId = in.readString();
+        this.driverId = in.readString();
+        this.fare = in.readString();
+        this.createdBy = in.readString();
+        this.lastModifiedBy = in.readString();
+        this.dateAdded = in.readString();
+        this.dateModified = in.readString();
+        this.tripStatus = in.readString();
+        this.customerId = in.readString();
+        this.status = in.readString();
+        this.customerName = in.readString();
+    }
+
+    public static final Parcelable.Creator<TripsByDriverMail> CREATOR = new Parcelable.Creator<TripsByDriverMail>()
+    {
+        @Override
+        public TripsByDriverMail createFromParcel(Parcel source)
+        {
+            return new TripsByDriverMail(source);
+        }
+
+        @Override
+        public TripsByDriverMail[] newArray(int size)
+        {
+            return new TripsByDriverMail[size];
+        }
+    };
 }

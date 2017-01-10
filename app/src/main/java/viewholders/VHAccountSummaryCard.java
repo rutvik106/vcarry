@@ -1,20 +1,27 @@
 package viewholders;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import apimodels.AccountSummary;
+import io.fusionbit.vcarry.ActivityTrips;
+import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.R;
 
 /**
  * Created by rutvik on 12/24/2016 at 9:09 AM.
  */
 
-public class VHAccountSummaryCard extends RecyclerView.ViewHolder
+public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements View.OnClickListener
 {
     private final Context context;
 
@@ -23,6 +30,10 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder
             tvAccountUnpaidTotal, tvCompletedTripToday, tvCompletedTripThisMonth,
             tvCompletedTripTotal, tvIncompleteTripToday, tvIncompleteTripThisMonth,
             tvIncompleteTripTotal;
+
+    private CardView cvAccountToday, cvAccountThisMonth, cvAccountTotal;
+
+    private AccountSummary accountSummary;
 
     private VHAccountSummaryCard(Context context, View itemView)
     {
@@ -43,6 +54,15 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder
         tvIncompleteTripToday = (TextView) itemView.findViewById(R.id.tv_incompleteTripToday);
         tvIncompleteTripThisMonth = (TextView) itemView.findViewById(R.id.tv_incompleteTripThisMonth);
         tvIncompleteTripTotal = (TextView) itemView.findViewById(R.id.tv_incompleteTripTotal);
+
+        cvAccountToday = (CardView) itemView.findViewById(R.id.cv_accountToday);
+        cvAccountThisMonth = (CardView) itemView.findViewById(R.id.cv_accountThisMonth);
+        cvAccountTotal = (CardView) itemView.findViewById(R.id.cv_accountTotal);
+
+        cvAccountToday.setOnClickListener(this);
+        cvAccountThisMonth.setOnClickListener(this);
+        cvAccountTotal.setOnClickListener(this);
+
     }
 
     public static VHAccountSummaryCard create(final Context context, final ViewGroup parent)
@@ -53,23 +73,28 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder
 
     public static void bind(final VHAccountSummaryCard vh, AccountSummary accountSummary)
     {
+        vh.accountSummary = accountSummary;
+
         vh.tvAccountPaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 accountSummary.getReceivedToday());
 
         vh.tvAccountUnpaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
-                (accountSummary.getReceivableToday() - accountSummary.getReceivedToday()));
+                (accountSummary.getReceivableToday() != 0 ?
+                        accountSummary.getReceivableToday() - accountSummary.getReceivedToday() : 0));
 
         vh.tvAccountPaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 accountSummary.getReceivedThisMonth());
 
         vh.tvAccountUnpaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
-                (accountSummary.getReceivableThisMonth() - accountSummary.getReceivedThisMonth()));
+                (accountSummary.getReceivableThisMonth() != 0 ?
+                        accountSummary.getReceivableThisMonth() - accountSummary.getReceivedThisMonth() : 0));
 
         vh.tvAccountPaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 accountSummary.getTotalReceived());
 
         vh.tvAccountUnpaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
-                (accountSummary.getTotalReceivable() - accountSummary.getTotalReceived()));
+                (accountSummary.getTotalReceivable() != 0 ?
+                        accountSummary.getTotalReceivable() - accountSummary.getTotalReceived() : 0));
 
         vh.tvCompletedTripToday.setText(vh.context.getResources().getString(R.string.trip_completed) + " " +
                 accountSummary.getTodayCompletedTrips());
@@ -92,4 +117,33 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder
 
     }
 
+    @Override
+    public void onClick(View view)
+    {
+        final Intent i = new Intent(context, ActivityTrips.class);
+        switch (view.getId())
+        {
+            case R.id.cv_accountToday:
+                i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.TODAY);
+                i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
+                        new ArrayList<Parcelable>(accountSummary.getTripToday()));
+                context.startActivity(i);
+                break;
+
+            case R.id.cv_accountThisMonth:
+                i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.THIS_MONTH);
+                i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
+                        new ArrayList<Parcelable>(accountSummary.getTripThisMonth()));
+                context.startActivity(i);
+                break;
+
+            case R.id.cv_accountTotal:
+                i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.TOTAL);
+                i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
+                        new ArrayList<Parcelable>(accountSummary.getTotalTrips()));
+                context.startActivity(i);
+                break;
+
+        }
+    }
 }

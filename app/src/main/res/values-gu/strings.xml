@@ -117,5 +117,8 @@
     <string name="incomplete_trip">અધૂરું:</string>
     <string name="enter_memo_amount">Please Enter Labour Amount</string>
     <string name="enter_labour_amount">Please Enter Memo Amount</string>
+    <string name="trips_today">આજની ટ્રિપ્સ</string>
+    <string name="trips_this_month">આ મહિના ની ટ્રિપ્સ</string>
+    <string name="total_trips">કુલ ટ્રિપ્સ</string>
 
 </resources>
