@@ -138,4 +138,17 @@ public class API
         call.enqueue(callback);
     }
 
+    public Call<ResponseBody> updateDeviceTokenDriver(final String driverEmail,
+                                                      final String deviceToken,
+                                                      RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call =
+                apiService.updateDeviceTokenDriver("update_device_token_driver",
+                        driverEmail, deviceToken);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
 }

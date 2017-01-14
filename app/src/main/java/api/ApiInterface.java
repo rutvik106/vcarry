@@ -96,4 +96,10 @@ public interface ApiInterface
                                                  @Field("driver_email") String driverEmail,
                                                  @Field("trip_id") String tripId);
 
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> updateDeviceTokenDriver(@Field("method") String method,
+                                               @Field("driver_email") String customerId,
+                                               @Field("device_token") String deviceToken);
+
 }
