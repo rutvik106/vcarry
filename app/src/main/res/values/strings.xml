@@ -115,5 +115,8 @@
     <string name="trips_today">Trips Today</string>
     <string name="trips_this_month">Trips This Month</string>
     <string name="total_trips">Total Trips</string>
+    <string name="driver_not_registered">You are not registered</string>
+    <string name="unauthorized">Unauthorized</string>
+    <string name="not_registered">Sorry, you are not registered with V-Carry</string>
 
 </resources>

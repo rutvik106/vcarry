@@ -42,6 +42,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import java.util.ArrayList;
 import java.util.List;
 
+import api.API;
+import api.RetrofitCallbacks;
 import apimodels.TripDetails;
 import extra.LocaleHelper;
 import extra.Log;
@@ -51,6 +53,8 @@ import fragment.FragmentMap;
 import fragment.FragmentTrips;
 import fragment.FragmentTripsOnOffer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static io.fusionbit.vcarry.Constants.ON_TRIP_CANCELED;
 import static io.fusionbit.vcarry.Constants.ON_TRIP_STOPPED;
@@ -260,6 +264,45 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 }
             }
         });
+
+        getDriverIdByDriverEmail();
+
+    }
+
+    private void getDriverIdByDriverEmail()
+    {
+
+        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        final RetrofitCallbacks<Integer> onGetDriverIdCallback =
+                new RetrofitCallbacks<Integer>()
+                {
+                    @Override
+                    public void onResponse(Call<Integer> call, Response<Integer> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() > 0)
+                            {
+                                PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                        .edit()
+                                        .putString(Constants.DRIVER_ID, String.valueOf(response.body()))
+                                        .apply();
+                            } else
+                            {
+                                PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
+                                        .edit()
+                                        .putString(Constants.DRIVER_ID, null)
+                                        .apply();
+                                showDriverNotRegistered();
+                            }
+                        }
+                    }
+                };
+
+        API.getInstance().getDriverIdByDriverEmail(driverEmail, onGetDriverIdCallback);
+
     }
 
     private void setupFirebaseRemoteConfig()
@@ -704,6 +747,17 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         {
             alert.dismiss();
         }
+    }
+
+    public void showDriverNotRegistered()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.unauthorized)
+                .setMessage(R.string.not_registered)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false);
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }

@@ -120,5 +120,8 @@
     <string name="trips_today">આજની ટ્રિપ્સ</string>
     <string name="trips_this_month">આ મહિના ની ટ્રિપ્સ</string>
     <string name="total_trips">કુલ ટ્રિપ્સ</string>
+    <string name="driver_not_registered">You are not registered</string>
+    <string name="unauthorized">બિન-સત્તાવાર</string>
+    <string name="not_registered">માફ કરશો, તમે V-Carry સાથે રજીસ્ટર થયા નહિ</string>
 
 </resources>

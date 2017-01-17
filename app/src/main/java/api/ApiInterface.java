@@ -99,7 +99,12 @@ public interface ApiInterface
     @FormUrlEncoded
     @POST("webservice.php")
     Call<ResponseBody> updateDeviceTokenDriver(@Field("method") String method,
-                                               @Field("driver_email") String customerId,
+                                               @Field("driver_email") String driverEmail,
                                                @Field("device_token") String deviceToken);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<Integer> getDriverIdByDriverEmail(@Field("method") String method,
+                                           @Field("driver_email") String driverEmail);
 
 }

@@ -151,4 +151,16 @@ public class API
         return call;
     }
 
+    public Call<Integer> getDriverIdByDriverEmail(final String driverEmail,
+                                                  RetrofitCallbacks<Integer> callback)
+    {
+        Call<Integer> call =
+                apiService.getDriverIdByDriverEmail("get_driver_id_by_driver_email",
+                        driverEmail);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
 }

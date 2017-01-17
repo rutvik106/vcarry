@@ -78,15 +78,63 @@ public class TransportRequestHandlerService extends Service
     {
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {
-            if (transportRequestHandler == null)
-            {
-                transportRequestHandler = new TransportRequestHandler(this);
-            }
-            addNotification();
-            TransportRequestHandler.setupConnectivityLogic();
+            getDriverIdByDriverEmail();
         }
 
         return START_STICKY;
+    }
+
+    private void getDriverIdByDriverEmail()
+    {
+
+        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        final RetrofitCallbacks<Integer> onGetDriverIdCallback =
+                new RetrofitCallbacks<Integer>()
+                {
+                    @Override
+                    public void onResponse(Call<Integer> call, Response<Integer> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() > 0)
+                            {
+                                PreferenceManager
+                                        .getDefaultSharedPreferences(TransportRequestHandlerService.this)
+                                        .edit()
+                                        .putString(Constants.DRIVER_ID, String.valueOf(response.body()))
+                                        .apply();
+
+                                if (transportRequestHandler == null)
+                                {
+                                    transportRequestHandler = new TransportRequestHandler(TransportRequestHandlerService.this);
+                                    addNotification(getString(R.string.service_listening));
+                                }
+
+                                TransportRequestHandler.setupConnectivityLogic();
+
+                            } else
+                            {
+                                PreferenceManager
+                                        .getDefaultSharedPreferences(TransportRequestHandlerService.this)
+                                        .edit()
+                                        .putString(Constants.DRIVER_ID, null)
+                                        .apply();
+                                if (transportRequestHandler != null)
+                                {
+                                    transportRequestHandler = null;
+                                    addNotification(getString(R.string.driver_not_registered));
+                                }
+
+                                TransportRequestHandler.setupConnectivityLogic();
+                            }
+                        }
+                    }
+                };
+
+        API.getInstance().getDriverIdByDriverEmail(driverEmail, onGetDriverIdCallback);
+
     }
 
     public void setResultReceiver(ResultReceiver resultReceiver)
@@ -136,7 +184,7 @@ public class TransportRequestHandlerService extends Service
         super.onDestroy();
     }
 
-    private void addNotification()
+    private void addNotification(String message)
     {
         final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
@@ -147,7 +195,7 @@ public class TransportRequestHandlerService extends Service
 
         Notification.Builder m_notificationBuilder = new Notification.Builder(this)
                 .setContentTitle("V-Carry")
-                .setContentText(getString(R.string.service_listening))
+                .setContentText(message)
                 .setSmallIcon(R.drawable.logo_small);
 
 
@@ -221,7 +269,7 @@ public class TransportRequestHandlerService extends Service
                 .edit()
                 .putBoolean(Constants.IS_DRIVER_ON_TRIP, false)
                 .apply();
-        addNotification();
+        addNotification(getString(R.string.service_listening));
         startCalculatingDistanceIfDriverOnTrip();
     }
 
@@ -232,7 +280,7 @@ public class TransportRequestHandlerService extends Service
                 .edit()
                 .putBoolean(Constants.IS_DRIVER_ON_TRIP, false)
                 .apply();
-        addNotification();
+        addNotification(getString(R.string.service_listening));
 
         if (!tripId.isEmpty())
         {

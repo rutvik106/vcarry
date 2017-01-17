@@ -73,6 +73,8 @@ public class Constants
 
     public static final String IS_BILL_PENDING = "IS_BILL_PENDING";
 
+    public static final String DRIVER_ID = "DRIVER_ID";
+
     public static HashMap<String, Object> getFirebaseRemoteValuesMap()
     {
 
