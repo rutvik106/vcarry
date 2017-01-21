@@ -53,6 +53,7 @@ import fragment.FragmentMap;
 import fragment.FragmentTrips;
 import fragment.FragmentTripsOnOffer;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -289,6 +290,9 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                         .edit()
                                         .putString(Constants.DRIVER_ID, String.valueOf(response.body()))
                                         .apply();
+
+                                updateFcmDeviceToken();
+
                             } else
                             {
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
@@ -302,6 +306,36 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 };
 
         API.getInstance().getDriverIdByDriverEmail(driverEmail, onGetDriverIdCallback);
+
+    }
+
+
+    private void updateFcmDeviceToken()
+    {
+        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        final String fcmDeviceToken = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.FCM_DRIVER_INSTANCE_ID, null);
+
+        final RetrofitCallbacks<ResponseBody> onUpdateDeviceTokenCallback =
+                new RetrofitCallbacks<ResponseBody>()
+                {
+
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                    {
+                        super.onResponse(call, response);
+                    }
+                };
+
+        if (fcmDeviceToken != null)
+        {
+            API.getInstance().updateDeviceTokenDriver(driverEmail, fcmDeviceToken, onUpdateDeviceTokenCallback);
+        } else
+        {
+            Toast.makeText(this, "FCM Instance ID not found!", Toast.LENGTH_SHORT).show();
+        }
+
 
     }
 

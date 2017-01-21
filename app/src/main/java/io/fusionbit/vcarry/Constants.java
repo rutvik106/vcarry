@@ -65,6 +65,8 @@ public class Constants
 
     public static final String PARCELABLE_TRIP_LIST = "PARCELABLE_TRIP_LIST";
 
+    public static final String FCM_DRIVER_INSTANCE_ID = "a0f7161f2d14ba177ed72b00017d1ddd";
+
     public static class FirebaseNames
     {
         public static final String NODE_ACCEPTED = "accepted";
