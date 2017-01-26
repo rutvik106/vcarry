@@ -3,7 +3,6 @@ package view;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,8 +31,6 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
     private final String requestId;
 
     TextView tvFrom, tvTo, tvTime, tvFare;
-
-    Button btnAccept;
 
     LinearLayout llAcceptRejectButtonContainer;
 
@@ -68,9 +65,7 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
             }
         });
 
-        btnAccept = (Button) findViewById(R.id.btn_reject);
-
-        btnAccept.setOnClickListener(new View.OnClickListener()
+        findViewById(R.id.btn_reject).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)

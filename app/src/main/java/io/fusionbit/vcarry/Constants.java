@@ -105,6 +105,13 @@ public class Constants
 
     }
 
+    public static final class NotificationType
+    {
+        public static final String SIMPLE = "simple";
+        public static final String GET_DRIVER_LOCATION = "get_driver_location";
+        public static final String DRIVER_CURRENT_LOCATION = "driver_current_location";
+    }
+
     public static class PrimaryKey
     {
         public static final int FOR_TRIP_SUMMARY = 1;
