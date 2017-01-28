@@ -301,6 +301,22 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                         .apply();
                                 showDriverNotRegistered();
                             }
+                        } else
+                        {
+                            showDriverNotRegistered();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Integer> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        final String driverId = PreferenceManager
+                                .getDefaultSharedPreferences(ActivityHome.this)
+                                .getString(Constants.DRIVER_ID, null);
+                        if (driverId == null)
+                        {
+                            showDriverNotRegistered();
                         }
                     }
                 };
