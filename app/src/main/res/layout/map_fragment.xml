@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/ll_dashboardContainer"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@android:color/black"
         android:gravity="center_horizontal"
@@ -89,7 +89,7 @@
             <Button
                 android:id="@+id/btn_dashCancelTrip"
                 android:layout_width="0dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/reject_btn"
@@ -101,7 +101,7 @@
             <Button
                 android:id="@+id/btn_dashStopTrip"
                 android:layout_width="0dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/accept_btn"

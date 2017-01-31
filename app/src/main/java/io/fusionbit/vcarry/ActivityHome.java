@@ -724,10 +724,16 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                             progressDialog.dismiss();
                         }
                     }
-                    final String tripId = resultData.getString(Constants.CURRENT_TRIP_ID);
-                    if (tripId != null)
+                    if (resultData != null)
                     {
-                        showCompletedTripDetails();
+                        final String tripId = resultData.getString(Constants.CURRENT_TRIP_ID);
+                        if (tripId != null)
+                        {
+                            showCompletedTripDetails();
+                        }
+                    } else
+                    {
+
                     }
                     break;
 
