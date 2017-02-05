@@ -80,7 +80,15 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        if (getSupportActionBar() != null)
+        {
+            getSupportActionBar().hide();
+        }
 
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.FULL_WAKE_LOCK, "My_App");

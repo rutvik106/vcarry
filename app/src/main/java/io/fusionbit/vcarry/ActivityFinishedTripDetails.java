@@ -3,6 +3,9 @@ package io.fusionbit.vcarry;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import apimodels.TripDetails;
+import apimodels.TripsByDriverMail;
+
 public class ActivityFinishedTripDetails extends AppCompatActivity
 {
 

@@ -123,5 +123,7 @@
     <string name="driver_not_registered">You are not registered</string>
     <string name="unauthorized">બિન-સત્તાવાર</string>
     <string name="not_registered">માફ કરશો, તમે V-Carry સાથે રજીસ્ટર થયા નહિ</string>
+    <string name="feature_coming_soon">Feature Coming Soon</string>
+    <string name="enter_cash_received">Please Enter Cash Received</string>
 
 </resources>

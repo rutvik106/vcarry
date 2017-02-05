@@ -457,31 +457,32 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     public boolean onNavigationItemSelected(MenuItem item)
     {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
 
-        if (id == R.id.nav_home)
+        switch (item.getItemId())
         {
-            fragmentMap.checkIfDriverOnTrip();
-            showFragment(fragmentMap);
-            setActionBarTitle("V-Carry");
-        } else if (id == R.id.nav_trips)
-        {
-            fragmentTrips.getTrips();
-            showFragment(fragmentTrips);
-            setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
-        } else if (id == R.id.nav_accountBalance)
-        {
-            showFragment(fragmentAccBalance);
-            setActionBarTitle(getResources().getString(R.string.nav_accountBalance));
-        } else if (id == R.id.nav_tripsOnOffer)
-        {
-            showFragment(fragmentTripsOnOffer);
-        } else if (id == R.id.nav_share)
-        {
-
-        } else if (id == R.id.nav_sendFeedback)
-        {
-
+            case R.id.nav_home:
+                fragmentMap.checkIfDriverOnTrip();
+                showFragment(fragmentMap);
+                setActionBarTitle("V-Carry");
+                break;
+            case R.id.nav_trips:
+                fragmentTrips.getTrips();
+                showFragment(fragmentTrips);
+                setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
+                break;
+            case R.id.nav_accountBalance:
+                showFragment(fragmentAccBalance);
+                setActionBarTitle(getResources().getString(R.string.nav_accountBalance));
+                break;
+            case R.id.nav_tripsOnOffer:
+                showFragment(fragmentTripsOnOffer);
+                break;
+            case R.id.nav_share:
+                Toast.makeText(this, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_sendFeedback:
+                Toast.makeText(this, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

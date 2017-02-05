@@ -137,7 +137,8 @@
             android:name=".ActivityTripNotifications"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ActivityTrips">
+        <activity android:name=".ActivityTrips"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

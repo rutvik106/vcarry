@@ -190,6 +190,8 @@ public class TransportRequestHandlerService extends Service
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
         if (isOnTrip)
         {
+            addTripNotification();
+            startCalculatingDistanceIfDriverOnTrip();
             return;
         }
 
@@ -257,6 +259,11 @@ public class TransportRequestHandlerService extends Service
                 .apply();
 
         tripDistanceDetails = new TripDistanceDetails(tripId, Calendar.getInstance().getTimeInMillis());
+
+        final Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(tripDistanceDetails);
+        realm.commitTransaction();
 
         addTripNotification();
         startCalculatingDistanceIfDriverOnTrip();
@@ -494,6 +501,8 @@ public class TransportRequestHandlerService extends Service
 
     public void startCalculatingDistanceIfDriverOnTrip()
     {
+
+
         Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE");
 
         final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
@@ -501,6 +510,20 @@ public class TransportRequestHandlerService extends Service
 
         final String tripId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CURRENT_TRIP_ID, "");
+
+        if (tripDistanceDetails == null)
+        {
+            //your phone might have turned off and trip details goes null
+            // get it form realm
+
+            final Realm realm = Realm.getDefaultInstance();
+
+            final TripDistanceDetails td = realm.where(TripDistanceDetails.class).equalTo("tripId", tripId)
+                    .findFirst();
+
+            tripDistanceDetails = realm.copyFromRealm(td);
+
+        }
 
         if (isOnTrip)
         {
@@ -538,45 +561,40 @@ public class TransportRequestHandlerService extends Service
                 mFusedLocation.stopGettingLocation();
 
                 mFusedLocation = null;
-
-                tripDistanceDetails.stopTrip(Calendar.getInstance().getTimeInMillis());
-
-                Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: WRITING TRIP DETAILS TO REALM");
-
-                final Realm realm = Realm.getDefaultInstance();
-
-                realm.executeTransactionAsync(new Realm.Transaction()
-                {
-                    @Override
-                    public void execute(Realm realm)
-                    {
-                        realm.copyToRealmOrUpdate(tripDistanceDetails);
-                    }
-                }, new Realm.Transaction.OnSuccess()
-                {
-                    @Override
-                    public void onSuccess()
-                    {
-
-                        Log.i(TAG, "TRANSACTION SUCCESSFUL");
-                        Bundle b = new Bundle();
-                        b.putString(Constants.CURRENT_TRIP_ID, tripId);
-                        resultReceiver.send(Constants.ON_TRIP_STOPPED, b);
-                    }
-                }, new Realm.Transaction.OnError()
-                {
-                    @Override
-                    public void onError(Throwable error)
-                    {
-
-                    }
-                });
-
-
-                //Toast.makeText(this, "TOTAL DISTANCE in m: " + tripDistanceDetails.getDistanceTravelled(), Toast.LENGTH_SHORT).show();
-
-
             }
+
+            tripDistanceDetails.stopTrip(Calendar.getInstance().getTimeInMillis());
+
+            Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: WRITING TRIP DETAILS TO REALM");
+
+            final Realm realm = Realm.getDefaultInstance();
+
+            realm.executeTransactionAsync(new Realm.Transaction()
+            {
+                @Override
+                public void execute(Realm realm)
+                {
+                    realm.copyToRealmOrUpdate(tripDistanceDetails);
+                }
+            }, new Realm.Transaction.OnSuccess()
+            {
+                @Override
+                public void onSuccess()
+                {
+
+                    Log.i(TAG, "TRANSACTION SUCCESSFUL");
+                    Bundle b = new Bundle();
+                    b.putString(Constants.CURRENT_TRIP_ID, tripId);
+                    resultReceiver.send(Constants.ON_TRIP_STOPPED, b);
+                }
+            }, new Realm.Transaction.OnError()
+            {
+                @Override
+                public void onError(Throwable error)
+                {
+
+                }
+            });
         }
     }
 
@@ -600,6 +618,7 @@ public class TransportRequestHandlerService extends Service
         Log.i(TAG, "SPEED: " + location.getSpeed());
         Log.i(TAG, "****************************");
         tripDistanceDetails.addLocationData(location.getTime(), location.getLatitude(), location.getLongitude());
+
     }
 
 }

@@ -118,5 +118,7 @@
     <string name="driver_not_registered">You are not registered</string>
     <string name="unauthorized">Unauthorized</string>
     <string name="not_registered">Sorry, you are not registered with V-Carry</string>
+    <string name="feature_coming_soon">Feature Coming Soon</string>
+    <string name="enter_cash_received">Please Enter Cash Received</string>
 
 </resources>

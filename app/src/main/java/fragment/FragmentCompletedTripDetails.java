@@ -159,6 +159,14 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
             }
         });
 
+        cbMemo.setChecked(true);
+        cbLabor.setChecked(true);
+
+        etLaborAmount.setText("0");
+        etMemoAmount.setText("0");
+
+        etTotalAmount.setText("0");
+
         tvCompletedTripStartTime = (TextView) view.findViewById(R.id.tv_completedTripStartTime);
         tvCompletedTripEndTime = (TextView) view.findViewById(R.id.tv_completedTripEndTime);
         tvCompletedTripDistance = (TextView) view.findViewById(R.id.tv_completedTripDistance);
@@ -284,7 +292,7 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
 
         if (etTotalAmount.getText().toString().trim().isEmpty())
         {
-            Toast.makeText(context, "Please Enter Cash Received", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.enter_cash_received, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -314,6 +322,19 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
                 memoAmount,
                 labourAmount,
                 etTotalAmount.getText().toString(), OnInsertTripStopData);
+    }
+
+    public void setToReadOnlyMode()
+    {
+        cbMemo.setEnabled(false);
+        cbLabor.setEnabled(false);
+
+        etTotalAmount.setEnabled(false);
+        etMemoAmount.setEnabled(false);
+        etLaborAmount.setEnabled(false);
+
+        fabTripDone.setEnabled(false);
+        fabTripDone.setVisibility(View.GONE);
     }
 
     public interface TripStopDataInsertionCallback
