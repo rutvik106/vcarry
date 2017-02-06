@@ -28,7 +28,7 @@
                 android:drawableLeft="@drawable/ic_access_time_grey_100_24dp"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
-                android:textColor="#f5f5f5f5"
+                android:textColor="#f5f5f5"
                 android:textSize="18sp"
                 tools:text="28-wed, 4:30PM"/>
 
@@ -38,18 +38,32 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="#f5f5f5f5"
+                android:textColor="#f5f5f5"
                 android:textSize="28sp"
                 tools:text="\u20B9 200"/>
 
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tv_vehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:drawablePadding="5dp"
+            android:drawableTop="@drawable/ic_local_shipping_black_18dp"
+            android:gravity="center"
+            android:textColor="#f5f5f5f5"
+            android:textSize="20sp"
+            tools:text="@string/vehicle"/>
+
+        <TextView
             android:id="@+id/tv_from"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="#f5f5f5f5"
+            android:drawableLeft="@drawable/ic_location_on_black_18dp"
+            android:drawablePadding="5dp"
+            android:textColor="#f5f5f5"
             android:textSize="18sp"
             tools:text="@string/request_from"/>
 
@@ -58,7 +72,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="#f5f5f5f5"
+            android:drawableLeft="@drawable/ic_location_on_black_18dp"
+            android:drawablePadding="5dp"
+            android:textColor="#f5f5f5"
             android:textSize="18sp"
             tools:text="@string/request_to"/>
 

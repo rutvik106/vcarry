@@ -30,7 +30,7 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
     private final String requestId;
 
-    TextView tvFrom, tvTo, tvTime, tvFare;
+    TextView tvFrom, tvTo, tvTime, tvFare, tvVehicle;
 
     LinearLayout llAcceptRejectButtonContainer;
 
@@ -80,6 +80,7 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
         tvTo = (TextView) findViewById(R.id.tv_to);
         tvTime = (TextView) findViewById(R.id.tv_time);
         tvFare = (TextView) findViewById(R.id.tv_fare);
+        tvVehicle = (TextView) findViewById(R.id.tv_vehicle);
 
         getRequestDetails();
 
@@ -100,6 +101,10 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
             tvTo.setText(getResources().getString(R.string.request_to) + ": " + details.get("to").toString());
             tvTime.setText(Utils.convertDateToRequireFormat(details.get("date_time").toString()));
             tvFare.setText(getResources().getString(R.string.rs) + " " + details.get("fare").toString());
+            if (details.get("vehicle") != null)
+            {
+                tvVehicle.setText(details.get("vehicle").toString());
+            }
         } else
         {
             onRequestDetailsNotFound(null);
@@ -146,6 +151,8 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
         tvFare.setText(getResources().getString(R.string.rs) + " "
                 + tripDetails.getFare());
+
+        tvVehicle.setText("N/A");
 
     }
 }
