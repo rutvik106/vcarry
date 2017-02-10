@@ -3,7 +3,6 @@ package fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -24,7 +23,6 @@ import api.RetrofitCallbacks;
 import apimodels.TripDetails;
 import extra.Utils;
 import io.fusionbit.vcarry.App;
-import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.R;
 import io.realm.Realm;
 import models.TripDistanceDetails;
@@ -63,6 +61,10 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
 
     double distance;
 
+    boolean isReadOnlyMode;
+
+    Call apiCall;
+
     RetrofitCallbacks OnInsertTripStopData = new RetrofitCallbacks<ResponseBody>()
     {
 
@@ -80,9 +82,17 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
                     } else
                     {
                         tripStopDataInsertionCallback.dataInsertedSuccessfully();
+
+                        final Realm realm = Realm.getDefaultInstance();
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(tripDetails);
+                        realm.copyToRealmOrUpdate(tripDistanceDetails);
+                        realm.commitTransaction();
+
                     }
                 } catch (IOException e)
                 {
+                    tripStopDataInsertionCallback.failedToInsertTripStopData();
                     e.printStackTrace();
                 }
             } else
@@ -100,11 +110,13 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
     };
 
     public static FragmentCompletedTripDetails newInstance(final Context context, final String tripId,
+                                                           final boolean isReadOnlyMode,
                                                            final TripStopDataInsertionCallback tripStopDataInsertionCallback)
     {
         FragmentCompletedTripDetails fragmentCompletedTripDetails = new FragmentCompletedTripDetails();
         fragmentCompletedTripDetails.context = context;
         fragmentCompletedTripDetails.tripId = tripId;
+        fragmentCompletedTripDetails.isReadOnlyMode = isReadOnlyMode;
         fragmentCompletedTripDetails.tripStopDataInsertionCallback = tripStopDataInsertionCallback;
         return fragmentCompletedTripDetails;
     }
@@ -175,10 +187,10 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
         //tvCompletedTripFrom = (TextView) view.findViewById(R.id.tv_completedTripFrom);
         //tvCompletedTripTo = (TextView) view.findViewById(R.id.tv_completedTripTo);
 
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-                .edit()
-                .putBoolean(Constants.IS_BILL_PENDING, true)
-                .apply();
+        if (isReadOnlyMode)
+        {
+            setToReadOnlyMode();
+        }
 
         showCompletedTripDetails(tripId);
 
@@ -190,11 +202,21 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
 
         final Realm realm = Realm.getDefaultInstance();
 
-        tripDetails = realm.where(TripDetails.class)
+        final TripDetails td = realm.where(TripDetails.class)
                 .equalTo("tripId", tripId).findFirst();
 
-        tripDistanceDetails = realm.where(TripDistanceDetails.class)
+        if (td != null)
+        {
+            tripDetails = realm.copyFromRealm(td);
+        }
+
+        final TripDistanceDetails tdd = realm.where(TripDistanceDetails.class)
                 .equalTo("tripId", tripId).findFirst();
+
+        if (tdd != null)
+        {
+            tripDistanceDetails = realm.copyFromRealm(tdd);
+        }
 
 
         if (tripDetails == null)
@@ -266,11 +288,25 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
 
         //tvCompletedTripTo.setText(tripDetails.getToShippingLocation());
 
+        if (isReadOnlyMode)
+        {
+            setToReadOnlyMode();
+        }
+
     }
 
     @Override
     public void onClick(View view)
     {
+        if (tripDetails == null || tripDistanceDetails == null)
+        {
+            return;
+        }
+
+        if (apiCall != null)
+        {
+            apiCall.cancel();
+        }
 
         if (cbLabor.isChecked())
         {
@@ -302,6 +338,7 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
             if (!etMemoAmount.getText().toString().isEmpty())
             {
                 memoAmount = etMemoAmount.getText().toString();
+                tripDistanceDetails.setMemoAmount(memoAmount);
             }
         }
 
@@ -310,11 +347,13 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
             if (!etLaborAmount.getText().toString().isEmpty())
             {
                 labourAmount = etLaborAmount.getText().toString();
+                tripDistanceDetails.setLabourAmount(labourAmount);
             }
         }
 
+        tripDistanceDetails.setAmount(etTotalAmount.getText().toString());
 
-        API.getInstance().stopTripAndSendDetails(tripId, tripDistanceDetails.getTripStartTime() + "",
+        apiCall = API.getInstance().stopTripAndSendDetails(tripId, tripDistanceDetails.getTripStartTime() + "",
                 tripDistanceDetails.getTripStopTime() + "",
                 tripDistanceDetails.getStartLatLng(),
                 tripDistanceDetails.getStopLatLng(),
@@ -324,7 +363,7 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
                 etTotalAmount.getText().toString(), OnInsertTripStopData);
     }
 
-    public void setToReadOnlyMode()
+    private void setToReadOnlyMode()
     {
         cbMemo.setEnabled(false);
         cbLabor.setEnabled(false);
@@ -335,6 +374,27 @@ public class FragmentCompletedTripDetails extends Fragment implements View.OnCli
 
         fabTripDone.setEnabled(false);
         fabTripDone.setVisibility(View.GONE);
+
+        if (tripDistanceDetails == null)
+        {
+            return;
+        }
+
+        if (tripDistanceDetails.getAmount() != null)
+        {
+            etTotalAmount.setText(tripDistanceDetails.getAmount());
+        }
+
+        if (tripDistanceDetails.getLabourAmount() != null)
+        {
+            etLaborAmount.setText(tripDistanceDetails.getLabourAmount());
+        }
+
+        if (tripDistanceDetails.getMemoAmount() != null)
+        {
+            etMemoAmount.setText(tripDistanceDetails.getMemoAmount());
+        }
+
     }
 
     public interface TripStopDataInsertionCallback

@@ -512,7 +512,14 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         {
             isShowingCompletedTripDetails = true;
             findViewById(R.id.fl_completedTripDetails).setVisibility(View.VISIBLE);
-            fragmentCompletedTripDetails = FragmentCompletedTripDetails.newInstance(this, tripId, this);
+            fragmentCompletedTripDetails = FragmentCompletedTripDetails.newInstance(this, tripId,
+                    false, this);
+
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putBoolean(Constants.IS_BILL_PENDING, true)
+                    .apply();
+
             fragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
                     .add(R.id.fl_completedTripDetails, fragmentCompletedTripDetails)

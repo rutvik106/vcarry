@@ -63,15 +63,17 @@ public class API
         call.enqueue(callback);
     }
 
-    public void stopTripAndSendDetails(final String tripId, final String startTime, final String stopTime,
-                                       final String startLoc, final String stopLoc, final String distance,
-                                       final String memoAmount, final String labourAmount, final String cashReceived,
-                                       final RetrofitCallbacks<ResponseBody> callback)
+    public Call<ResponseBody> stopTripAndSendDetails(final String tripId, final String startTime, final String stopTime,
+                                                     final String startLoc, final String stopLoc, final String distance,
+                                                     final String memoAmount, final String labourAmount, final String cashReceived,
+                                                     final RetrofitCallbacks<ResponseBody> callback)
     {
         Call<ResponseBody> call = apiService.stopTripAndSendDetails("insert_trip_stop_data",
                 tripId, startTime, stopTime, startLoc, stopLoc, distance, memoAmount, labourAmount, cashReceived);
 
         call.enqueue(callback);
+
+        return call;
     }
 
     public void insertTripAcceptedData(final String driverEmail, final String tripId,

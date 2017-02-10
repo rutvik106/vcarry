@@ -107,7 +107,6 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     @SerializedName("customer_contact_no")
     private String customerContactNo;
 
-
     public String getTripId()
     {
         return tripId;

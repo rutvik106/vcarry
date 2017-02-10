@@ -125,5 +125,6 @@
     <string name="not_registered">માફ કરશો, તમે V-Carry સાથે રજીસ્ટર થયા નહિ</string>
     <string name="feature_coming_soon">Feature Coming Soon</string>
     <string name="enter_cash_received">Please Enter Cash Received</string>
+    <string name="finished_trip_details">Finished Trip Details</string>
 
 </resources>

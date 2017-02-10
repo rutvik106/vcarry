@@ -23,6 +23,12 @@ public class TripDistanceDetails extends RealmObject
 
     long tripStopTime;
 
+    private String labourAmount;
+
+    private String memoAmount;
+
+    private String amount;
+
     RealmList<LatLngData> latLngDataList;
 
     public TripDistanceDetails()
@@ -162,6 +168,36 @@ public class TripDistanceDetails extends RealmObject
             return "0.00,0.00";
         }
         return latLngDataList.last().getLat() + "," + latLngDataList.last().getLng();
+    }
+
+    public String getLabourAmount()
+    {
+        return labourAmount;
+    }
+
+    public void setLabourAmount(String labourAmount)
+    {
+        this.labourAmount = labourAmount;
+    }
+
+    public String getMemoAmount()
+    {
+        return memoAmount;
+    }
+
+    public void setMemoAmount(String memoAmount)
+    {
+        this.memoAmount = memoAmount;
+    }
+
+    public String getAmount()
+    {
+        return amount;
+    }
+
+    public void setAmount(String amount)
+    {
+        this.amount = amount;
     }
 
 }
