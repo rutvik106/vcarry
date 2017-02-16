@@ -111,20 +111,20 @@
     <string name="this_month">આ મહિને</string>
     <string name="total">કુલ</string>
     <string name="trip_cancel_msg">આ સફર સમાપ્ત થયેલ નથી, શું તમે ખરેખર આ સફર રદ કરવા માગો છો?</string>
-    <string name="service_listening">Listening for Transport Request...</string>
+    <string name="service_listening">ટ્રાન્સપોર્ટ વિનંતી રાહ જોવે છે...</string>
     <string name="clear_offline_data">ઑફલાઇન ડેટા કાઢી નાખો</string>
     <string name="trip_completed">પૂર્ણ  ટ્રીપ:</string>
     <string name="incomplete_trip">અધૂરું:</string>
-    <string name="enter_memo_amount">Please Enter Labour Amount</string>
-    <string name="enter_labour_amount">Please Enter Memo Amount</string>
+    <string name="enter_memo_amount">કૃપા કરીને શ્રમ રકમ દાખલ કરો</string>
+    <string name="enter_labour_amount">કૃપા કરીને મેમો રકમ દાખલ કરો</string>
     <string name="trips_today">આજની ટ્રિપ્સ</string>
     <string name="trips_this_month">આ મહિના ની ટ્રિપ્સ</string>
     <string name="total_trips">કુલ ટ્રિપ્સ</string>
     <string name="driver_not_registered">You are not registered</string>
     <string name="unauthorized">બિન-સત્તાવાર</string>
     <string name="not_registered">માફ કરશો, તમે V-Carry સાથે રજીસ્ટર થયા નહિ</string>
-    <string name="feature_coming_soon">Feature Coming Soon</string>
-    <string name="enter_cash_received">Please Enter Cash Received</string>
-    <string name="finished_trip_details">Finished Trip Details</string>
+    <string name="feature_coming_soon">સુવિધા જલ્દી ઉપલબ્ધ થશે</string>
+    <string name="enter_cash_received">કૃપા કરીને કેશ દાખલ કરો</string>
+    <string name="finished_trip_details">સમાપ્ત ટ્રીપ ની વિગતો</string>
 
 </resources>

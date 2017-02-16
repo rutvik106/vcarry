@@ -255,6 +255,9 @@ public class ActivityTripDetails extends AppCompatActivity
                                 {
                                     Log.i(TAG, "STARTING TRIP NOW CALLING FUNCTION ON SERVICE");
                                     mService.startTrip(tripId);
+                                    Intent i = new Intent(ActivityTripDetails.this, ActivityHome.class);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(i);
                                 }
 
                                 try
