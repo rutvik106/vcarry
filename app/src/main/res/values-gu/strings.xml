@@ -126,5 +126,6 @@
     <string name="feature_coming_soon">સુવિધા જલ્દી ઉપલબ્ધ થશે</string>
     <string name="enter_cash_received">કૃપા કરીને કેશ દાખલ કરો</string>
     <string name="finished_trip_details">સમાપ્ત ટ્રીપ ની વિગતો</string>
+    <string name="trip_number">Trip Number</string>
 
 </resources>

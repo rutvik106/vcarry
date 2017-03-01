@@ -106,6 +106,30 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     private String toAreaName;
     @SerializedName("customer_contact_no")
     private String customerContactNo;
+    /**
+     * trip_datetime_dmy : 05/02/2017 11:36:56 AM
+     * from_address_line1 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
+     * from_address_line2 : Rangin Park Soc
+     * to_address_line1 : Jodhpur park society
+     * to_address_line2 : Jodhpur park society Near Ramdev Nagar BRTS Bus stop
+     * vehicle_type : Tata Ace
+     * trip_no : 050220170000019
+     */
+
+    @SerializedName("trip_datetime_dmy")
+    private String tripDatetimeDmy;
+    @SerializedName("from_address_line1")
+    private String fromAddressLine1;
+    @SerializedName("from_address_line2")
+    private String fromAddressLine2;
+    @SerializedName("to_address_line1")
+    private String toAddressLine1;
+    @SerializedName("to_address_line2")
+    private String toAddressLine2;
+    @SerializedName("vehicle_type")
+    private String vehicleType;
+    @SerializedName("trip_no")
+    private String tripNo;
 
     public String getTripId()
     {
@@ -149,7 +173,10 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
 
     public String getFromShippingLocation()
     {
-        return fromShippingLocation;
+        return getFromAddressLine1() + ", " +
+                getFromAddressLine2() + ", " +
+                getFromAreaName() + ", " +
+                getFromCityName();
     }
 
     public void setFromShippingLocation(String fromShippingLocation)
@@ -179,7 +206,10 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
 
     public String getToShippingLocation()
     {
-        return toShippingLocation;
+        return getToAddressLine1() + ", " +
+                getToAddressLine2() + ", " +
+                getToAreaName() + ", " +
+                getToCityName();
     }
 
     public void setToShippingLocation(String toShippingLocation)
@@ -383,5 +413,75 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     public void setCustomerContactNo(String customerContactNo)
     {
         this.customerContactNo = customerContactNo;
+    }
+
+    public String getTripDatetimeDmy()
+    {
+        return tripDatetimeDmy;
+    }
+
+    public void setTripDatetimeDmy(String tripDatetimeDmy)
+    {
+        this.tripDatetimeDmy = tripDatetimeDmy;
+    }
+
+    public String getFromAddressLine1()
+    {
+        return fromAddressLine1;
+    }
+
+    public void setFromAddressLine1(String fromAddressLine1)
+    {
+        this.fromAddressLine1 = fromAddressLine1;
+    }
+
+    public String getFromAddressLine2()
+    {
+        return fromAddressLine2;
+    }
+
+    public void setFromAddressLine2(String fromAddressLine2)
+    {
+        this.fromAddressLine2 = fromAddressLine2;
+    }
+
+    public String getToAddressLine1()
+    {
+        return toAddressLine1;
+    }
+
+    public void setToAddressLine1(String toAddressLine1)
+    {
+        this.toAddressLine1 = toAddressLine1;
+    }
+
+    public String getToAddressLine2()
+    {
+        return toAddressLine2;
+    }
+
+    public void setToAddressLine2(String toAddressLine2)
+    {
+        this.toAddressLine2 = toAddressLine2;
+    }
+
+    public String getVehicleType()
+    {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType)
+    {
+        this.vehicleType = vehicleType;
+    }
+
+    public String getTripNo()
+    {
+        return tripNo;
+    }
+
+    public void setTripNo(String tripNo)
+    {
+        this.tripNo = tripNo;
     }
 }

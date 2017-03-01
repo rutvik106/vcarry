@@ -527,7 +527,7 @@ public class TransportRequestHandlerService extends Service
 
         if (isOnTrip)
         {
-            Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: DRIVER ON TRIP");
+            Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: Motorist ON TRIP");
             if (mFusedLocation == null)
             {
                 Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: CREATING NEW FUSED LOCATION PROVIDER");
@@ -551,7 +551,7 @@ public class TransportRequestHandlerService extends Service
             }
         } else
         {
-            Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: DRIVER NOT ON TRIP");
+            Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: Motorist NOT ON TRIP");
             if (mFusedLocation != null)
             {
                 Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: FUSED LOCATION PROVIDER IS NOT NULL");

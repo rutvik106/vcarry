@@ -121,5 +121,6 @@
     <string name="feature_coming_soon">Feature Coming Soon</string>
     <string name="enter_cash_received">Please Enter Cash Received</string>
     <string name="finished_trip_details">Finished Trip Details</string>
+    <string name="trip_number">Trip Number</string>
 
 </resources>

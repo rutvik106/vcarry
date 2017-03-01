@@ -116,7 +116,7 @@ public class NotificationHandler
                                         protected Void doInBackground(Void... voids)
                                         {
                                             FCM.sendPushNotification(Constants.NotificationType.DRIVER_CURRENT_LOCATION,
-                                                    "Driver Location", "Driver current location", customerDeviceToken, extraDetails);
+                                                    "Motorist Location", "Motorist current location", customerDeviceToken, extraDetails);
                                             return null;
                                         }
                                     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

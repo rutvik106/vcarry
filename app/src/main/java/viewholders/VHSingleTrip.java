@@ -34,7 +34,8 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
 
     TripsByDriverMail model;
 
-    TextView tvTripFrom, tvTripTo, tvTripTime, tvCurrentTripStatus, tvTripTimeCountdown, tvTimeLeft;
+    TextView tvTripFrom, tvTripTo, tvTripTime, tvCurrentTripStatus,
+            tvTripTimeCountdown, tvTimeLeft, tvTripNumber;
 
     LinearLayout llContainer;
 
@@ -60,6 +61,8 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
         tvCurrentTripStatus = (TextView) itemView.findViewById(R.id.tv_currentTripStatus);
         tvTripTimeCountdown = (TextView) itemView.findViewById(R.id.tv_tripTimeCountdown);
         tvTimeLeft = (TextView) itemView.findViewById(R.id.tv_timeLeft);
+
+        tvTripNumber = (TextView) itemView.findViewById(R.id.tv_tripNumber);
 
         llContainer = (LinearLayout) itemView.findViewById(R.id.ll_singleTripContainer);
 
@@ -90,6 +93,8 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
         vh.tvCurrentTripStatus.setText(model.getStatus());
 
         vh.tvTripTime.setText(Utils.convertDateToRequireFormat(model.getTripDatetime()));
+
+        vh.tvTripNumber.setText(model.getTripNo());
 
         try
         {

@@ -30,6 +30,24 @@
             android:textSize="12sp"
             android:textStyle="bold"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/trip_number"
+            android:textColor="#999999"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/tv_tripNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            tools:text="134235634567"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,9 +74,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="Tue, 2 4:24 PM"
                     android:textColor="#333333"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp"
+                    tools:text="Tue, 2 4:24 PM"/>
 
             </LinearLayout>
 

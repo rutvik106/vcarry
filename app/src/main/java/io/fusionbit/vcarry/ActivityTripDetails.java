@@ -35,7 +35,7 @@ public class ActivityTripDetails extends AppCompatActivity
     String tripId;
 
     TextView tvTripDetailTime, tvTripCustomerName, tvTripLocation, tvTripDestination,
-            tvTripStatus, tvTripFare;
+            tvTripStatus, tvTripFare, tvTripNumber;
 
     Button btnStartTrip;
 
@@ -86,6 +86,8 @@ public class ActivityTripDetails extends AppCompatActivity
         tvTripLocation = (TextView) findViewById(R.id.tv_tripLocation);
         tvTripFare = (TextView) findViewById(R.id.tv_tripFare);
         tvTripStatus = (TextView) findViewById(R.id.tv_tripStatus);
+
+        tvTripNumber = (TextView) findViewById(R.id.tv_tripNumber);
 
         btnStartTrip = (Button) findViewById(R.id.btn_startTrip);
 
@@ -171,7 +173,9 @@ public class ActivityTripDetails extends AppCompatActivity
         tvTripLocation.setText(tripDetails.getFromShippingLocation());
         tvTripDestination.setText(tripDetails.getToShippingLocation());
         tvTripCustomerName.setText(tripDetails.getCustomerName());
-        tvTripDetailTime.setText(tripDetails.getTripDatetime());
+        tvTripDetailTime.setText(tripDetails.getTripDatetimeDmy());
+
+        tvTripNumber.setText(tripDetails.getTripNo());
 
         final int tripStatus = Integer.valueOf(tripDetails.getTripStatus());
         final int tripStatusStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
