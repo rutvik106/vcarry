@@ -9,13 +9,12 @@ import com.google.gson.annotations.SerializedName;
 import io.fusionbit.vcarry.Constants;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.RealmClass;
 
 /**
  * Created by rutvik on 11/27/2016 at 3:54 PM.
  */
 
-public class TripsByDriverMail extends RealmObject implements Comparable<TripsByDriverMail>,Parcelable
+public class TripsByDriverMail extends RealmObject implements Comparable<TripsByDriverMail>, Parcelable
 {
 
 
@@ -86,6 +85,42 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     private String status;
     @SerializedName("customer_name")
     private String customerName;
+    /**
+     * trip_datetime_dmy : 05/02/2017 11:36:56 AM
+     * from_address_line1 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
+     * from_address_line2 : Rangin Park Soc
+     * from_city_name : Ahmedabad
+     * from_area_name : S g highway
+     * to_address_line1 : Jodhpur park society
+     * to_address_line2 : Jodhpur park society Near Ramdev Nagar BRTS Bus stop
+     * to_city_name : Ahmedabad
+     * to_area_name : Kankriya
+     * customer_contact_no : 9409210477
+     * trip_no : 050220170000019
+     */
+
+    @SerializedName("trip_datetime_dmy")
+    private String tripDatetimeDmy;
+    @SerializedName("from_address_line1")
+    private String fromAddressLine1;
+    @SerializedName("from_address_line2")
+    private String fromAddressLine2;
+    @SerializedName("from_city_name")
+    private String fromCityName;
+    @SerializedName("from_area_name")
+    private String fromAreaName;
+    @SerializedName("to_address_line1")
+    private String toAddressLine1;
+    @SerializedName("to_address_line2")
+    private String toAddressLine2;
+    @SerializedName("to_city_name")
+    private String toCityName;
+    @SerializedName("to_area_name")
+    private String toAreaName;
+    @SerializedName("customer_contact_no")
+    private String customerContactNo;
+    @SerializedName("trip_no")
+    private String tripNo;
 
     public String getTripId()
     {
@@ -119,7 +154,9 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
 
     public String getFromShippingLocation()
     {
-        return fromShippingLocation;
+        return getFromAddressLine1() + ", " +
+                getFromAddressLine2() + ", " +
+                getFromAreaName() + ", " + getFromCityName();
     }
 
     public void setFromShippingLocation(String fromShippingLocation)
@@ -159,7 +196,9 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
 
     public String getToShippingLocation()
     {
-        return toShippingLocation;
+        return getToAddressLine1() + ", " +
+                getToAddressLine2() + ", " +
+                getToAreaName() + ", " + getToCityName();
     }
 
     public void setToShippingLocation(String toShippingLocation)
@@ -322,6 +361,120 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         return this.getTripId().equals(that.getTripId());
     }*/
 
+    public TripsByDriverMail()
+    {
+    }
+
+    public String getTripDatetimeDmy()
+    {
+        return tripDatetimeDmy;
+    }
+
+    public void setTripDatetimeDmy(String tripDatetimeDmy)
+    {
+        this.tripDatetimeDmy = tripDatetimeDmy;
+    }
+
+    public String getFromAddressLine1()
+    {
+        return fromAddressLine1;
+    }
+
+    public void setFromAddressLine1(String fromAddressLine1)
+    {
+        this.fromAddressLine1 = fromAddressLine1;
+    }
+
+    public String getFromAddressLine2()
+    {
+        return fromAddressLine2;
+    }
+
+    public void setFromAddressLine2(String fromAddressLine2)
+    {
+        this.fromAddressLine2 = fromAddressLine2;
+    }
+
+    public String getFromCityName()
+    {
+        return fromCityName;
+    }
+
+    public void setFromCityName(String fromCityName)
+    {
+        this.fromCityName = fromCityName;
+    }
+
+    public String getFromAreaName()
+    {
+        return fromAreaName;
+    }
+
+    public void setFromAreaName(String fromAreaName)
+    {
+        this.fromAreaName = fromAreaName;
+    }
+
+    public String getToAddressLine1()
+    {
+        return toAddressLine1;
+    }
+
+    public void setToAddressLine1(String toAddressLine1)
+    {
+        this.toAddressLine1 = toAddressLine1;
+    }
+
+    public String getToAddressLine2()
+    {
+        return toAddressLine2;
+    }
+
+    public void setToAddressLine2(String toAddressLine2)
+    {
+        this.toAddressLine2 = toAddressLine2;
+    }
+
+    public String getToCityName()
+    {
+        return toCityName;
+    }
+
+    public void setToCityName(String toCityName)
+    {
+        this.toCityName = toCityName;
+    }
+
+    public String getToAreaName()
+    {
+        return toAreaName;
+    }
+
+    public void setToAreaName(String toAreaName)
+    {
+        this.toAreaName = toAreaName;
+    }
+
+    public String getCustomerContactNo()
+    {
+        return customerContactNo;
+    }
+
+    public void setCustomerContactNo(String customerContactNo)
+    {
+        this.customerContactNo = customerContactNo;
+    }
+
+    public String getTripNo()
+    {
+        return tripNo;
+    }
+
+    public void setTripNo(String tripNo)
+    {
+        this.tripNo = tripNo;
+    }
+
     @Override
     public int describeContents()
     {
@@ -352,10 +505,17 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         dest.writeString(this.customerId);
         dest.writeString(this.status);
         dest.writeString(this.customerName);
-    }
-
-    public TripsByDriverMail()
-    {
+        dest.writeString(this.tripDatetimeDmy);
+        dest.writeString(this.fromAddressLine1);
+        dest.writeString(this.fromAddressLine2);
+        dest.writeString(this.fromCityName);
+        dest.writeString(this.fromAreaName);
+        dest.writeString(this.toAddressLine1);
+        dest.writeString(this.toAddressLine2);
+        dest.writeString(this.toCityName);
+        dest.writeString(this.toAreaName);
+        dest.writeString(this.customerContactNo);
+        dest.writeString(this.tripNo);
     }
 
     protected TripsByDriverMail(Parcel in)
@@ -381,9 +541,20 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         this.customerId = in.readString();
         this.status = in.readString();
         this.customerName = in.readString();
+        this.tripDatetimeDmy = in.readString();
+        this.fromAddressLine1 = in.readString();
+        this.fromAddressLine2 = in.readString();
+        this.fromCityName = in.readString();
+        this.fromAreaName = in.readString();
+        this.toAddressLine1 = in.readString();
+        this.toAddressLine2 = in.readString();
+        this.toCityName = in.readString();
+        this.toAreaName = in.readString();
+        this.customerContactNo = in.readString();
+        this.tripNo = in.readString();
     }
 
-    public static final Parcelable.Creator<TripsByDriverMail> CREATOR = new Parcelable.Creator<TripsByDriverMail>()
+    public static final Creator<TripsByDriverMail> CREATOR = new Creator<TripsByDriverMail>()
     {
         @Override
         public TripsByDriverMail createFromParcel(Parcel source)
