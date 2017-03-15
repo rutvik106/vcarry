@@ -182,6 +182,18 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         super.onStop();
     }
 
+    @Override
+    protected void internetNotAvailable()
+    {
+        Toast.makeText(this, "No Internet", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
+
+    }
+
 
     public void acceptRequest(final String requestId)
     {
@@ -221,7 +233,7 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     {
         Log.i(TAG, "TRIP ID: " + tripId + " WAS ACCEPTED SUCCESSFULLY");
         //Toast.makeText(this, "TRIP ACCEPTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
-        mService.startListeningForTripConfirmation(tripId);
+        //mService.startListeningForTripConfirmation(tripId);
     }
 
     @Override

@@ -93,28 +93,27 @@
 
     <string name="trip_confirm_notification_title">અભિનંદન!</string>
     <string name="trip_confirm_notification_message">તમારી ટ્રીપ પાક્કી છે</string>
-
     <string name="trip_not_confirm_notification_title">માફ કરશો</string>
     <string name="trip_not_confirm_notification_message">બીજા કોઇને સફર મળી</string>
-
     <string name="ok">ઠીક છે</string>
-
     <string name="please_update">અપડેટ કરો</string>
     <string name="trip_notification">ટ્રીપ નોટિફિકેશન્સ</string>
     <string name="time_lest">સમય બાકી</string>
-    <string name="paid">ચૂકવણી</string>
-    <string name="unpaid">અવેતન</string>
     <string name="account_summary">એકાઉન્ટ સારાંશ</string>
     <string name="finish_trip">ટ્રીપ સમાપ્ત કરો</string>
     <string name="cancel_trip">ટ્રીપ રદ કરો</string>
+
+    <string name="paid">ચૂકવણી</string>
+    <string name="unpaid">અવેતન</string>
     <string name="today">આજે</string>
     <string name="this_month">આ મહિને</string>
     <string name="total">કુલ</string>
+    <string name="trip_completed">પૂર્ણ  ટ્રીપ:</string>
+    <string name="incomplete_trip">અધૂરું:</string>
+
     <string name="trip_cancel_msg">આ સફર સમાપ્ત થયેલ નથી, શું તમે ખરેખર આ સફર રદ કરવા માગો છો?</string>
     <string name="service_listening">ટ્રાન્સપોર્ટ વિનંતી રાહ જોવે છે...</string>
     <string name="clear_offline_data">ઑફલાઇન ડેટા કાઢી નાખો</string>
-    <string name="trip_completed">પૂર્ણ  ટ્રીપ:</string>
-    <string name="incomplete_trip">અધૂરું:</string>
     <string name="enter_memo_amount">કૃપા કરીને શ્રમ રકમ દાખલ કરો</string>
     <string name="enter_labour_amount">કૃપા કરીને મેમો રકમ દાખલ કરો</string>
     <string name="trips_today">આજની ટ્રિપ્સ</string>
@@ -126,6 +125,8 @@
     <string name="feature_coming_soon">સુવિધા જલ્દી ઉપલબ્ધ થશે</string>
     <string name="enter_cash_received">કૃપા કરીને કેશ દાખલ કરો</string>
     <string name="finished_trip_details">સમાપ્ત ટ્રીપ ની વિગતો</string>
-    <string name="trip_number">Trip Number</string>
+    <string name="trip_number">ટ્રીપ નંબર</string>
+    <string name="trip_accepted_successfully">Trip Accepted Successfully</string>
+    <string name="wait_for_trip_confirmation">Please wait for confirmation message form V-Carry</string>
 
 </resources>

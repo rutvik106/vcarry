@@ -18,7 +18,6 @@ import api.API;
 import api.RetrofitCallbacks;
 import extra.Log;
 import io.fusionbit.vcarry.App;
-import io.fusionbit.vcarry.Constants;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -118,55 +117,50 @@ public class TransportRequestHandler
 
     }
 
-    public static void startListeningForTripConfirmation(final String tripId, final ConfirmationListener confirmationListener)
-    {
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-        dbRef.getRoot();
-
-        dbRef.child(Constants.FirebaseNames.NODE_ACCEPTED)
-                .child(tripId).addChildEventListener(new ChildEventListener()
-        {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s)
-            {
-
-            }
-
-            @Override
-            public final void onChildChanged(DataSnapshot dataSnapshot, String s)
-            {
-                if (dataSnapshot.getKey().equals(Constants.FirebaseNames.KEY_CONFIRM))
-                {
-                    final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                    if (dataSnapshot.getValue().equals(userEmail))
-                    {
-                        confirmationListener.tripConfirmed(tripId);
-                    } else
-                    {
-                        confirmationListener.tripNotConfirmed(tripId);
-                    }
-                }
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot)
-            {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s)
-            {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
-
-            }
-        });
-    }
+    //Not Using this function As we are receiving FCM notification
+    /**
+     * public static void startListeningForTripConfirmation(final String tripId, final ConfirmationListener confirmationListener)
+     * {
+     * DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
+     * dbRef.getRoot();
+     * <p>
+     * dbRef.child(Constants.FirebaseNames.NODE_ACCEPTED)
+     * .child(tripId).addChildEventListener(new ChildEventListener()
+     * {
+     *
+     * @Override public void onChildAdded(DataSnapshot dataSnapshot, String s)
+     * {
+     * <p>
+     * }
+     * @Override public final void onChildChanged(DataSnapshot dataSnapshot, String s)
+     * {
+     * if (dataSnapshot.getKey().equals(Constants.FirebaseNames.KEY_CONFIRM))
+     * {
+     * final String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+     * if (dataSnapshot.getValue().equals(userEmail))
+     * {
+     * confirmationListener.tripConfirmed(tripId);
+     * } else
+     * {
+     * confirmationListener.tripNotConfirmed(tripId);
+     * }
+     * }
+     * }
+     * @Override public void onChildRemoved(DataSnapshot dataSnapshot)
+     * {
+     * <p>
+     * }
+     * @Override public void onChildMoved(DataSnapshot dataSnapshot, String s)
+     * {
+     * <p>
+     * }
+     * @Override public void onCancelled(DatabaseError databaseError)
+     * {
+     * <p>
+     * }
+     * });
+     * }
+     */
 
     public static void acceptRequest(final String requestId, final String latLng, final TripAcceptedCallback tripAcceptedCallback)
     {

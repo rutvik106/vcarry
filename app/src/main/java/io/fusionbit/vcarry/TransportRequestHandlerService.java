@@ -171,10 +171,14 @@ public class TransportRequestHandlerService extends Service
                 new IntentFilter(Constants.Broadcast.UPCOMING_TRIP_NOTIFICATION));
     }
 
-    public void startListeningForTripConfirmation(final String tripId)
-    {
-        TransportRequestHandler.startListeningForTripConfirmation(tripId, TransportRequestHandlerService.this);
-    }
+    //Not Using this function As we are receiving FCM notification
+
+    /**
+     * public void startListeningForTripConfirmation(final String tripId)
+     * {
+     * TransportRequestHandler.startListeningForTripConfirmation(tripId, TransportRequestHandlerService.this);
+     * }
+     */
 
     @Override
     public void onDestroy()
@@ -351,9 +355,8 @@ public class TransportRequestHandlerService extends Service
                 getResources().getString(R.string.trip_confirm_notification_message), pendingIntent);
     }
 
-    private void insertTripDataIntoRealmAndSetupAlarm(final String tripId)
+    public void insertTripDataIntoRealmAndSetupAlarm(final String tripId)
     {
-
         final RetrofitCallbacks<TripDetails> callback = new RetrofitCallbacks<TripDetails>()
         {
 

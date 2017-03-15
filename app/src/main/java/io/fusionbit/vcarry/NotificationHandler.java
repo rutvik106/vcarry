@@ -2,13 +2,16 @@ package io.fusionbit.vcarry;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.location.Location;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -23,7 +26,10 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
+import extra.Utils;
 import fcm.FCM;
+
+import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
  * Created by rutvik on 1/26/2017 at 6:45 PM.
@@ -42,6 +48,36 @@ public class NotificationHandler
     JSONObject extra;
 
     FusedLocation fusedLocation;
+
+    TransportRequestHandlerService mService;
+
+    boolean mServiceBound = false;
+
+    ServiceConnection mServiceConnection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder)
+        {
+            mServiceBound = true;
+            mService = ((TransportRequestHandlerService.TransportRequestServiceBinder) iBinder)
+                    .getService();
+            try
+            {
+                mService.insertTripDataIntoRealmAndSetupAlarm(extra.getString("trip_id"));
+                context.unbindService(mServiceConnection);
+            } catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName)
+        {
+            mServiceBound = false;
+            mService = null;
+        }
+    };
 
     public NotificationHandler(Context context, RemoteMessage remoteMessage)
     {
@@ -76,6 +112,30 @@ public class NotificationHandler
                     break;
                 case Constants.NotificationType.GET_DRIVER_LOCATION:
                     sendLocationToCustomer();
+                    break;
+                case Constants.NotificationType.DRIVER_ALLOCATED:
+
+                    final Intent intent = new Intent(context, ActivityTripDetails.class);
+                    intent.putExtra(Constants.INTENT_EXTRA_TRIP_ID, extra.getString("trip_id"));
+
+                    //extra.Log.i(TAG, "SETTING TRIP ID: " + tripId + " IN PENDING INTENT");
+
+                    final PendingIntent pendingIntent = PendingIntent.getActivity(context,
+                            Integer.valueOf(extra.getString("trip_id")),
+                            intent,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    //start bound service now
+                    Intent transportRequestHandlerService = new Intent(context,
+                            TransportRequestHandlerService.class);
+                    context.startService(transportRequestHandlerService);
+
+                    //bind activity to service
+                    context.bindService(transportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
+
+                    Utils.showSimpleNotification(context, Integer.valueOf(extra.getString("trip_id")),
+                            data.getString("title"),
+                            data.getString("message"), pendingIntent);
                     break;
             }
         } catch (JSONException e)

@@ -104,6 +104,9 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
             if (details.get("vehicle") != null)
             {
                 tvVehicle.setText(details.get("vehicle").toString());
+            } else
+            {
+                tvVehicle.setText("N/A");
             }
         } else
         {
@@ -152,7 +155,13 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
         tvFare.setText(getResources().getString(R.string.rs) + " "
                 + tripDetails.getFare());
 
-        tvVehicle.setText("N/A");
+        if (tripDetails.getVehicleType() != null)
+        {
+            tvVehicle.setText(tripDetails.getVehicleType());
+        } else
+        {
+            tvVehicle.setText("N/A");
+        }
 
     }
 }

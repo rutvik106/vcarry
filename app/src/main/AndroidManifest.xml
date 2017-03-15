@@ -62,7 +62,7 @@
         </service>
 
 
-        <receiver android:name="extra.NetworkConnectionDetector">
+        <receiver android:name=".BaseActivity$NetworkConnectionDetector">
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGE"/>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>

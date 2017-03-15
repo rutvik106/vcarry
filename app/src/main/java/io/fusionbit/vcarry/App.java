@@ -1,8 +1,6 @@
 package io.fusionbit.vcarry;
 
-import android.content.Context;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
+import android.app.Application;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -23,10 +21,12 @@ import retrofit2.Response;
  * Created by rutvik on 10/26/2016 at 9:41 AM.
  */
 
-public class App extends MultiDexApplication
+public class App extends Application
 {
 
     public static final String APP_TAG = "VCRY ";
+
+    public static String PACKAGE_NAME;
 
     private static final String TAG = APP_TAG + App.class.getSimpleName();
 
@@ -41,6 +41,8 @@ public class App extends MultiDexApplication
     public void onCreate()
     {
         super.onCreate();
+
+        PACKAGE_NAME = getApplicationContext().getPackageName();
 
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
 
@@ -58,12 +60,13 @@ public class App extends MultiDexApplication
     }
 
 
-    @Override
-    protected void attachBaseContext(Context base)
-    {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
+    /**
+     * @Override protected void attachBaseContext(Context base)
+     * {
+     * super.attachBaseContext(base);
+     * MultiDex.install(this);
+     * }
+     */
 
     public void getTripNotifications(final TripNotificationListener tripNotificationListener)
     {

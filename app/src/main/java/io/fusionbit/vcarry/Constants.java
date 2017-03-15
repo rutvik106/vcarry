@@ -110,6 +110,7 @@ public class Constants
         public static final String SIMPLE = "simple";
         public static final String GET_DRIVER_LOCATION = "get_driver_location";
         public static final String DRIVER_CURRENT_LOCATION = "driver_current_location";
+        public static final String DRIVER_ALLOCATED = "driver_allocated";
     }
 
     public static class PrimaryKey

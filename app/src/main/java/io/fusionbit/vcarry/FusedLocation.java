@@ -335,7 +335,7 @@ public class FusedLocation implements LocationListener
         void locationSettingChangeUnavailable();
     }
 
-    public static abstract class LocationAwareActivity extends AppCompatActivity implements ForceLocationResultCallbacks
+    public static abstract class LocationAwareActivity extends BaseActivity implements ForceLocationResultCallbacks
     {
 
         @Override

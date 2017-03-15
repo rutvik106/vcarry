@@ -97,19 +97,21 @@
     <string name="please_update">Please Update</string>
     <string name="trip_notification">Trip Notification</string>
     <string name="time_lest">Time Left</string>
-    <string name="paid">Paid</string>
-    <string name="unpaid">Unpaid</string>
     <string name="account_summary">Account Summary</string>
     <string name="finish_trip">FINISH TRIP</string>
     <string name="cancel_trip">CANCEL TRIP</string>
+
+    <string name="paid">Paid</string>
+    <string name="unpaid">Unpaid</string>
     <string name="today">Today</string>
     <string name="this_month">This Month</string>
     <string name="total">Total</string>
+    <string name="trip_completed">Trip Completed:</string>
+    <string name="incomplete_trip">Incomplete:</string>
+
     <string name="trip_cancel_msg">This trip is not finished, are you sure you want to cancel this trip?</string>
     <string name="service_listening">Listening for Transport Request...</string>
     <string name="clear_offline_data">Clear Offline Data</string>
-    <string name="trip_completed">Trip Completed:</string>
-    <string name="incomplete_trip">Incomplete:</string>
     <string name="enter_memo_amount">Please Enter Labour Amount</string>
     <string name="enter_labour_amount">Please Enter Memo Amount</string>
     <string name="trips_today">Trips Today</string>
@@ -122,5 +124,7 @@
     <string name="enter_cash_received">Please Enter Cash Received</string>
     <string name="finished_trip_details">Finished Trip Details</string>
     <string name="trip_number">Trip Number</string>
+    <string name="trip_accepted_successfully">Trip Accepted Successfully</string>
+    <string name="wait_for_trip_confirmation">Please wait for confirmation message form V-Carry</string>
 
 </resources>

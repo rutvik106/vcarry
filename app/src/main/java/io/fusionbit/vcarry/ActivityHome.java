@@ -12,7 +12,9 @@ import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -84,6 +86,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     FragmentCompletedTripDetails fragmentCompletedTripDetails;
 
+    CoordinatorLayout clActivityHome;
+
     boolean doubleBackToExitPressedOnce = false;
 
     List<Fragment> fragmentList = new ArrayList<>();
@@ -127,6 +131,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         }
     };
 
+    private Snackbar snackbarNoInternet;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -165,6 +171,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        clActivityHome = (CoordinatorLayout) findViewById(R.id.cl_activityHome);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -360,7 +367,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         remoteConfig = FirebaseRemoteConfig.getInstance();
 
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                //.setDeveloperModeEnabled(BuildConfig.DEBUG)
                 .build();
 
         remoteConfig.setConfigSettings(configSettings);
@@ -500,6 +507,29 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
             mServiceBound = false;
         }
         super.onStop();
+    }
+
+    @Override
+    protected void internetNotAvailable()
+    {
+        if (snackbarNoInternet == null)
+        {
+            snackbarNoInternet = Snackbar.make(clActivityHome, "No Internet", Snackbar.LENGTH_INDEFINITE);
+            snackbarNoInternet.show();
+        }
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
+        if (snackbarNoInternet != null)
+        {
+            if (snackbarNoInternet.isShown())
+            {
+                snackbarNoInternet.dismiss();
+                snackbarNoInternet = null;
+            }
+        }
     }
 
     private void showCompletedTripDetails()
