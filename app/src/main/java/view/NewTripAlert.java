@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import apimodels.TripDetails;
+import extra.LocaleHelper;
 import extra.Utils;
 import firebase.TransportRequestHandler;
 import io.fusionbit.vcarry.ActivityTransportRequest;
@@ -146,10 +147,22 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
     private void setTripRequestData(TripDetails tripDetails)
     {
+
+        if (LocaleHelper.getLanguage(activityTransportRequest).equalsIgnoreCase("gu"))
+        {
+            Log.i(TAG, "setTripRequestData: LANGUAGE IS GUJARATI");
+            tripDetails.setReturnGujaratiAddress(true);
+        } else
+        {
+            Log.i(TAG, "setTripRequestData: LANGUAGE IS NOT GUJARATI");
+        }
+
         tvFrom.setText(getResources().getString(R.string.request_from) + ": "
                 + tripDetails.getFromShippingLocation());
+
         tvTo.setText(getResources().getString(R.string.request_to) + ": "
                 + tripDetails.getToShippingLocation());
+
         tvTime.setText(Utils.convertDateToRequireFormat(tripDetails.getTripDatetime()));
 
         tvFare.setText(getResources().getString(R.string.rs) + " "

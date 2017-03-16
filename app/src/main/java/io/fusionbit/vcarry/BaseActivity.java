@@ -1,28 +1,29 @@
 package io.fusionbit.vcarry;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 /**
  * Created by rutvik on 3/15/2017 at 7:56 AM.
  */
 
-public abstract class BaseActivity extends AppCompatActivity
+public abstract class BaseActivity extends AppCompatActivity implements NetworkConnectionDetector.ConnectivityReceiverListener
 {
     private NetworkConnectionDetector networkConnectionDetector;
+
+    private static final String TAG = App.APP_TAG + BaseActivity.class.getSimpleName();
 
     @Override
     protected void onStart()
     {
         super.onStart();
         IntentFilter i = new IntentFilter();
-        i.addAction("android.net.wifi.STATE_CHANGE");
-        i.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        i.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        networkConnectionDetector = new NetworkConnectionDetector();
         registerReceiver(networkConnectionDetector, i);
     }
 
@@ -30,6 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
+        NetworkConnectionDetector.connectivityReceiverListener = this;
         checkInternet();
     }
 
@@ -56,19 +58,22 @@ public abstract class BaseActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected)
+    {
+        if (isConnected)
+        {
+            Log.i(TAG, "CONNECTED>>>");
+            internetAvailable();
+        } else
+        {
+            Log.i(TAG, "<<<DISCONNECTED");
+            internetNotAvailable();
+        }
+    }
+
     protected abstract void internetNotAvailable();
 
     protected abstract void internetAvailable();
-
-
-    public class NetworkConnectionDetector extends BroadcastReceiver
-    {
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            checkInternet();
-        }
-
-    }
 
 }

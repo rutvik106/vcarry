@@ -1,12 +1,15 @@
 package apimodels;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import extra.Utils;
+import io.fusionbit.vcarry.App;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -131,6 +134,28 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     @SerializedName("trip_no")
     private String tripNo;
 
+
+    public boolean isReturnGujaratiAddress()
+    {
+        return returnGujaratiAddress;
+    }
+
+    public void setReturnGujaratiAddress(boolean returnGujaratiAddress)
+    {
+        this.returnGujaratiAddress = returnGujaratiAddress;
+    }
+
+    private boolean returnGujaratiAddress;
+    /**
+     * to_gujarati_address :
+     * from_gujarati_address :
+     */
+
+    @SerializedName("to_gujarati_address")
+    private String toGujaratiAddress;
+    @SerializedName("from_gujarati_address")
+    private String fromGujaratiAddress;
+
     public String getTripId()
     {
         return tripId;
@@ -173,6 +198,10 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
 
     public String getFromShippingLocation()
     {
+        if (returnGujaratiAddress)
+        {
+            return getFromGujaratiAddress();
+        }
         return getFromAddressLine1() + ", " +
                 getFromAddressLine2() + ", " +
                 getFromAreaName() + ", " +
@@ -206,6 +235,10 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
 
     public String getToShippingLocation()
     {
+        if (returnGujaratiAddress)
+        {
+            return getToGujaratiAddress();
+        }
         return getToAddressLine1() + ", " +
                 getToAddressLine2() + ", " +
                 getToAreaName() + ", " +
@@ -483,5 +516,93 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     public void setTripNo(String tripNo)
     {
         this.tripNo = tripNo;
+    }
+
+    public String getToGujaratiAddress()
+    {
+        try
+        {
+            if (toGujaratiAddress != null)
+            {
+                if (!toGujaratiAddress.isEmpty())
+                {
+                    // Convert from Unicode to UTF-8
+                    String string = toGujaratiAddress;
+                    byte[] utf8 = string.getBytes("UTF-8");
+
+                    // Convert from UTF-8 to Unicode
+                    return new String(utf8, "UTF-8");
+                } else
+                {
+                    return getToAddressLine1() + ", " +
+                            getToAddressLine2() + ", " +
+                            getToAreaName() + ", " +
+                            getToCityName();
+                }
+            } else
+            {
+                return getToAddressLine1() + ", " +
+                        getToAddressLine2() + ", " +
+                        getToAreaName() + ", " +
+                        getToCityName();
+            }
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+            return getToAddressLine1() + ", " +
+                    getToAddressLine2() + ", " +
+                    getToAreaName() + ", " +
+                    getToCityName();
+        }
+    }
+
+    public void setToGujaratiAddress(String toGujaratiAddress)
+    {
+        this.toGujaratiAddress = toGujaratiAddress;
+    }
+
+    public String getFromGujaratiAddress()
+    {
+        Log.i(App.APP_TAG, "getFromGujaratiAddress()");
+
+        try
+        {
+            if (fromGujaratiAddress != null)
+            {
+                if (!fromGujaratiAddress.isEmpty())
+                {
+                    // Convert from Unicode to UTF-8
+                    String string = fromGujaratiAddress;
+                    byte[] utf8 = string.getBytes("UTF-8");
+
+                    // Convert from UTF-8 to Unicode
+                    return new String(utf8, "UTF-8");
+                } else
+                {
+                    return getFromAddressLine1() + ", " +
+                            getFromAddressLine2() + ", " +
+                            getFromAreaName() + ", " +
+                            getFromCityName();
+                }
+            } else
+            {
+                return getFromAddressLine1() + ", " +
+                        getFromAddressLine2() + ", " +
+                        getFromAreaName() + ", " +
+                        getFromCityName();
+            }
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+            return getFromAddressLine1() + ", " +
+                    getFromAddressLine2() + ", " +
+                    getFromAreaName() + ", " +
+                    getFromCityName();
+        }
+    }
+
+    public void setFromGujaratiAddress(String fromGujaratiAddress)
+    {
+        this.fromGujaratiAddress = fromGujaratiAddress;
     }
 }
