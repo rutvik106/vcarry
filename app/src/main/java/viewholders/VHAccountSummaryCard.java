@@ -2,15 +2,12 @@ package viewholders;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 import apimodels.AccountSummary;
 import io.fusionbit.vcarry.ActivityTrips;
@@ -125,22 +122,22 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
         {
             case R.id.cv_accountToday:
                 i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.TODAY);
-                i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
-                        new ArrayList<Parcelable>(accountSummary.getTripToday()));
+                /*i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
+                        new ArrayList<Parcelable>(accountSummary.getTripToday()));*/
                 context.startActivity(i);
                 break;
 
             case R.id.cv_accountThisMonth:
                 i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.THIS_MONTH);
-                i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
-                        new ArrayList<Parcelable>(accountSummary.getTripThisMonth()));
+                /*i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
+                        new ArrayList<Parcelable>(accountSummary.getTripThisMonth()));*/
                 context.startActivity(i);
                 break;
 
             case R.id.cv_accountTotal:
                 i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.TOTAL);
-                i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
-                        new ArrayList<Parcelable>(accountSummary.getTotalTrips()));
+                /*i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
+                        new ArrayList<Parcelable>(accountSummary.getTotalTrips()));*/
                 context.startActivity(i);
                 break;
 

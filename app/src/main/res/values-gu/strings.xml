@@ -129,5 +129,7 @@
     <string name="trip_accepted_successfully">Trip Accepted Successfully</string>
     <string name="wait_for_trip_confirmation">Please wait for confirmation message form V-Carry</string>
     <string name="trip_rejection_prompt_msg">તમે આ ટ્રીપ રિજેક્ટ કરવા માંગો છો?</string>
+    <string name="no_internet">ઇન્ટરનેટ સાથે જોડાયેલ નથી</string>
+    <string name="something_went_wrong">કંઈક ખોટું થયું.</string>
 
 </resources>
