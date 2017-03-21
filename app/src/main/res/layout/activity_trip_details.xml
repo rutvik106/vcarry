@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_trip_details"
     android:layout_width="match_parent"
@@ -84,7 +85,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:textColor="#333333"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp"
+                    tools:text="Rutvik Mehta"/>
 
             </LinearLayout>
 
@@ -92,8 +94,17 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_my_location_white_24dp"
+                    app:fabSize="mini"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -108,7 +119,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:textColor="#333333"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp"
+                    tools:text="52,53 Jodhpur park soc near ramdev nagar opp courtyad marriott hotel, satellite 380015"/>
 
             </LinearLayout>
 
@@ -116,8 +128,18 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_my_location_white_24dp"
+                    app:fabSize="mini"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -132,7 +154,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:textColor="#333333"
-                    android:textSize="15sp"/>
+                    android:textSize="15sp"
+                    tools:text=" hotel, satellite 380015"/>
 
             </LinearLayout>
 

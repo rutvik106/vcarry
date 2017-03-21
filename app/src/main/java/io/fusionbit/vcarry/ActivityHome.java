@@ -2,6 +2,7 @@ package io.fusionbit.vcarry;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -23,6 +24,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -107,6 +109,10 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     TextView notificationCount;
 
     MenuItem notificationMenuItem;
+
+    SearchView searchView;
+
+    MenuItem searchMenu;
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -437,6 +443,12 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
         notificationMenuItem.setVisible(false);
 
+        // Retrieve the SearchView and plug it into SearchManager
+        searchMenu = menu.findItem(R.id.action_search);
+        searchMenu.setVisible(false);
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
     }
 
@@ -471,18 +483,23 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 fragmentMap.checkIfDriverOnTrip();
                 showFragment(fragmentMap);
                 setActionBarTitle("V-Carry");
+                searchMenu.setVisible(false);
                 break;
             case R.id.nav_trips:
                 fragmentTrips.getTrips();
                 showFragment(fragmentTrips);
                 setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
+                searchView.setOnQueryTextListener(fragmentTrips);
+                searchMenu.setVisible(true);
                 break;
             case R.id.nav_accountBalance:
                 showFragment(fragmentAccBalance);
                 setActionBarTitle(getResources().getString(R.string.nav_accountBalance));
+                searchMenu.setVisible(false);
                 break;
             case R.id.nav_tripsOnOffer:
                 showFragment(fragmentTripsOnOffer);
+                searchMenu.setVisible(false);
                 break;
             case R.id.nav_share:
                 Toast.makeText(this, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();

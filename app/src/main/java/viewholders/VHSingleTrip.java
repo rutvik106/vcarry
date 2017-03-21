@@ -2,13 +2,13 @@ package viewholders;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -36,6 +36,8 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
 
     TextView tvTripFrom, tvTripTo, tvTripTime, tvCurrentTripStatus,
             tvTripTimeCountdown, tvTimeLeft, tvTripNumber;
+
+    RelativeLayout rlSingleTrip;
 
     LinearLayout llContainer;
 
@@ -65,6 +67,8 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
         tvTripNumber = (TextView) itemView.findViewById(R.id.tv_tripNumber);
 
         llContainer = (LinearLayout) itemView.findViewById(R.id.ll_singleTripContainer);
+
+        rlSingleTrip = (RelativeLayout) itemView.findViewById(R.id.rl_singleTrip);
 
         llContainer.setOnClickListener(new View.OnClickListener()
         {
@@ -121,16 +125,28 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
 
         if (tripStatus < tripStatusStarted)
         {
-            vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#66bb6a"));
+            vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
+                    .getColor(android.R.color.holo_green_light));
+            vh.rlSingleTrip.setBackground(vh.context.getResources()
+                    .getDrawable(R.drawable.trip_card_bg_green));
         } else if (tripStatus == tripStarted)
         {
-            vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#ffa726"));
+            vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
+                    .getColor(android.R.color.holo_orange_light));
+            vh.rlSingleTrip.setBackground(vh.context.getResources()
+                    .getDrawable(R.drawable.trip_card_bg_orange));
         } else if (tripStatus == tripCanceledByDriver)
         {
-            vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#ef5350"));
+            vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
+                    .getColor(android.R.color.holo_red_light));
+            vh.rlSingleTrip.setBackground(vh.context.getResources()
+                    .getDrawable(R.drawable.trip_card_bg_red));
         } else
         {
-            vh.tvCurrentTripStatus.setTextColor(Color.parseColor("#666666"));
+            vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
+                    .getColor(android.R.color.black));
+            vh.rlSingleTrip.setBackground(vh.context.getResources()
+                    .getDrawable(R.drawable.trip_card_bg_black));
         }
     }
 

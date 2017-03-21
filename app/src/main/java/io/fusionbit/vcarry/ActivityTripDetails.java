@@ -27,7 +27,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ActivityTripDetails extends AppCompatActivity
+public class ActivityTripDetails extends BaseActivity
 {
 
     private static final String TAG = App.APP_TAG + ActivityTripDetails.class.getSimpleName();
@@ -300,5 +300,17 @@ public class ActivityTripDetails extends AppCompatActivity
             unbindService(mServiceConnection);
             mServiceBound = false;
         }
+    }
+
+    @Override
+    protected void internetNotAvailable()
+    {
+
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
+
     }
 }

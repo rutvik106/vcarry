@@ -164,7 +164,6 @@ public class ActivityTrips extends BaseActivity
         final RetrofitCallbacks<List<TripsByDriverMail>> onGetTripSummary =
                 new RetrofitCallbacks<List<TripsByDriverMail>>()
                 {
-
                     @Override
                     public void onResponse(Call<List<TripsByDriverMail>> call, Response<List<TripsByDriverMail>> response)
                     {

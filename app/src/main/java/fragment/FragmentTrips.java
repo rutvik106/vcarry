@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.FrameLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import adapters.TripsAdapter;
@@ -33,7 +36,7 @@ import retrofit2.Response;
  * Created by rutvik on 11/17/2016 at 10:49 PM.
  */
 
-public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefreshListener
+public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefreshListener, SearchView.OnQueryTextListener
 {
 
     private static final String TAG = App.APP_TAG + FragmentTrips.class.getSimpleName();
@@ -169,4 +172,42 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
         getTrips();
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText)
+    {
+        if (newText.length() > 0)
+        {
+            final List<TripsByDriverMail> searchedTrips = new ArrayList<>();
+            for (TripsByDriverMail trip : tripResults)
+            {
+                if (trip.getTripNo().contains(newText) ||
+                        trip.getStatus().toLowerCase().contains(newText.toLowerCase()))
+                {
+                    searchedTrips.add(trip);
+                }
+            }
+            if (searchedTrips.size() > 0)
+            {
+                adapter.clear();
+                for (TripsByDriverMail trip : searchedTrips)
+                {
+                    adapter.addTrip(trip);
+                }
+            }
+        } else
+        {
+            adapter.clear();
+            for (TripsByDriverMail trip : tripResults)
+            {
+                adapter.addTrip(trip);
+            }
+        }
+        return false;
+    }
 }

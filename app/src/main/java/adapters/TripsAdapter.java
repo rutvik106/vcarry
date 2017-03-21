@@ -72,4 +72,10 @@ public class TripsAdapter extends RecyclerView.Adapter
     {
         return tripsByDriverMailList.size();
     }
+
+    public void clear()
+    {
+        tripsByDriverMailList.clear();
+        notifyDataSetChanged();
+    }
 }
