@@ -1,7 +1,6 @@
 package io.fusionbit.vcarry;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -11,7 +10,7 @@ import java.util.List;
 import adapters.TripsAdapter;
 import apimodels.TripsByDriverMail;
 
-public class ActivityTrips extends AppCompatActivity
+public class ActivityTrips extends BaseActivity
 {
 
     private String tripsType = null;
@@ -74,5 +73,17 @@ public class ActivityTrips extends AppCompatActivity
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void internetNotAvailable()
+    {
+
+    }
+
+    @Override
+    protected void internetAvailable()
+    {
+
     }
 }

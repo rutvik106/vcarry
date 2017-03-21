@@ -1,6 +1,8 @@
 package view;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -28,14 +30,10 @@ import io.fusionbit.vcarry.R;
 public class NewTripAlert extends FrameLayout implements TransportRequestHandler.RequestDetailsCallback, App.TripNotificationListener
 {
     private static final String TAG = App.APP_TAG + NewTripAlert.class.getSimpleName();
-
-    private final String requestId;
-
-    TextView tvFrom, tvTo, tvTime, tvFare, tvVehicle;
-
-    LinearLayout llAcceptRejectButtonContainer;
-
     final ActivityTransportRequest activityTransportRequest;
+    private final String requestId;
+    TextView tvFrom, tvTo, tvTime, tvFare, tvVehicle;
+    LinearLayout llAcceptRejectButtonContainer;
 
     public NewTripAlert(final String requestId,
                         final ActivityTransportRequest activityTransportRequest,
@@ -72,8 +70,7 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
             public void onClick(View view)
             {
                 llAcceptRejectButtonContainer.setVisibility(View.GONE);
-                NewTripAlert.this
-                        .activityTransportRequest.rejectRequest(requestId);
+                promptForTripRejection();
             }
         });
 
@@ -85,6 +82,24 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
         getRequestDetails();
 
+    }
+
+    private void promptForTripRejection()
+    {
+        new AlertDialog.Builder(activityTransportRequest)
+                .setMessage(R.string.trip_rejection_prompt_msg)
+                .setPositiveButton(R.string.reject, new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        NewTripAlert.this
+                                .activityTransportRequest.rejectRequest(requestId);
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void getRequestDetails()

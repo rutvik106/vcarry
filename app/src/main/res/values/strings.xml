@@ -126,5 +126,6 @@
     <string name="trip_number">Trip Number</string>
     <string name="trip_accepted_successfully">Trip Accepted Successfully</string>
     <string name="wait_for_trip_confirmation">Please wait for confirmation message form V-Carry</string>
+    <string name="trip_rejection_prompt_msg">Do you want to Reject this Trip?</string>
 
 </resources>

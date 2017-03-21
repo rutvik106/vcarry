@@ -119,7 +119,7 @@
     <string name="trips_today">આજની ટ્રિપ્સ</string>
     <string name="trips_this_month">આ મહિના ની ટ્રિપ્સ</string>
     <string name="total_trips">કુલ ટ્રિપ્સ</string>
-    <string name="driver_not_registered">You are not registered</string>
+    <string name="driver_not_registered">તમે રજીસ્ટર નથી</string>
     <string name="unauthorized">બિન-સત્તાવાર</string>
     <string name="not_registered">માફ કરશો, તમે V-Carry સાથે રજીસ્ટર થયા નહિ</string>
     <string name="feature_coming_soon">સુવિધા જલ્દી ઉપલબ્ધ થશે</string>
@@ -128,5 +128,6 @@
     <string name="trip_number">ટ્રીપ નંબર</string>
     <string name="trip_accepted_successfully">Trip Accepted Successfully</string>
     <string name="wait_for_trip_confirmation">Please wait for confirmation message form V-Carry</string>
+    <string name="trip_rejection_prompt_msg">તમે આ ટ્રીપ રિજેક્ટ કરવા માંગો છો?</string>
 
 </resources>

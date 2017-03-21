@@ -432,15 +432,6 @@ public class TransportRequestHandlerService extends Service
                 getResources().getString(R.string.trip_not_confirm_notification_message), null);
     }
 
-    public class TransportRequestServiceBinder extends Binder
-    {
-        public TransportRequestHandlerService getService()
-        {
-            return TransportRequestHandlerService.this;
-        }
-
-    }
-
     private void showAlert(String requestId)
     {
         Intent newTripRequestIntent = new Intent(Constants.NEW_TRIP_REQUEST);
@@ -486,7 +477,8 @@ public class TransportRequestHandlerService extends Service
                 .setContentText(getResources().getString(R.string.new_request))
                 .setSmallIcon(R.drawable.ic_local_shipping_black_24dp)
                 .setContentIntent(showTripDetailsPendingIntent)
-                .setAutoCancel(true)
+                .setAutoCancel(false)
+                .setOngoing(true)
                 .setVibrate(new long[]{0, 500, 200, 500})
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 /*.addAction(R.drawable.ic_done_black_24dp, getResources().getString(R.string.accept), pAccept)
@@ -500,7 +492,6 @@ public class TransportRequestHandlerService extends Service
         notificationManager.notify(mRequestId, n);
 
     }
-
 
     public void startCalculatingDistanceIfDriverOnTrip()
     {
@@ -601,7 +592,6 @@ public class TransportRequestHandlerService extends Service
         }
     }
 
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
     {
@@ -621,6 +611,15 @@ public class TransportRequestHandlerService extends Service
         Log.i(TAG, "SPEED: " + location.getSpeed());
         Log.i(TAG, "****************************");
         tripDistanceDetails.addLocationData(location.getTime(), location.getLatitude(), location.getLongitude());
+
+    }
+
+    public class TransportRequestServiceBinder extends Binder
+    {
+        public TransportRequestHandlerService getService()
+        {
+            return TransportRequestHandlerService.this;
+        }
 
     }
 
