@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.database.DatabaseError;
 
 import adapters.NewTripPagerAdapter;
+import extra.LocaleHelper;
 import firebase.TransportRequestHandler;
 import view.NewTripAlert;
 
@@ -48,15 +49,9 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     PowerManager.WakeLock wl;
 
     String requestId = null;
-
-    private ViewPager vpNewTripPager = null;
-    private NewTripPagerAdapter adapter = null;
-
     NewTripRequestReceiver newTripRequestReceiver;
-
     ImageView ivPreviousTrip;
     ImageView ivNextTrip;
-
     ServiceConnection mServiceConnection = new ServiceConnection()
     {
         @Override
@@ -75,6 +70,8 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
             mService = null;
         }
     };
+    private ViewPager vpNewTripPager = null;
+    private NewTripPagerAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -100,8 +97,9 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
-
         setContentView(R.layout.activity_transport_request);
+
+        LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
 
         newTripRequestReceiver = new NewTripRequestReceiver();
 
@@ -289,21 +287,6 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         Toast.makeText(mService, "Please turn on location service", Toast.LENGTH_SHORT).show();
     }
 
-    private class FusedLocationApiCallbacks extends FusedLocation.ApiConnectionCallbacks
-    {
-
-        public FusedLocationApiCallbacks(FusedLocation.LocationAwareActivity locationAwareActivity)
-        {
-            super(locationAwareActivity);
-        }
-
-        @Override
-        public void onConnectionSuspended(int i)
-        {
-
-        }
-    }
-
     @Override
     protected void onDestroy()
     {
@@ -362,23 +345,6 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
         vpNewTripPager.setCurrentItem(adapter.getItemPosition(pageToShow), true);
     }
 
-    class NewTripRequestReceiver extends BroadcastReceiver
-    {
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            ivPreviousTrip.setVisibility(View.VISIBLE);
-            ivNextTrip.setVisibility(View.VISIBLE);
-            Log.i(TAG, "BROADCAST RECEIVED FOR NEW TRIP REQUEST");
-            final String requestId = intent.getStringExtra("REQUEST_ID");
-            NewTripAlert newTripAlert = new NewTripAlert(requestId, ActivityTransportRequest.this,
-                    ActivityTransportRequest.this);
-            addView(newTripAlert);
-            setCurrentPage(newTripAlert);
-        }
-    }
-
-
     private void showNextTrip()
     {
         if (vpNewTripPager.getCurrentItem() < adapter.getCount() - 1)
@@ -398,6 +364,37 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     private int getItem(int i)
     {
         return vpNewTripPager.getCurrentItem() + i;
+    }
+
+    private class FusedLocationApiCallbacks extends FusedLocation.ApiConnectionCallbacks
+    {
+
+        public FusedLocationApiCallbacks(FusedLocation.LocationAwareActivity locationAwareActivity)
+        {
+            super(locationAwareActivity);
+        }
+
+        @Override
+        public void onConnectionSuspended(int i)
+        {
+
+        }
+    }
+
+    class NewTripRequestReceiver extends BroadcastReceiver
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            ivPreviousTrip.setVisibility(View.VISIBLE);
+            ivNextTrip.setVisibility(View.VISIBLE);
+            Log.i(TAG, "BROADCAST RECEIVED FOR NEW TRIP REQUEST");
+            final String requestId = intent.getStringExtra("REQUEST_ID");
+            NewTripAlert newTripAlert = new NewTripAlert(requestId, ActivityTransportRequest.this,
+                    ActivityTransportRequest.this);
+            addView(newTripAlert);
+            setCurrentPage(newTripAlert);
+        }
     }
 
 }

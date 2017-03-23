@@ -86,17 +86,52 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_vehicle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:drawablePadding="5dp"
-                android:drawableTop="@drawable/ic_local_shipping_black_18dp"
-                android:gravity="center"
-                android:textColor="#f5f5f5f5"
-                android:textSize="20sp"
-                tools:text="@string/vehicle"/>
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/tv_vehicle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="5dp"
+                    android:drawableTop="@drawable/ic_local_shipping_black_18dp"
+                    android:gravity="center"
+                    android:text="@string/n_a"
+                    android:textColor="#f5f5f5f5"
+                    android:textSize="18sp"
+                    tools:text="Atul Loading"/>
+
+                <TextView
+                    android:id="@+id/tv_weight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="5dp"
+                    android:drawableTop="@drawable/ic_weight"
+                    android:gravity="center"
+                    android:text="@string/n_a"
+                    android:textColor="#f5f5f5f5"
+                    android:textSize="18sp"
+                    tools:text="500 Kg"/>
+
+                <TextView
+                    android:id="@+id/tv_dimension"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="5dp"
+                    android:drawableTop="@drawable/ic_dimension"
+                    android:gravity="center"
+                    android:text="@string/n_a"
+                    android:textColor="#f5f5f5f5"
+                    android:textSize="18sp"
+                    tools:text="10 x 10"/>
+
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/tv_from"

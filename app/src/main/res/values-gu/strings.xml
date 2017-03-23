@@ -131,5 +131,7 @@
     <string name="trip_rejection_prompt_msg">તમે આ ટ્રીપ રિજેક્ટ કરવા માંગો છો?</string>
     <string name="no_internet">ઇન્ટરનેટ સાથે જોડાયેલ નથી</string>
     <string name="something_went_wrong">કંઈક ખોટું થયું.</string>
+    <string name="n_a">N/A</string>
+    <string name="trip_not_found">માફ કરશો, ટ્રીપ ની વિગતો મળી નથી</string>
 
 </resources>

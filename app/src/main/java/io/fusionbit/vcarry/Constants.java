@@ -66,15 +66,7 @@ public class Constants
     public static final String PARCELABLE_TRIP_LIST = "PARCELABLE_TRIP_LIST";
 
     public static final String FCM_DRIVER_INSTANCE_ID = "a0f7161f2d14ba177ed72b00017d1ddd";
-
-    public static class FirebaseNames
-    {
-        public static final String NODE_ACCEPTED = "accepted";
-        public static final String KEY_CONFIRM = "confirm";
-    }
-
     public static final String IS_BILL_PENDING = "IS_BILL_PENDING";
-
     public static final String DRIVER_ID = "DRIVER_ID";
 
     public static HashMap<String, Object> getFirebaseRemoteValuesMap()
@@ -97,6 +89,12 @@ public class Constants
 
     }
 
+    public static class FirebaseNames
+    {
+        public static final String NODE_ACCEPTED = "accepted";
+        public static final String KEY_CONFIRM = "confirm";
+    }
+
     static class Broadcast
     {
 
@@ -111,6 +109,7 @@ public class Constants
         public static final String GET_DRIVER_LOCATION = "get_driver_location";
         public static final String DRIVER_CURRENT_LOCATION = "driver_current_location";
         public static final String DRIVER_ALLOCATED = "driver_allocated";
+        public static final String DRIVER_UNALLOCATED = "driver_unallocated";
     }
 
     public static class PrimaryKey

@@ -110,6 +110,9 @@ public class NotificationHandler
                 case Constants.NotificationType.SIMPLE:
                     showNotification(0, data.getString("title"), data.getString("message"));
                     break;
+                case Constants.NotificationType.DRIVER_UNALLOCATED:
+                    showNotification(0, data.getString("title"), data.getString("message"));
+                    break;
                 case Constants.NotificationType.GET_DRIVER_LOCATION:
                     sendLocationToCustomer();
                     break;

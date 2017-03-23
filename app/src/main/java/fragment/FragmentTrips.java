@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -49,10 +48,8 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     Realm realm;
 
     RealmResults<TripsByDriverMail> tripResults;
-
-    private SwipeRefreshLayout srlRefreshTrips;
-
     FrameLayout flTripListEmptyView;
+    private SwipeRefreshLayout srlRefreshTrips;
 
     public static FragmentTrips newInstance(int index, Context context)
     {

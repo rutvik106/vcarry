@@ -133,18 +133,42 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     private String vehicleType;
     @SerializedName("trip_no")
     private String tripNo;
+    /**
+     * trip_start_time :
+     * trip_stop_time :
+     * trip_start_latlong :
+     * trip_stop_latlong :
+     * trip_distance :
+     * memo_amount :
+     * labour_amount :
+     * cash_received :
+     * lat_long :
+     * weight : 980
+     * dimensions : 70x90
+     */
 
-
-    public boolean isReturnGujaratiAddress()
-    {
-        return returnGujaratiAddress;
-    }
-
-    public void setReturnGujaratiAddress(boolean returnGujaratiAddress)
-    {
-        this.returnGujaratiAddress = returnGujaratiAddress;
-    }
-
+    @SerializedName("trip_start_time")
+    private String tripStartTime;
+    @SerializedName("trip_stop_time")
+    private String tripStopTime;
+    @SerializedName("trip_start_latlong")
+    private String tripStartLatlong;
+    @SerializedName("trip_stop_latlong")
+    private String tripStopLatlong;
+    @SerializedName("trip_distance")
+    private String tripDistance;
+    @SerializedName("memo_amount")
+    private String memoAmount;
+    @SerializedName("labour_amount")
+    private String labourAmount;
+    @SerializedName("cash_received")
+    private String cashReceived;
+    @SerializedName("lat_long")
+    private String latLong;
+    @SerializedName("weight")
+    private String weight;
+    @SerializedName("dimensions")
+    private String dimensions;
     private boolean returnGujaratiAddress;
     /**
      * to_gujarati_address :
@@ -155,6 +179,16 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     private String toGujaratiAddress;
     @SerializedName("from_gujarati_address")
     private String fromGujaratiAddress;
+
+    public boolean isReturnGujaratiAddress()
+    {
+        return returnGujaratiAddress;
+    }
+
+    public void setReturnGujaratiAddress(boolean returnGujaratiAddress)
+    {
+        this.returnGujaratiAddress = returnGujaratiAddress;
+    }
 
     public String getTripId()
     {
@@ -604,5 +638,115 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     public void setFromGujaratiAddress(String fromGujaratiAddress)
     {
         this.fromGujaratiAddress = fromGujaratiAddress;
+    }
+
+    public String getTripStartTime()
+    {
+        return tripStartTime;
+    }
+
+    public void setTripStartTime(String tripStartTime)
+    {
+        this.tripStartTime = tripStartTime;
+    }
+
+    public String getTripStopTime()
+    {
+        return tripStopTime;
+    }
+
+    public void setTripStopTime(String tripStopTime)
+    {
+        this.tripStopTime = tripStopTime;
+    }
+
+    public String getTripStartLatlong()
+    {
+        return tripStartLatlong;
+    }
+
+    public void setTripStartLatlong(String tripStartLatlong)
+    {
+        this.tripStartLatlong = tripStartLatlong;
+    }
+
+    public String getTripStopLatlong()
+    {
+        return tripStopLatlong;
+    }
+
+    public void setTripStopLatlong(String tripStopLatlong)
+    {
+        this.tripStopLatlong = tripStopLatlong;
+    }
+
+    public String getTripDistance()
+    {
+        return tripDistance;
+    }
+
+    public void setTripDistance(String tripDistance)
+    {
+        this.tripDistance = tripDistance;
+    }
+
+    public String getMemoAmount()
+    {
+        return memoAmount;
+    }
+
+    public void setMemoAmount(String memoAmount)
+    {
+        this.memoAmount = memoAmount;
+    }
+
+    public String getLabourAmount()
+    {
+        return labourAmount;
+    }
+
+    public void setLabourAmount(String labourAmount)
+    {
+        this.labourAmount = labourAmount;
+    }
+
+    public String getCashReceived()
+    {
+        return cashReceived;
+    }
+
+    public void setCashReceived(String cashReceived)
+    {
+        this.cashReceived = cashReceived;
+    }
+
+    public String getLatLong()
+    {
+        return latLong;
+    }
+
+    public void setLatLong(String latLong)
+    {
+        this.latLong = latLong;
+    }
+
+    public String getWeight()
+    {
+        return weight;
+    }
+
+    public void setWeight(String weight)
+    {
+        this.weight = weight;
+    }
+
+    public String getDimensions()
+    {
+        return dimensions;
+    }
+
+    public void setDimensions(String dimensions)
+    {
+        this.dimensions = dimensions;
     }
 }
