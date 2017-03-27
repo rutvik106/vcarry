@@ -99,6 +99,7 @@
                 android:orientation="horizontal">
 
                 <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab_updateFromLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
@@ -134,6 +135,7 @@
                 android:orientation="horizontal">
 
                 <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab_updateToLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"

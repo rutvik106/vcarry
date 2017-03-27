@@ -1,5 +1,6 @@
 package io.fusionbit.vcarry;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -13,9 +14,9 @@ import android.util.Log;
 
 public abstract class BaseActivity extends AppCompatActivity implements NetworkConnectionDetector.ConnectivityReceiverListener
 {
-    private NetworkConnectionDetector networkConnectionDetector;
-
     private static final String TAG = App.APP_TAG + BaseActivity.class.getSimpleName();
+    ProgressDialog progressDialog;
+    private NetworkConnectionDetector networkConnectionDetector;
 
     @Override
     protected void onStart()
@@ -75,5 +76,35 @@ public abstract class BaseActivity extends AppCompatActivity implements NetworkC
     protected abstract void internetNotAvailable();
 
     protected abstract void internetAvailable();
+
+    void showProgressDialog(String message)
+    {
+
+        if (progressDialog == null)
+        {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(message);
+            progressDialog.show();
+        } else
+        {
+            if (progressDialog.isShowing())
+            {
+                progressDialog.setMessage(message);
+            }
+        }
+    }
+
+    void hideProgressDialog()
+    {
+
+        if (progressDialog != null)
+        {
+            if (progressDialog.isShowing())
+            {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+        }
+    }
 
 }

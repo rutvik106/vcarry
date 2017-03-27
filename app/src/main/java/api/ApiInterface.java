@@ -107,4 +107,10 @@ public interface ApiInterface
     Call<Integer> getDriverIdByDriverEmail(@Field("method") String method,
                                            @Field("driver_email") String driverEmail);
 
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> updateShippingLocationLatLng(@Field("method") String method,
+                                                    @Field("shipping_location_id") String shippingLocationId,
+                                                    @Field("lat_long") String latLng);
+
 }

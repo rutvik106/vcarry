@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -181,10 +180,6 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
             if (tripDetails.getTripId().equals(requestId))
             {
                 setTripRequestData(tripDetails);
-            } else
-            {
-                Toast.makeText(activityTransportRequest, R.string.trip_not_found, Toast.LENGTH_SHORT).show();
-                activityTransportRequest.finish();
             }
         }
 
@@ -199,10 +194,6 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
             if (tripDetails.getTripId().equals(requestId))
             {
                 setTripRequestData(tripDetails);
-            } else
-            {
-                Toast.makeText(activityTransportRequest, R.string.trip_not_found, Toast.LENGTH_SHORT).show();
-                activityTransportRequest.finish();
             }
         }
     }

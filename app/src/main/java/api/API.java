@@ -17,13 +17,10 @@ import retrofit2.Call;
 public class API
 {
 
-    private ApiInterface apiService;
-
+    private static final String TAG = App.APP_TAG + API.class.getSimpleName();
     //create an object of SingleObject
     private static API instance = new API();
-
-    private static final String TAG = App.APP_TAG + API.class.getSimpleName();
-
+    private ApiInterface apiService;
     private String authToken = "";
 
     private API()
@@ -159,6 +156,19 @@ public class API
         Call<Integer> call =
                 apiService.getDriverIdByDriverEmail("get_driver_id_by_driver_email",
                         driverEmail);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<ResponseBody> updateShippingLocationLatLng(final String shippingLocationId,
+                                                           final String latLng,
+                                                           RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call =
+                apiService.updateShippingLocationLatLng("update_lat_long_shipping_location",
+                        shippingLocationId, latLng);
 
         call.enqueue(callback);
 

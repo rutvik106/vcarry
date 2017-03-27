@@ -16,6 +16,10 @@
 #   public *;
 #}
 
+
+-dontobfuscate
+-optimizations !code/allocation/variable
+
 # FOR VALIDATION
 -keep class com.mobsandgeeks.saripaar.** {*;}
 -keep @com.mobsandgeeks.saripaar.annotation.ValidateUsing class * {*;}

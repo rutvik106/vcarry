@@ -4,16 +4,22 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
 
@@ -27,7 +33,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class ActivityTripDetails extends BaseActivity
+public class ActivityTripDetails extends BaseActivity implements View.OnClickListener
 {
 
     private static final String TAG = App.APP_TAG + ActivityTripDetails.class.getSimpleName();
@@ -38,6 +44,8 @@ public class ActivityTripDetails extends BaseActivity
             tvTripStatus, tvTripFare, tvTripNumber;
 
     Button btnStartTrip;
+
+    FloatingActionButton fabUpdateFromLocation, fabUpdateToLocation;
 
     TripDetails tripDetails;
 
@@ -91,6 +99,11 @@ public class ActivityTripDetails extends BaseActivity
 
         btnStartTrip = (Button) findViewById(R.id.btn_startTrip);
 
+        fabUpdateFromLocation = (FloatingActionButton) findViewById(R.id.fab_updateFromLocation);
+        fabUpdateToLocation = (FloatingActionButton) findViewById(R.id.fab_updateToLocation);
+
+        fabUpdateFromLocation.setOnClickListener(this);
+        fabUpdateToLocation.setOnClickListener(this);
 
         tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
 
@@ -281,7 +294,7 @@ public class ActivityTripDetails extends BaseActivity
                         {
                             super.onFailure(call, t);
                             btnStartTrip.setVisibility(View.VISIBLE);
-                            Toast.makeText(mService, "something went wrong please try again later", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mService, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -313,4 +326,123 @@ public class ActivityTripDetails extends BaseActivity
     {
 
     }
+
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+
+            case R.id.fab_updateFromLocation:
+                new AlertDialog.Builder(this)
+                        .setMessage(R.string.are_you_sure_update_from_location)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i)
+                            {
+                                new UpdateShippingLocationLatLng(tripDetails.getFromShippingLocationId());
+                            }
+                        })
+                        .setNegativeButton(R.string.no, null)
+                        .show();
+                break;
+
+            case R.id.fab_updateToLocation:
+                new AlertDialog.Builder(this)
+                        .setMessage(R.string.are_you_sure_update_to_location)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i)
+                            {
+                                new UpdateShippingLocationLatLng(tripDetails.getToShippingLocationId());
+                            }
+                        })
+                        .setNegativeButton(R.string.no, null)
+                        .show();
+                break;
+
+        }
+    }
+
+    private class UpdateShippingLocationLatLng extends RetrofitCallbacks<ResponseBody>
+    {
+
+        final String shippingLocationId;
+
+        FusedLocation fusedLocation;
+
+        UpdateShippingLocationLatLng(String shippingLocationId)
+        {
+            showProgressDialog(getString(R.string.getting_location));
+            this.shippingLocationId = shippingLocationId;
+            fusedLocation = new FusedLocation(ActivityTripDetails.this, new FusedLocation.ApiConnectionCallbacks(null)
+            {
+                @Override
+                public void onConnected(@Nullable Bundle bundle)
+                {
+                    fusedLocation.startGettingLocation(new FusedLocation.GetLocation()
+                    {
+                        @Override
+                        public void onLocationChanged(Location location)
+                        {
+                            fusedLocation.stopGettingLocation();
+                            updateShippingLocation(location.getLatitude() + "," + location.getLongitude());
+                        }
+                    });
+                }
+            }, new GoogleApiClient.OnConnectionFailedListener()
+            {
+                @Override
+                public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
+                {
+                    Toast.makeText(ActivityTripDetails.this, R.string.cannot_connect_location_api, Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
+                }
+            });
+        }
+
+        void updateShippingLocation(String latLng)
+        {
+            showProgressDialog(getString(R.string.updating_location));
+            fusedLocation = null;
+            API.getInstance().updateShippingLocationLatLng(shippingLocationId, latLng, this);
+        }
+
+        @Override
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+        {
+            super.onResponse(call, response);
+            hideProgressDialog();
+            if (response.isSuccessful())
+            {
+                try
+                {
+                    if (response.body().string().contains("success"))
+                    {
+                        Toast.makeText(ActivityTripDetails.this, R.string.location_updated_successfully, Toast.LENGTH_SHORT).show();
+                    } else
+                    {
+                        Toast.makeText(ActivityTripDetails.this, R.string.failed_to_update_location, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            } else
+            {
+                Toast.makeText(ActivityTripDetails.this, R.string.failed_to_update_location, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<ResponseBody> call, Throwable t)
+        {
+            super.onFailure(call, t);
+            hideProgressDialog();
+            Toast.makeText(ActivityTripDetails.this, R.string.failed_to_update_location, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

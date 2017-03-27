@@ -131,5 +131,14 @@
     <string name="something_went_wrong">Something went Wrong.</string>
     <string name="n_a">N/A</string>
     <string name="trip_not_found">Sorry, Trip details not found</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="are_you_sure_update_from_location">Are you sure you want to update From Shipping Location?</string>
+    <string name="are_you_sure_update_to_location">Are you sure you want to update To Shipping Location?</string>
+    <string name="getting_location">Getting Your Location...</string>
+    <string name="cannot_connect_location_api">Cannot connect to location API</string>
+    <string name="updating_location">Updating Location...</string>
+    <string name="location_updated_successfully">Location Updated Successfully</string>
+    <string name="failed_to_update_location">Failed to update Location</string>
 
 </resources>

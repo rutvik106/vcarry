@@ -93,27 +93,16 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     boolean doubleBackToExitPressedOnce = false;
 
     List<Fragment> fragmentList = new ArrayList<>();
-
-    private boolean isShowingCompletedTripDetails = false;
-
     ServiceResultReceiver serviceResultReceiver;
-
     ProgressDialog progressDialog;
-
     FirebaseRemoteConfig remoteConfig;
-
     FusedLocation fusedLocation;
-
     RelativeLayout notifCount;
-
     TextView notificationCount;
-
     MenuItem notificationMenuItem;
-
     SearchView searchView;
-
     MenuItem searchMenu;
-
+    private boolean isShowingCompletedTripDetails = false;
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
         public void onServiceConnected(ComponentName className, IBinder service)
@@ -407,7 +396,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
             }
 
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press BACK again to exit", Toast.LENGTH_SHORT).show();
 
             new Handler().postDelayed(new Runnable()
             {
@@ -758,6 +747,68 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     }
 
+    @Override
+    public void dataInsertedSuccessfully()
+    {
+        Toast.makeText(this, "TRIP STOP DATA INSERTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
+        if (isShowingCompletedTripDetails)
+        {
+            hideCompletedTripDetails();
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putBoolean(Constants.IS_BILL_PENDING, false)
+                    .putString(Constants.CURRENT_TRIP_ID, null)
+                    .apply();
+        }
+    }
+
+    @Override
+    public void failedToInsertTripStopData()
+    {
+        Toast.makeText(this, "FAILED TO INSERTED TRIP STOP DATA", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showUrgentNotice()
+    {
+        String message = "";
+        String title = "";
+
+        if (LocaleHelper.getLanguage(this).equals("gu"))
+        {
+            message = remoteConfig.getString("urgent_notice_gujarati");
+            title = remoteConfig.getString("urgent_notice_title_gujarati");
+        } else
+        {
+            message = remoteConfig.getString("urgent_notice_english");
+            title = remoteConfig.getString("urgent_notice_title_english");
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.ok), null);
+        AlertDialog alert = builder.create();
+        if (!isFinishing())
+        {
+            alert.show();
+        } else
+        {
+            alert.dismiss();
+        }
+    }
+
+    public void showDriverNotRegistered()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.unauthorized)
+                .setMessage(R.string.not_registered)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false);
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     public class ServiceResultReceiver extends ResultReceiver
     {
         public ServiceResultReceiver(Handler handler)
@@ -806,69 +857,6 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                     super.onReceiveResult(resultCode, resultData);
             }
         }
-    }
-
-    @Override
-    public void dataInsertedSuccessfully()
-    {
-        Toast.makeText(this, "TRIP STOP DATA INSERTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
-        if (isShowingCompletedTripDetails)
-        {
-            hideCompletedTripDetails();
-            PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit()
-                    .putBoolean(Constants.IS_BILL_PENDING, false)
-                    .putString(Constants.CURRENT_TRIP_ID, null)
-                    .apply();
-        }
-    }
-
-    @Override
-    public void failedToInsertTripStopData()
-    {
-        Toast.makeText(this, "FAILED TO INSERTED TRIP STOP DATA", Toast.LENGTH_SHORT).show();
-    }
-
-
-    private void showUrgentNotice()
-    {
-        String message = "";
-        String title = "";
-
-        if (LocaleHelper.getLanguage(this).equals("gu"))
-        {
-            message = remoteConfig.getString("urgent_notice_gujarati");
-            title = remoteConfig.getString("urgent_notice_title_gujarati");
-        } else
-        {
-            message = remoteConfig.getString("urgent_notice_english");
-            title = remoteConfig.getString("urgent_notice_title_english");
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(title)
-                .setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton(getResources().getString(R.string.ok), null);
-        AlertDialog alert = builder.create();
-        if (!isFinishing())
-        {
-            alert.show();
-        } else
-        {
-            alert.dismiss();
-        }
-    }
-
-    public void showDriverNotRegistered()
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.unauthorized)
-                .setMessage(R.string.not_registered)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setCancelable(false);
-        AlertDialog alert = builder.create();
-        alert.show();
     }
 
 }
