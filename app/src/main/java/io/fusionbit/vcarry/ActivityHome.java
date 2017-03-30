@@ -48,6 +48,7 @@ import java.util.List;
 
 import api.API;
 import api.RetrofitCallbacks;
+import apimodels.DriverDetails;
 import apimodels.TripDetails;
 import extra.LocaleHelper;
 import extra.Log;
@@ -56,6 +57,7 @@ import fragment.FragmentCompletedTripDetails;
 import fragment.FragmentMap;
 import fragment.FragmentTrips;
 import fragment.FragmentTripsOnOffer;
+import io.realm.Realm;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -295,6 +297,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
                                 updateFcmDeviceToken();
 
+                                getUserDetails(String.valueOf(response.body()));
+
                             } else
                             {
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
@@ -325,6 +329,32 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
         API.getInstance().getDriverIdByDriverEmail(driverEmail, onGetDriverIdCallback);
 
+    }
+
+    private void getUserDetails(String driverId)
+    {
+        Log.i(TAG, "GETTING DRIVER DETAILS FOR DRIVER ID: " + driverId);
+        final RetrofitCallbacks<DriverDetails> onGetDriverDetails =
+                new RetrofitCallbacks<DriverDetails>()
+                {
+                    @Override
+                    public void onResponse(Call<DriverDetails> call, Response<DriverDetails> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            Log.i(TAG, "SUCCESSFULLY GOT DRIVER DETAILS SAVING TO REALM");
+                            final Realm realm = Realm.getDefaultInstance();
+                            realm.beginTransaction();
+                            realm.copyToRealmOrUpdate(response.body());
+                            realm.commitTransaction();
+                            realm.close();
+                            Log.i(TAG, "DRIVER DETAILS SAVED AND CLOSED REALM");
+                        }
+                    }
+                };
+
+        API.getInstance().getDriverDetailsByDriverId(driverId, onGetDriverDetails);
     }
 
 
@@ -448,13 +478,11 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         switch (id)
         {
             case R.id.action_settings:
                 startActivityForResult(new Intent(this, ActivitySettings.class), Constants.CHANGE_LANGUAGE);
                 break;
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -520,7 +548,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     {
         if (snackbarNoInternet == null)
         {
-            snackbarNoInternet = Snackbar.make(clActivityHome, "No Internet", Snackbar.LENGTH_INDEFINITE);
+            snackbarNoInternet = Snackbar.make(clActivityHome, R.string.no_internet, Snackbar.LENGTH_INDEFINITE);
             snackbarNoInternet.show();
         }
     }

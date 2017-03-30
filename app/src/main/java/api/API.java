@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import apimodels.AccountSummary;
+import apimodels.DriverDetails;
 import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
 import io.fusionbit.vcarry.App;
@@ -169,6 +170,30 @@ public class API
         Call<ResponseBody> call =
                 apiService.updateShippingLocationLatLng("update_lat_long_shipping_location",
                         shippingLocationId, latLng);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<DriverDetails> getDriverDetailsByDriverId(final String driverId,
+                                                          final RetrofitCallbacks<DriverDetails> callback)
+    {
+        Call<DriverDetails> call =
+                apiService.getDriverDetailsByDriverId("get_driver_details_by_driver_id",
+                        driverId);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<TripDetails> getTripDetailsByTripNo(final String tripNo,
+                                                    final RetrofitCallbacks<TripDetails> callback)
+    {
+        Call<TripDetails> call =
+                apiService.getTripDetailsByTripNo("get_trip_details_by_trip_no",
+                        tripNo);
 
         call.enqueue(callback);
 

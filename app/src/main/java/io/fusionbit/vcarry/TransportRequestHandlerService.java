@@ -318,6 +318,11 @@ public class TransportRequestHandlerService extends Service
     {
         Log.i(TAG, "New Request arrived!!!!");
 
+
+
+        /*final Realm realm=Realm.getDefaultInstance();
+        realm.where(DriverDetails.class).equalTo("driverId",)*/
+
         showNotification(dataSnapshot.getKey());
         showAlert(dataSnapshot.getKey());
 

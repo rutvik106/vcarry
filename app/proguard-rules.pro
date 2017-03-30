@@ -16,6 +16,7 @@
 #   public *;
 #}
 
+-printmapping build/outputs/mapping/release/mapping.txt
 
 -dontobfuscate
 -optimizations !code/allocation/variable

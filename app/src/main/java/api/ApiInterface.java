@@ -3,6 +3,7 @@ package api;
 import java.util.List;
 
 import apimodels.AccountSummary;
+import apimodels.DriverDetails;
 import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
 import okhttp3.ResponseBody;
@@ -112,5 +113,16 @@ public interface ApiInterface
     Call<ResponseBody> updateShippingLocationLatLng(@Field("method") String method,
                                                     @Field("shipping_location_id") String shippingLocationId,
                                                     @Field("lat_long") String latLng);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<DriverDetails> getDriverDetailsByDriverId(@Field("method") String method,
+                                                   @Field("driver_id") String driverId);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<TripDetails> getTripDetailsByTripNo(@Field("method") String method,
+                                             @Field("trip_no") String tripNo);
+
 
 }

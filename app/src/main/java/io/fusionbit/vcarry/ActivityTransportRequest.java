@@ -149,18 +149,13 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
 
         //bind activity to service
         bindService(transportRequestHandlerService, mServiceConnection, BIND_AUTO_CREATE);
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
 
         if (newTripRequestReceiver == null)
         {
             newTripRequestReceiver = new NewTripRequestReceiver();
         }
         registerReceiver(newTripRequestReceiver, new IntentFilter(Constants.NEW_TRIP_REQUEST));
+
     }
 
     @Override
