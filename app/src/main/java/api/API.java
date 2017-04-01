@@ -200,4 +200,29 @@ public class API
         return call;
     }
 
+    public Call<List<String>> getTripNumberLike(final String tripNo,
+                                                final RetrofitCallbacks<List<String>> callback)
+    {
+        Call<List<String>> call =
+                apiService.getTripNumberLike("get_trip_nos_like_no",
+                        tripNo);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
+    public Call<ResponseBody> updateDriverLatLng(final String driverId,
+                                                 final String latLng,
+                                                 final RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call =
+                apiService.updateDriverLatLng("update_lat_long_driver",
+                        driverId, latLng);
+
+        call.enqueue(callback);
+
+        return call;
+    }
+
 }

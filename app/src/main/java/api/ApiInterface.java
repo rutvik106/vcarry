@@ -124,5 +124,16 @@ public interface ApiInterface
     Call<TripDetails> getTripDetailsByTripNo(@Field("method") String method,
                                              @Field("trip_no") String tripNo);
 
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<List<String>> getTripNumberLike(@Field("method") String method,
+                                         @Field("no") String tripNo);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> updateDriverLatLng(@Field("method") String method,
+                                          @Field("driver_id") String driverId,
+                                          @Field("lat_long") String tripNo);
+
 
 }
