@@ -26,8 +26,13 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
+import api.API;
+import api.RetrofitCallbacks;
 import extra.Utils;
 import fcm.FCM;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -140,6 +145,12 @@ public class NotificationHandler
                             data.getString("title"),
                             data.getString("message"), pendingIntent);
                     break;
+
+                case Constants.NotificationType.SEND_LOCATION_SERVER:
+                    Log.i(TAG, "SERVER REQUESTING LOCATION....");
+                    sendLocationToServer();
+                    break;
+
             }
         } catch (JSONException e)
         {
@@ -168,6 +179,7 @@ public class NotificationHandler
                             @Override
                             public void onLocationChanged(Location location)
                             {
+                                fusedLocation.stopGettingLocation();
                                 try
                                 {
                                     extraDetails.put("lat", location.getLatitude());
@@ -188,7 +200,7 @@ public class NotificationHandler
                                 {
                                     e.printStackTrace();
                                 }
-                                fusedLocation.stopGettingLocation();
+
                             }
                         });
                     }
@@ -213,6 +225,69 @@ public class NotificationHandler
         {
             e.printStackTrace();
         }
+    }
+
+    private void sendLocationToServer()
+    {
+
+        if (fusedLocation == null)
+        {
+            Log.i(TAG, "GETTING LOCATION...");
+            fusedLocation = new FusedLocation(context, new FusedLocation.ApiConnectionCallbacks(null)
+            {
+                @Override
+                public void onConnected(@Nullable Bundle bundle)
+                {
+                    Log.i(TAG, "CONNECTED TO FUSED LOCATION API");
+                    fusedLocation.startGettingLocation(new FusedLocation.GetLocation()
+                    {
+                        @Override
+                        public void onLocationChanged(Location location)
+                        {
+                            Log.i(TAG, "GOT LOCATION...");
+                            fusedLocation.stopGettingLocation();
+                            try
+                            {
+                                Log.i(TAG, "SENDING LOCATION TO SERVER");
+                                API.getInstance().updateDriverLatLng(extra.getString("driver_id"),
+                                        location.getLatitude() + "," + location.getLongitude(),
+                                        new RetrofitCallbacks<ResponseBody>()
+                                        {
+                                            @Override
+                                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                                            {
+                                                super.onResponse(call, response);
+                                                if (response.isSuccessful())
+                                                {
+                                                    Log.i(TAG, "LOCATION SENT TO SERVER SUCCESSFULLY");
+                                                }
+                                            }
+                                        });
+                            } catch (JSONException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onConnectionSuspended(int i)
+                {
+
+                }
+            }, new GoogleApiClient.OnConnectionFailedListener()
+            {
+
+                @Override
+                public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
+                {
+
+                }
+            });
+
+        }
+
     }
 
 
