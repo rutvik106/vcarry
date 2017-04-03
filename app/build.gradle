@@ -42,7 +42,7 @@ android {
         }
         debug {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
         }
     }
 
@@ -52,20 +52,19 @@ dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.firebaseui:firebase-ui:0.4.1'
-
+    //SUPPORT LIBRARIES
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:support-v4:25.1.0'
-    compile 'com.google.android.gms:play-services:10.0.1'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.google.firebase:firebase-core:10.0.1'
-    compile 'com.google.firebase:firebase-database:10.0.1'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
-    compile 'com.google.firebase:firebase-auth:10.0.1'
     compile 'com.android.support:design:25.1.0'
+
+    //GOOGLE PLAY SERVICES
+    compile 'com.google.android.gms:play-services:10.0.1'
+
+    //GLIDE and GLIDE transformations
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
 
+    //ted-permissions
     compile 'gun0912.ted:tedpermission:1.0.2'
 
     // retrofit, gson
@@ -73,8 +72,15 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+
+    //firebase
     compile 'com.google.firebase:firebase-config:10.0.1'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
+    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-database:10.0.1'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
+    compile 'com.google.firebase:firebase-auth:10.0.1'
+    compile 'com.firebaseui:firebase-ui:0.4.1'
 
 }
 

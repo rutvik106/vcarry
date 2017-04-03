@@ -45,14 +45,20 @@ public class DriverDetails extends RealmObject
      * email : rutvik1061992@gmail.com
      * 15 : 0
      * multi_trip : 0
-     * 16 : f739vRHoAzY:APA91bFXWfiL5cHFKnuvCKqaW2c2Qhgx3uwxf9hZ8q7WznQwx15Jv_Rr8iShjheErW-qHiz6oyXV58kfoIWkbDdpHvdSZyZUWcKVo8LXScEuLr-gBqxYEhJAtsg8ZO8E9fZELgkw0A3Z
-     * device_token : f739vRHoAzY:APA91bFXWfiL5cHFKnuvCKqaW2c2Qhgx3uwxf9hZ8q7WznQwx15Jv_Rr8iShjheErW-qHiz6oyXV58kfoIWkbDdpHvdSZyZUWcKVo8LXScEuLr-gBqxYEhJAtsg8ZO8E9fZELgkw0A3Z
+     * 16 : e0NWMj3QuG8:APA91bH6SvHTj3Dt-RNirTjIxJDs-1iPsUsjQuZvcX_pq5yt8yTaQBIylI5vE7xLUg6zBkAjW124gQIZ4LZdSCYvpWkPLiwwrtFWcQVBwDDTy1f-e9apwhwrYYjNKs5yyMWjIjMCVto8
+     * device_token : e0NWMj3QuG8:APA91bH6SvHTj3Dt-RNirTjIxJDs-1iPsUsjQuZvcX_pq5yt8yTaQBIylI5vE7xLUg6zBkAjW124gQIZ4LZdSCYvpWkPLiwwrtFWcQVBwDDTy1f-e9apwhwrYYjNKs5yyMWjIjMCVto8
      * 17 : 1
      * active : 1
      * 18 :
      * vehicle_reg_no :
      * 19 :
      * licence_no :
+     * 20 : Atul Loading
+     * vehicle_type : Atul Loading
+     * 21 : 23.0265168,72.5147056
+     * lat_long : 23.0265168,72.5147056
+     * 22 : 2017-04-02 16:33:20
+     * lat_long_datetime : 2017-04-02 16:33:20
      */
 
     @PrimaryKey
@@ -96,6 +102,12 @@ public class DriverDetails extends RealmObject
     private String vehicleRegNo;
     @SerializedName("licence_no")
     private String licenceNo;
+    @SerializedName("vehicle_type")
+    private String vehicleType;
+    @SerializedName("lat_long")
+    private String latLong;
+    @SerializedName("lat_long_datetime")
+    private String latLongDatetime;
 
     public String getDriverId()
     {
@@ -295,5 +307,35 @@ public class DriverDetails extends RealmObject
     public void setLicenceNo(String licenceNo)
     {
         this.licenceNo = licenceNo;
+    }
+
+    public String getVehicleType()
+    {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType)
+    {
+        this.vehicleType = vehicleType;
+    }
+
+    public String getLatLong()
+    {
+        return latLong;
+    }
+
+    public void setLatLong(String latLong)
+    {
+        this.latLong = latLong;
+    }
+
+    public String getLatLongDatetime()
+    {
+        return latLongDatetime;
+    }
+
+    public void setLatLongDatetime(String latLongDatetime)
+    {
+        this.latLongDatetime = latLongDatetime;
     }
 }

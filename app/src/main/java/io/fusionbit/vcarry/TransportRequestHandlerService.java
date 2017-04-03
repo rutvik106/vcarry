@@ -22,15 +22,18 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import api.API;
 import api.RetrofitCallbacks;
+import apimodels.DriverDetails;
 import apimodels.TripDetails;
 import broadcastreceivers.UpcomingTripNotificationReceiver;
 import extra.Log;
@@ -318,13 +321,49 @@ public class TransportRequestHandlerService extends Service
     {
         Log.i(TAG, "New Request arrived!!!!");
 
+        final String driverId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.DRIVER_ID, null);
 
+        if (driverId == null)
+        {
+            return;
+        }
 
-        /*final Realm realm=Realm.getDefaultInstance();
-        realm.where(DriverDetails.class).equalTo("driverId",)*/
+        final Realm realm = Realm.getDefaultInstance();
+        final DriverDetails driverDetails
+                = realm.where(DriverDetails.class).equalTo("driverId", driverId).findFirst();
 
-        showNotification(dataSnapshot.getKey());
-        showAlert(dataSnapshot.getKey());
+        if (driverDetails == null)
+        {
+            return;
+        }
+
+        TransportRequestHandler.getRequestDetails(dataSnapshot.getKey(), new TransportRequestHandler.RequestDetailsCallback()
+        {
+            @Override
+            public void onGetRequestDetails(DataSnapshot dataSnapshot)
+            {
+                Map details = (Map) dataSnapshot.getValue();
+                if (details != null)
+                {
+                    if (details.get("vehicle") != null)
+                    {
+                        if (driverDetails.getVehicleType().equals(details.get("vehicle")))
+                        {
+                            showNotification(dataSnapshot.getKey());
+                            showAlert(dataSnapshot.getKey());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onRequestDetailsNotFound(DatabaseError databaseError)
+            {
+
+            }
+        });
+
 
     }
 
