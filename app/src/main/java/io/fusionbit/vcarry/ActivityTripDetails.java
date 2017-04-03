@@ -1,6 +1,7 @@
 package io.fusionbit.vcarry;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -38,7 +39,7 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
 
     private static final String TAG = App.APP_TAG + ActivityTripDetails.class.getSimpleName();
 
-    String tripId;
+    String tripId, tripNumber;
 
     TextView tvTripDetailTime, tvTripCustomerName, tvTripLocation, tvTripDestination,
             tvTripStatus, tvTripFare, tvTripNumber;
@@ -75,6 +76,13 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
         }
     };
 
+    public static void start(Context context, String tripNumber)
+    {
+        Intent i = new Intent(context, ActivityTripDetails.class);
+        i.putExtra(Constants.INTENT_EXTRA_TRIP_NUMBER, tripNumber);
+        context.startActivity(i);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -107,6 +115,8 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
 
         tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
 
+        tripNumber = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_NUMBER);
+
         Log.i(TAG, "TRIP ID IN ACTIVITY TRIP DETAILS IS: " + tripId);
 
     }
@@ -116,12 +126,11 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
     {
         super.onStart();
 
-        if (!tripId.isEmpty())
-        {
-            realm = Realm.getDefaultInstance();
-            tryToGetFromRealm();
-            getTripDetails();
-        }
+
+        realm = Realm.getDefaultInstance();
+        tryToGetFromRealm();
+        getTripDetails();
+
 
         //start bound service now
         Intent TransportRequestHandlerService = new Intent(this, TransportRequestHandlerService.class);
@@ -133,7 +142,13 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
 
     private void tryToGetFromRealm()
     {
-        tripDetails = realm.where(TripDetails.class).equalTo("tripId", tripId).findFirst();
+        if (tripId != null)
+        {
+            tripDetails = realm.where(TripDetails.class).equalTo("tripId", tripId).findFirst();
+        } else if (tripNumber != null)
+        {
+            tripDetails = realm.where(TripDetails.class).equalTo("tripNo", tripNumber).findFirst();
+        }
 
 
         if (tripDetails != null)
@@ -152,31 +167,52 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
 
     private void getTripDetails()
     {
-
-        API.getInstance().getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripDetails>()
+        if (tripId != null)
         {
-
-            @Override
-            public void onResponse(Call<TripDetails> call, Response<TripDetails> response)
+            API.getInstance().getTripDetailsByTripId(tripId, new RetrofitCallbacks<TripDetails>()
             {
-                super.onResponse(call, response);
-                if (response.isSuccessful())
-                {
-                    if (response.body() != null)
-                    {
-                        tripDetails = response.body();
-                        realm.beginTransaction();
-                        realm.copyToRealmOrUpdate(response.body());
-                        realm.commitTransaction();
 
-                        bindDataToUi();
+                @Override
+                public void onResponse(Call<TripDetails> call, Response<TripDetails> response)
+                {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful())
+                    {
+                        handleResponse(response);
                     }
                 }
-            }
-        });
+            });
+        } else if (tripNumber != null)
+        {
+            API.getInstance().getTripDetailsByTripNo(tripNumber, new RetrofitCallbacks<TripDetails>()
+            {
+
+                @Override
+                public void onResponse(Call<TripDetails> call, Response<TripDetails> response)
+                {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful())
+                    {
+                        handleResponse(response);
+                    }
+                }
+            });
+        }
 
     }
 
+    private void handleResponse(Response<TripDetails> response)
+    {
+        if (response.body() != null)
+        {
+            tripDetails = response.body();
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(response.body());
+            realm.commitTransaction();
+
+            bindDataToUi();
+        }
+    }
 
     private void bindDataToUi()
     {

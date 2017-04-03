@@ -6,11 +6,14 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,7 +24,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
@@ -104,7 +109,11 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     MenuItem notificationMenuItem;
     SearchView searchView;
     MenuItem searchMenu;
+    String driverId;
+    Call<List<String>> tripSearchCall;
     private boolean isShowingCompletedTripDetails = false;
+    private SimpleCursorAdapter myAdapter;
+    private String[] strArrData = {"No Suggestions"};
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
         public void onServiceConnected(ComponentName className, IBinder service)
@@ -165,6 +174,12 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
             }
         });*/
 
+        final String[] from = new String[]{"tripNumber"};
+        final int[] to = new int[]{android.R.id.text1};
+
+        myAdapter =
+                new SimpleCursorAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+                        null, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -290,9 +305,10 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                         {
                             if (response.body() > 0)
                             {
+                                driverId = String.valueOf(response.body());
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                                         .edit()
-                                        .putString(Constants.DRIVER_ID, String.valueOf(response.body()))
+                                        .putString(Constants.DRIVER_ID, driverId)
                                         .apply();
 
                                 updateFcmDeviceToken();
@@ -317,7 +333,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                     public void onFailure(Call<Integer> call, Throwable t)
                     {
                         super.onFailure(call, t);
-                        final String driverId = PreferenceManager
+                        driverId = PreferenceManager
                                 .getDefaultSharedPreferences(ActivityHome.this)
                                 .getString(Constants.DRIVER_ID, null);
                         if (driverId == null)
@@ -468,6 +484,78 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSuggestionsAdapter(myAdapter);
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener()
+        {
+            @Override
+            public boolean onSuggestionClick(int position)
+            {
+                // Add clicked text to search box
+                CursorAdapter ca = searchView.getSuggestionsAdapter();
+                Cursor cursor = ca.getCursor();
+                cursor.moveToPosition(position);
+                searchView.setQuery(cursor.getString(cursor.getColumnIndex("tripNumber")), false);
+
+                ActivityTripDetails.start(ActivityHome.this,
+                        cursor.getString(cursor.getColumnIndex("tripNumber")));
+
+                return true;
+            }
+
+            @Override
+            public boolean onSuggestionSelect(int position)
+            {
+                return true;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
+            @Override
+            public boolean onQueryTextSubmit(String s)
+            {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String s)
+            {
+                if (tripSearchCall != null)
+                {
+                    tripSearchCall.cancel();
+                }
+
+                tripSearchCall = API.getInstance().getTripNumberLike(s, driverId, new RetrofitCallbacks<List<String>>()
+                {
+
+                    @Override
+                    public void onResponse(Call<List<String>> call, Response<List<String>> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() == null)
+                            {
+                                return;
+                            }
+                            strArrData = response.body().toArray(new String[0]);
+                            // Filter data
+                            final MatrixCursor mc = new MatrixCursor(new String[]{BaseColumns._ID, "tripNumber"});
+                            for (int i = 0; i < strArrData.length; i++)
+                            {
+                                if (strArrData[i].toLowerCase().contains(s.toLowerCase()))
+                                {
+                                    mc.addRow(new Object[]{i, strArrData[i]});
+                                }
+                            }
+                            myAdapter.changeCursor(mc);
+                            myAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -506,7 +594,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 fragmentTrips.getTrips();
                 showFragment(fragmentTrips);
                 setActionBarTitle(getResources().getString(R.string.actionbar_title_trips));
-                searchView.setOnQueryTextListener(fragmentTrips);
+                //searchView.setOnQueryTextListener(fragmentTrips);
                 searchMenu.setVisible(true);
                 break;
             case R.id.nav_accountBalance:

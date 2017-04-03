@@ -68,6 +68,7 @@ public class Constants
     public static final String FCM_DRIVER_INSTANCE_ID = "a0f7161f2d14ba177ed72b00017d1ddd";
     public static final String IS_BILL_PENDING = "IS_BILL_PENDING";
     public static final String DRIVER_ID = "DRIVER_ID";
+    public static final String INTENT_EXTRA_TRIP_NUMBER = "INTENT_EXTRA_TRIP_NUMBER";
 
     public static HashMap<String, Object> getFirebaseRemoteValuesMap()
     {
