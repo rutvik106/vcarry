@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import apimodels.TripsByDriverMail;
 import extra.CountDownTimer;
+import extra.LocaleHelper;
 import extra.Utils;
 import io.fusionbit.vcarry.ActivityTripDetails;
 import io.fusionbit.vcarry.Constants;
@@ -31,20 +32,13 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
 {
 
     final Context context;
-
+    final SimpleDateFormat sdf;
+    final Handler handler;
     TripsByDriverMail model;
-
     TextView tvTripFrom, tvTripTo, tvTripTime, tvCurrentTripStatus,
             tvTripTimeCountdown, tvTimeLeft, tvTripNumber;
-
     RelativeLayout rlSingleTrip;
-
     LinearLayout llContainer;
-
-    final SimpleDateFormat sdf;
-
-    final Handler handler;
-
     CountDownTimer countDownTimer;
 
 
@@ -92,8 +86,15 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
     public static void bind(final VHSingleTrip vh, final TripsByDriverMail model)
     {
         vh.model = model;
-        vh.tvTripFrom.setText(model.getFromShippingLocation());
-        vh.tvTripTo.setText(model.getToShippingLocation());
+        if (LocaleHelper.getLanguage(vh.context).equalsIgnoreCase("gu"))
+        {
+            vh.tvTripFrom.setText(model.getFromGujaratiAddress());
+            vh.tvTripTo.setText(model.getToGujaratiAddress());
+        } else
+        {
+            vh.tvTripFrom.setText(model.getFromShippingLocation());
+            vh.tvTripTo.setText(model.getToShippingLocation());
+        }
         vh.tvCurrentTripStatus.setText(model.getStatus());
 
         vh.tvTripTime.setText(Utils.convertDateToRequireFormat(model.getTripDatetime()));

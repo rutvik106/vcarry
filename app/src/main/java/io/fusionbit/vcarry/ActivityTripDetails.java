@@ -27,6 +27,7 @@ import java.io.IOException;
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripDetails;
+import extra.LocaleHelper;
 import extra.Log;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -42,7 +43,8 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
     String tripId, tripNumber;
 
     TextView tvTripDetailTime, tvTripCustomerName, tvTripLocation, tvTripDestination,
-            tvTripStatus, tvTripFare, tvTripNumber;
+            tvTripStatus, tvTripFare, tvTripNumber, tvFromCompanyName, tvToCompanyName,
+            tvTripWeight, tvTripDimension;
 
     Button btnStartTrip;
 
@@ -109,6 +111,12 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
 
         fabUpdateFromLocation = (FloatingActionButton) findViewById(R.id.fab_updateFromLocation);
         fabUpdateToLocation = (FloatingActionButton) findViewById(R.id.fab_updateToLocation);
+
+        tvFromCompanyName = (TextView) findViewById(R.id.tv_tripFromCompanyName);
+        tvToCompanyName = (TextView) findViewById(R.id.tv_tripToCompanyName);
+
+        tvTripDimension = (TextView) findViewById(R.id.tv_tripDimension);
+        tvTripWeight = (TextView) findViewById(R.id.tv_tripWeight);
 
         fabUpdateFromLocation.setOnClickListener(this);
         fabUpdateToLocation.setOnClickListener(this);
@@ -219,10 +227,28 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
         Log.i(TAG, "BINDING DATA TO UI");
         tvTripFare.setText(getResources().getString(R.string.rs) + " " + tripDetails.getFare());
         tvTripStatus.setText(tripDetails.getStatus());
-        tvTripLocation.setText(tripDetails.getFromShippingLocation());
-        tvTripDestination.setText(tripDetails.getToShippingLocation());
+
+
+        if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu"))
+        {
+            tvTripLocation.setText(tripDetails.getFromGujaratiAddress());
+            tvTripDestination.setText(tripDetails.getToGujaratiAddress());
+            tvFromCompanyName.setText(tripDetails.getFromGujaratiName());
+            tvToCompanyName.setText(tripDetails.getToGujaratiName());
+        } else
+        {
+            tvTripLocation.setText(tripDetails.getFromShippingLocation());
+            tvTripDestination.setText(tripDetails.getToShippingLocation());
+            tvFromCompanyName.setText(tripDetails.getFromCompanyName());
+            tvToCompanyName.setText(tripDetails.getToCompanyName());
+        }
+
+
         tvTripCustomerName.setText(tripDetails.getCustomerName());
         tvTripDetailTime.setText(tripDetails.getTripDatetimeDmy());
+
+        tvTripWeight.setText(tripDetails.getWeight());
+        tvTripDimension.setText(tripDetails.getDimensions());
 
         tvTripNumber.setText(tripDetails.getTripNo());
 

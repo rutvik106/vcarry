@@ -140,5 +140,9 @@
     <string name="updating_location">Updating Location...</string>
     <string name="location_updated_successfully">Location Updated Successfully</string>
     <string name="failed_to_update_location">Failed to update Location</string>
+    <string name="from_company_name">From Company Name</string>
+    <string name="to_company_name">To Company Name</string>
+    <string name="dimension">Dimension</string>
+    <string name="weight">Weight</string>
 
 </resources>

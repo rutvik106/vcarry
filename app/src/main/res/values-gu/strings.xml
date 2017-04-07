@@ -142,5 +142,9 @@
     <string name="updating_location">Updating Location...</string>
     <string name="location_updated_successfully">Location Updated Successfully</string>
     <string name="failed_to_update_location">Failed to update Location</string>
+    <string name="from_company_name">પ્રારંભ કંપનીના નામ</string>
+    <string name="to_company_name">ગંતવ્ય કંપનીના નામ</string>
+    <string name="dimension">માપ</string>
+    <string name="weight">વજન</string>
 
 </resources>

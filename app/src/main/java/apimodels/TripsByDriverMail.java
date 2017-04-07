@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.UnsupportedEncodingException;
+
 import io.fusionbit.vcarry.Constants;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -18,6 +20,20 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
 {
 
 
+    public static final Creator<TripsByDriverMail> CREATOR = new Creator<TripsByDriverMail>()
+    {
+        @Override
+        public TripsByDriverMail createFromParcel(Parcel source)
+        {
+            return new TripsByDriverMail(source);
+        }
+
+        @Override
+        public TripsByDriverMail[] newArray(int size)
+        {
+            return new TripsByDriverMail[size];
+        }
+    };
     /**
      * trip_id : 2
      * trip_datetime : 2016-09-07 16:17:18
@@ -121,6 +137,138 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     private String customerContactNo;
     @SerializedName("trip_no")
     private String tripNo;
+    /**
+     * 0 : 783
+     * 1 : 2017-03-23 17:10:38
+     * 2 : 23/03/2017 05:10:38 PM
+     * 3 : 25
+     * 4 : Amishi Mehta
+     * 5 : Jodhpur park society
+     * 6 : Jodhpur park society Near Ramdev Nagar BRTS Bus stop
+     * 7 :
+     * from_gujarati_address :
+     * 8 : 2
+     * 9 : Ahmedabad
+     * 10 : 567
+     * 11 : Kankriya
+     * 12 : 35
+     * 13 : jeet patel
+     * 14 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
+     * 15 : Rangin Park Soc
+     * 16 :
+     * to_gujarati_address :
+     * 17 : 2
+     * 18 : Ahmedabad
+     * 19 : 566
+     * 20 : S g highway
+     * 21 : 1
+     * 22 : Tata Ace
+     * vehicle_type : Tata Ace
+     * 23 : 2
+     * 24 : 212
+     * 25 : 27
+     * 26 : 27
+     * 27 : 2017-03-23 17:11:01
+     * 28 : 2017-03-23 17:11:22
+     * 29 : 6
+     * 30 : 1664
+     * 31 : Finished
+     * 32 : Amishi Mehta
+     * 33 : 9409210477
+     * 34 : 201703230000424
+     * 35 : 1490269349122
+     * trip_start_time : 1490269349122
+     * 36 : 1490269386949
+     * trip_stop_time : 1490269386949
+     * 37 : 23.0260084,72.5149829
+     * trip_start_latlong : 23.0260084,72.5149829
+     * 38 : 23.0261119,72.5146944
+     * trip_stop_latlong : 23.0261119,72.5146944
+     * 39 : 0
+     * trip_distance : 0
+     * 40 : 0
+     * memo_amount : 0
+     * 41 : 0
+     * labour_amount : 0
+     * 42 : 212
+     * cash_received : 212
+     * 43 :
+     * lat_long : 23.0333222,72.5104536
+     * 44 : 23.0333222,72.5104536
+     * 45 : 200
+     * weight : 200
+     * 46 : 23x123
+     * dimensions : 23x123
+     */
+
+    @SerializedName("from_gujarati_address")
+    private String fromGujaratiAddress;
+    @SerializedName("to_gujarati_address")
+    private String toGujaratiAddress;
+    @SerializedName("vehicle_type")
+    private String vehicleType;
+    @SerializedName("trip_start_time")
+    private String tripStartTime;
+    @SerializedName("trip_stop_time")
+    private String tripStopTime;
+    @SerializedName("trip_start_latlong")
+    private String tripStartLatlong;
+    @SerializedName("trip_stop_latlong")
+    private String tripStopLatlong;
+    @SerializedName("trip_distance")
+    private String tripDistance;
+    @SerializedName("memo_amount")
+    private String memoAmount;
+    @SerializedName("labour_amount")
+    private String labourAmount;
+    @SerializedName("cash_received")
+    private String cashReceived;
+    @SerializedName("lat_long")
+    private String latLong;
+    @SerializedName("weight")
+    private String weight;
+    @SerializedName("dimensions")
+    private String dimensions;
+
+    public TripsByDriverMail()
+    {
+    }
+
+    protected TripsByDriverMail(Parcel in)
+    {
+        this.tripId = in.readString();
+        this.tripDatetime = in.readString();
+        this.fromShippingLocationId = in.readString();
+        this.fromShippingLocation = in.readString();
+        this.fromCityId = in.readString();
+        this.fromAreaId = in.readString();
+        this.toShippingLocationId = in.readString();
+        this.toShippingLocation = in.readString();
+        this.toCityId = in.readString();
+        this.toAreaId = in.readString();
+        this.vehicleTypeId = in.readString();
+        this.driverId = in.readString();
+        this.fare = in.readString();
+        this.createdBy = in.readString();
+        this.lastModifiedBy = in.readString();
+        this.dateAdded = in.readString();
+        this.dateModified = in.readString();
+        this.tripStatus = in.readString();
+        this.customerId = in.readString();
+        this.status = in.readString();
+        this.customerName = in.readString();
+        this.tripDatetimeDmy = in.readString();
+        this.fromAddressLine1 = in.readString();
+        this.fromAddressLine2 = in.readString();
+        this.fromCityName = in.readString();
+        this.fromAreaName = in.readString();
+        this.toAddressLine1 = in.readString();
+        this.toAddressLine2 = in.readString();
+        this.toCityName = in.readString();
+        this.toAreaName = in.readString();
+        this.customerContactNo = in.readString();
+        this.tripNo = in.readString();
+    }
 
     public String getTripId()
     {
@@ -326,6 +474,18 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         this.status = status;
     }
 
+    /*@Override
+    public boolean equals(Object c)
+    {
+        if (!(c instanceof TripsByDriverMail))
+        {
+            return false;
+        }
+
+        TripsByDriverMail that = (TripsByDriverMail) c;
+        return this.getTripId().equals(that.getTripId());
+    }*/
+
     public String getCustomerName()
     {
         return customerName;
@@ -347,22 +507,6 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         {
             return -1;
         }
-    }
-
-    /*@Override
-    public boolean equals(Object c)
-    {
-        if (!(c instanceof TripsByDriverMail))
-        {
-            return false;
-        }
-
-        TripsByDriverMail that = (TripsByDriverMail) c;
-        return this.getTripId().equals(that.getTripId());
-    }*/
-
-    public TripsByDriverMail()
-    {
     }
 
     public String getTripDatetimeDmy()
@@ -518,54 +662,209 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         dest.writeString(this.tripNo);
     }
 
-    protected TripsByDriverMail(Parcel in)
+    public String getFromGujaratiAddress()
     {
-        this.tripId = in.readString();
-        this.tripDatetime = in.readString();
-        this.fromShippingLocationId = in.readString();
-        this.fromShippingLocation = in.readString();
-        this.fromCityId = in.readString();
-        this.fromAreaId = in.readString();
-        this.toShippingLocationId = in.readString();
-        this.toShippingLocation = in.readString();
-        this.toCityId = in.readString();
-        this.toAreaId = in.readString();
-        this.vehicleTypeId = in.readString();
-        this.driverId = in.readString();
-        this.fare = in.readString();
-        this.createdBy = in.readString();
-        this.lastModifiedBy = in.readString();
-        this.dateAdded = in.readString();
-        this.dateModified = in.readString();
-        this.tripStatus = in.readString();
-        this.customerId = in.readString();
-        this.status = in.readString();
-        this.customerName = in.readString();
-        this.tripDatetimeDmy = in.readString();
-        this.fromAddressLine1 = in.readString();
-        this.fromAddressLine2 = in.readString();
-        this.fromCityName = in.readString();
-        this.fromAreaName = in.readString();
-        this.toAddressLine1 = in.readString();
-        this.toAddressLine2 = in.readString();
-        this.toCityName = in.readString();
-        this.toAreaName = in.readString();
-        this.customerContactNo = in.readString();
-        this.tripNo = in.readString();
+        try
+        {
+            if (fromGujaratiAddress != null)
+            {
+                if (!fromGujaratiAddress.isEmpty())
+                {
+                    // Convert from Unicode to UTF-8
+                    String string = fromGujaratiAddress;
+                    byte[] utf8 = string.getBytes("UTF-8");
+
+                    // Convert from UTF-8 to Unicode
+                    return new String(utf8, "UTF-8");
+                } else
+                {
+                    return getFromAddressLine1() + ", " +
+                            getFromAddressLine2() + ", " +
+                            getFromAreaName() + ", " +
+                            getFromCityName();
+                }
+            } else
+            {
+                return getFromAddressLine1() + ", " +
+                        getFromAddressLine2() + ", " +
+                        getFromAreaName() + ", " +
+                        getFromCityName();
+            }
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+            return getFromAddressLine1() + ", " +
+                    getFromAddressLine2() + ", " +
+                    getFromAreaName() + ", " +
+                    getFromCityName();
+        }
     }
 
-    public static final Creator<TripsByDriverMail> CREATOR = new Creator<TripsByDriverMail>()
+    public void setFromGujaratiAddress(String fromGujaratiAddress)
     {
-        @Override
-        public TripsByDriverMail createFromParcel(Parcel source)
-        {
-            return new TripsByDriverMail(source);
-        }
+        this.fromGujaratiAddress = fromGujaratiAddress;
+    }
 
-        @Override
-        public TripsByDriverMail[] newArray(int size)
+    public String getToGujaratiAddress()
+    {
+        try
         {
-            return new TripsByDriverMail[size];
+            if (toGujaratiAddress != null)
+            {
+                if (!toGujaratiAddress.isEmpty())
+                {
+                    // Convert from Unicode to UTF-8
+                    String string = toGujaratiAddress;
+                    byte[] utf8 = string.getBytes("UTF-8");
+
+                    // Convert from UTF-8 to Unicode
+                    return new String(utf8, "UTF-8");
+                } else
+                {
+                    return getToAddressLine1() + ", " +
+                            getToAddressLine2() + ", " +
+                            getToAreaName() + ", " +
+                            getToCityName();
+                }
+            } else
+            {
+                return getToAddressLine1() + ", " +
+                        getToAddressLine2() + ", " +
+                        getToAreaName() + ", " +
+                        getToCityName();
+            }
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+            return getToAddressLine1() + ", " +
+                    getToAddressLine2() + ", " +
+                    getToAreaName() + ", " +
+                    getToCityName();
         }
-    };
+    }
+
+    public void setToGujaratiAddress(String toGujaratiAddress)
+    {
+        this.toGujaratiAddress = toGujaratiAddress;
+    }
+
+    public String getVehicleType()
+    {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType)
+    {
+        this.vehicleType = vehicleType;
+    }
+
+    public String getTripStartTime()
+    {
+        return tripStartTime;
+    }
+
+    public void setTripStartTime(String tripStartTime)
+    {
+        this.tripStartTime = tripStartTime;
+    }
+
+    public String getTripStopTime()
+    {
+        return tripStopTime;
+    }
+
+    public void setTripStopTime(String tripStopTime)
+    {
+        this.tripStopTime = tripStopTime;
+    }
+
+    public String getTripStartLatlong()
+    {
+        return tripStartLatlong;
+    }
+
+    public void setTripStartLatlong(String tripStartLatlong)
+    {
+        this.tripStartLatlong = tripStartLatlong;
+    }
+
+    public String getTripStopLatlong()
+    {
+        return tripStopLatlong;
+    }
+
+    public void setTripStopLatlong(String tripStopLatlong)
+    {
+        this.tripStopLatlong = tripStopLatlong;
+    }
+
+    public String getTripDistance()
+    {
+        return tripDistance;
+    }
+
+    public void setTripDistance(String tripDistance)
+    {
+        this.tripDistance = tripDistance;
+    }
+
+    public String getMemoAmount()
+    {
+        return memoAmount;
+    }
+
+    public void setMemoAmount(String memoAmount)
+    {
+        this.memoAmount = memoAmount;
+    }
+
+    public String getLabourAmount()
+    {
+        return labourAmount;
+    }
+
+    public void setLabourAmount(String labourAmount)
+    {
+        this.labourAmount = labourAmount;
+    }
+
+    public String getCashReceived()
+    {
+        return cashReceived;
+    }
+
+    public void setCashReceived(String cashReceived)
+    {
+        this.cashReceived = cashReceived;
+    }
+
+    public String getLatLong()
+    {
+        return latLong;
+    }
+
+    public void setLatLong(String latLong)
+    {
+        this.latLong = latLong;
+    }
+
+    public String getWeight()
+    {
+        return weight;
+    }
+
+    public void setWeight(String weight)
+    {
+        this.weight = weight;
+    }
+
+    public String getDimensions()
+    {
+        return dimensions;
+    }
+
+    public void setDimensions(String dimensions)
+    {
+        this.dimensions = dimensions;
+    }
 }

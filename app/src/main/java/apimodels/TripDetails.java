@@ -179,6 +179,68 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     private String toGujaratiAddress;
     @SerializedName("from_gujarati_address")
     private String fromGujaratiAddress;
+    /**
+     * 0 : 875
+     * 1 : 2017-04-03 11:52:08
+     * 2 : 03/04/2017 11:52:08 AM
+     * 3 : 163
+     * 4 : 139
+     * 5 : Home
+     * 6 : 52/53 Jodhpur park society, Opp courtyard marriott,
+     * 7 :
+     * 8 : ૫૨,૫૩ જોધપુર પાર્ક સોસાયટી, રામદેવ નગર, સ્ટૅલલિતે રોડ.
+     * 9 :
+     * from_gujarati_name :
+     * 10 : 2
+     * 11 : Ahmedabad
+     * 12 : 568
+     * 13 : Ramdevnagar
+     * 14 : to location from map
+     * 15 : Narmadashanker Road, Girdhar Nagar, Ahmedabad, Gujarat 380004
+     * 16 :
+     * 17 :
+     * 18 :
+     * to_gujarati_name :
+     * 19 : 2
+     * 20 : Ahmedabad
+     * 21 : 576
+     * 22 : Rakhiyal
+     * 23 : 2
+     * 24 : Atul Loading
+     * 25 : 2
+     * 26 : Rutvik Mehta
+     * 27 :
+     * vehicle_reg_no :
+     * 28 :
+     * licence_no :
+     * 29 : 1
+     * 30 : 27
+     * 31 : 27
+     * 32 : 2017-04-03 11:52:50
+     * 33 : 2017-04-06 14:32:42
+     * 34 : 6
+     * 35 : 1664
+     * 36 : Finished
+     * 37 : Amishi Mehta
+     * 38 : 9409210477
+     * 39 : 201704030000516
+     * 40 :
+     * cancel_desc :
+     * 41 : 1
+     * 42 : 1
+     */
+
+    @SerializedName("from_gujarati_name")
+    private String fromGujaratiName;
+    @SerializedName("to_gujarati_name")
+    private String toGujaratiName;
+    @SerializedName("vehicle_reg_no")
+    private String vehicleRegNo;
+    @SerializedName("licence_no")
+    private String licenceNo;
+    @SerializedName("cancel_desc")
+    private String cancelDesc;
+
 
     public boolean isReturnGujaratiAddress()
     {
@@ -732,7 +794,7 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
 
     public String getWeight()
     {
-        return weight;
+        return weight != null ? !weight.isEmpty() ? weight : "NA" : "NA";
     }
 
     public void setWeight(String weight)
@@ -742,11 +804,72 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
 
     public String getDimensions()
     {
-        return dimensions;
+        return dimensions != null ? !dimensions.isEmpty() ? dimensions : "NA" : "NA";
     }
 
     public void setDimensions(String dimensions)
     {
         this.dimensions = dimensions;
+    }
+
+    public String getFromGujaratiName()
+    {
+        return fromGujaratiName != null ? !fromGujaratiName.isEmpty() ? fromGujaratiName : fromShippingLocation : fromShippingLocation;
+    }
+
+    public void setFromGujaratiName(String fromGujaratiName)
+    {
+        this.fromGujaratiName = fromGujaratiName;
+    }
+
+    public String getToGujaratiName()
+    {
+        return toGujaratiName != null ? !toGujaratiName.isEmpty() ? toGujaratiName : toShippingLocation : toShippingLocation;
+    }
+
+    public void setToGujaratiName(String toGujaratiName)
+    {
+        this.toGujaratiName = toGujaratiName;
+    }
+
+    public String getVehicleRegNo()
+    {
+        return vehicleRegNo;
+    }
+
+    public void setVehicleRegNo(String vehicleRegNo)
+    {
+        this.vehicleRegNo = vehicleRegNo;
+    }
+
+    public String getLicenceNo()
+    {
+        return licenceNo;
+    }
+
+    public void setLicenceNo(String licenceNo)
+    {
+        this.licenceNo = licenceNo;
+    }
+
+    public String getCancelDesc()
+    {
+        return cancelDesc;
+    }
+
+    public void setCancelDesc(String cancelDesc)
+    {
+        this.cancelDesc = cancelDesc;
+    }
+
+
+    public String getFromCompanyName()
+    {
+        return fromShippingLocation;
+    }
+
+    public String getToCompanyName()
+    {
+        return toShippingLocation;
     }
 }

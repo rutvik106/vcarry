@@ -112,7 +112,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     String driverId;
     Call<List<String>> tripSearchCall;
     private boolean isShowingCompletedTripDetails = false;
-    private SimpleCursorAdapter myAdapter;
+    private SimpleCursorAdapter tripSearchResultCursorAdapter;
     private String[] strArrData = {"No Suggestions"};
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -177,7 +177,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         final String[] from = new String[]{"tripNumber"};
         final int[] to = new int[]{android.R.id.text1};
 
-        myAdapter =
+        tripSearchResultCursorAdapter =
                 new SimpleCursorAdapter(this, android.R.layout.simple_spinner_dropdown_item,
                         null, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
@@ -484,7 +484,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setSuggestionsAdapter(myAdapter);
+        searchView.setSuggestionsAdapter(tripSearchResultCursorAdapter);
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener()
         {
             @Override
@@ -547,8 +547,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                     mc.addRow(new Object[]{i, strArrData[i]});
                                 }
                             }
-                            myAdapter.changeCursor(mc);
-                            myAdapter.notifyDataSetChanged();
+                            tripSearchResultCursorAdapter.changeCursor(mc);
+                            tripSearchResultCursorAdapter.notifyDataSetChanged();
                         }
                     }
                 });

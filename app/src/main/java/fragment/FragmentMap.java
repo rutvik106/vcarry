@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripDetails;
+import extra.LocaleHelper;
 import io.fusionbit.vcarry.App;
 import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.R;
@@ -56,28 +57,17 @@ import static java.lang.StrictMath.toDegrees;
 public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnCameraChangeListener, GoogleMap.OnCameraIdleListener
 {
     private static final String TAG = App.APP_TAG + FragmentMap.class.getSimpleName();
-
-    private SyncedMapFragment mapFragment;
-
-    private GoogleMap mMap;
-
-    private LatLngInterpolator mLatLngInterpolator;
-
     public boolean isReady = false;
-
-    private Context context;
-
-    private Marker currentLocationMarker;
-
-    private LatLng currentLatLng;
-
     LinearLayout llDashboardContainer;
-
     TextView tvDashCustomerName, tvDashCustomerContact, tvDashTripTo, tvDashTripFrom;
-
     Button btnDashStopTrip, btnDashCancelTrip;
-
     OnTripStopListener onTripStopListener;
+    private SyncedMapFragment mapFragment;
+    private GoogleMap mMap;
+    private LatLngInterpolator mLatLngInterpolator;
+    private Context context;
+    private Marker currentLocationMarker;
+    private LatLng currentLatLng;
 
     public static FragmentMap newInstance(int index, Context context, OnTripStopListener onTripStopListener)
     {
@@ -194,6 +184,155 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
     }
 
+    public void checkIfDriverOnTrip()
+    {
+
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        final boolean isOnTrip = pref
+                .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
+
+        if (isOnTrip)
+        {
+            final String tripId = pref.getString(Constants.CURRENT_TRIP_ID, "");
+
+            if (!tripId.isEmpty())
+            {
+
+                final Realm realm = Realm.getDefaultInstance();
+
+
+                final TripDetails tripDetails = realm
+                        .where(TripDetails.class).equalTo("tripId", tripId).findFirst();
+
+
+                if (tripDetails != null)
+                {
+                    llDashboardContainer.setVisibility(View.VISIBLE);
+                    if (tripDetails.getCustomerContactNo() != null)
+                    {
+                        tvDashCustomerContact.setText(tripDetails.getCustomerContactNo());
+                        tvDashCustomerContact.setOnClickListener(new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View view)
+                            {
+                                Intent intent = new Intent(Intent.ACTION_CALL,
+                                        Uri.parse("tel:" + tripDetails.getCustomerContactNo()));
+                                startActivity(intent);
+                            }
+                        });
+                    } else
+                    {
+                        tvDashCustomerContact.setText("");
+                    }
+                    if (LocaleHelper.getLanguage(getActivity()).equalsIgnoreCase("gu"))
+                    {
+                        tvDashTripTo.setText(tripDetails.getToGujaratiAddress());
+                        tvDashTripFrom.setText(tripDetails.getFromGujaratiAddress());
+                    } else
+                    {
+                        tvDashTripTo.setText(tripDetails.getToShippingLocation());
+                        tvDashTripFrom.setText(tripDetails.getFromShippingLocation());
+                    }
+                    tvDashCustomerName.setText(tripDetails.getCustomerName());
+
+                    btnDashStopTrip.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View view)
+                        {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle(getResources().getString(R.string.stop_trip))
+                                    .setMessage(getResources().getString(R.string.are_you_sure_stop_trip))
+                                    .setPositiveButton(getResources().getString(R.string.stop), new DialogInterface.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i)
+                                        {
+                                            stopTrip(tripId);
+                                        }
+                                    }).setNegativeButton(getResources().getString(R.string.cancel), null)
+                                    .show();
+
+
+                        }
+                    });
+
+                    btnDashCancelTrip.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View view)
+                        {
+                            new AlertDialog.Builder(getActivity())
+                                    .setTitle(getResources().getString(R.string.cancel_trip))
+                                    .setMessage(R.string.trip_cancel_msg)
+                                    .setPositiveButton(getResources().getString(R.string.cancel_trip), new DialogInterface.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i)
+                                        {
+                                            cancelTrip(tripId);
+                                        }
+                                    }).setNegativeButton(getResources().getString(R.string.cancel), null)
+                                    .show();
+                        }
+                    });
+
+                }
+
+            }
+        }
+
+    }
+
+    private void stopTrip(final String tripId)
+    {
+        API.getInstance().updateTripStatus(Constants.TRIP_STATUS_FINISHED, tripId, new RetrofitCallbacks<ResponseBody>()
+        {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+            {
+                super.onResponse(call, response);
+
+                if (response.isSuccessful())
+                {
+
+                    llDashboardContainer.setVisibility(View.GONE);
+
+                    onTripStopListener.onTripStop(tripId);
+
+                }
+
+            }
+
+        });
+    }
+
+    private void cancelTrip(final String tripId)
+    {
+        API.getInstance().updateTripStatus(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER,
+                tripId, new RetrofitCallbacks<ResponseBody>()
+                {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                    {
+                        super.onResponse(call, response);
+
+                        if (response.isSuccessful())
+                        {
+
+                            llDashboardContainer.setVisibility(View.GONE);
+
+                            onTripStopListener.onTripCancel(tripId);
+
+                        }
+
+                    }
+
+                });
+
+    }
 
     public interface LatLngInterpolator
     {
@@ -273,150 +412,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         cos(fromLat) * cos(toLat) * pow(sin(dLng / 2), 2)));
             }
         }
-
-    }
-
-    public void checkIfDriverOnTrip()
-    {
-
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-        final boolean isOnTrip = pref
-                .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
-
-        if (isOnTrip)
-        {
-            final String tripId = pref.getString(Constants.CURRENT_TRIP_ID, "");
-
-            if (!tripId.isEmpty())
-            {
-
-                final Realm realm = Realm.getDefaultInstance();
-
-
-                final TripDetails tripDetails = realm
-                        .where(TripDetails.class).equalTo("tripId", tripId).findFirst();
-
-
-                if (tripDetails != null)
-                {
-                    llDashboardContainer.setVisibility(View.VISIBLE);
-                    if (tripDetails.getCustomerContactNo() != null)
-                    {
-                        tvDashCustomerContact.setText(tripDetails.getCustomerContactNo());
-                        tvDashCustomerContact.setOnClickListener(new View.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(View view)
-                            {
-                                Intent intent = new Intent(Intent.ACTION_CALL,
-                                        Uri.parse("tel:" + tripDetails.getCustomerContactNo()));
-                                startActivity(intent);
-                            }
-                        });
-                    } else
-                    {
-                        tvDashCustomerContact.setText("");
-                    }
-                    tvDashTripTo.setText(tripDetails.getToShippingLocation());
-                    tvDashTripFrom.setText(tripDetails.getFromShippingLocation());
-                    tvDashCustomerName.setText(tripDetails.getCustomerName());
-
-                    btnDashStopTrip.setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View view)
-                        {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle(getResources().getString(R.string.stop_trip))
-                                    .setMessage(getResources().getString(R.string.are_you_sure_stop_trip))
-                                    .setPositiveButton(getResources().getString(R.string.stop), new DialogInterface.OnClickListener()
-                                    {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i)
-                                        {
-                                            stopTrip(tripId);
-                                        }
-                                    }).setNegativeButton(getResources().getString(R.string.cancel), null)
-                                    .show();
-
-
-                        }
-                    });
-
-                    btnDashCancelTrip.setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View view)
-                        {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle(getResources().getString(R.string.cancel_trip))
-                                    .setMessage(R.string.trip_cancel_msg)
-                                    .setPositiveButton(getResources().getString(R.string.cancel_trip), new DialogInterface.OnClickListener()
-                                    {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i)
-                                        {
-                                            cancelTrip(tripId);
-                                        }
-                                    }).setNegativeButton(getResources().getString(R.string.cancel), null)
-                                    .show();
-                        }
-                    });
-
-                }
-
-            }
-        }
-
-    }
-
-
-    private void stopTrip(final String tripId)
-    {
-        API.getInstance().updateTripStatus(Constants.TRIP_STATUS_FINISHED, tripId, new RetrofitCallbacks<ResponseBody>()
-        {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-            {
-                super.onResponse(call, response);
-
-                if (response.isSuccessful())
-                {
-
-                    llDashboardContainer.setVisibility(View.GONE);
-
-                    onTripStopListener.onTripStop(tripId);
-
-                }
-
-            }
-
-        });
-    }
-
-    private void cancelTrip(final String tripId)
-    {
-        API.getInstance().updateTripStatus(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER,
-                tripId, new RetrofitCallbacks<ResponseBody>()
-                {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-                    {
-                        super.onResponse(call, response);
-
-                        if (response.isSuccessful())
-                        {
-
-                            llDashboardContainer.setVisibility(View.GONE);
-
-                            onTripStopListener.onTripCancel(tripId);
-
-                        }
-
-                    }
-
-                });
 
     }
 
