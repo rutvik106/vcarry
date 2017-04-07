@@ -1,6 +1,5 @@
 package extra;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,6 +8,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.media.RingtoneManager;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.WindowManager;
 
@@ -118,21 +118,22 @@ public class Utils
     public static void showSimpleNotification(final Context context, int tripId,
                                               String title, String message, PendingIntent pendingIntent)
     {
-        Notification n = new Notification.Builder(context)
+        NotificationCompat.Builder n = new NotificationCompat.Builder(context)
                 .setContentTitle(title)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(message))
                 .setContentText(message)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.logo_small)
                 .setAutoCancel(true)
                 .setVibrate(new long[]{0, 500, 200, 500})
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .build();
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
 
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
-        notificationManager.notify(tripId, n);
+        notificationManager.notify(tripId, n.build());
     }
 
     public static Date addDays(Date date, int days)

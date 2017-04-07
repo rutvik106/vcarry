@@ -14,7 +14,45 @@
         android:background="@android:color/black"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:weightSum="5">
+
+            <TextView
+                android:id="@+id/tv_dashTripFromCompany"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:ellipsize="marquee"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                tools:text="Shnakar Chemicals Vatva"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_dashTripToCompany"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:ellipsize="marquee"
+                android:gravity="left"
+                android:maxLines="1"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                tools:text="Shnakar Chemicals Vatva"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,7 +68,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                tools:text="52,53 jodhpur park soc, near ramdev nagar opp courtyard marriott, satellite"/>
 
             <ImageView
                 android:layout_width="0dp"
@@ -45,7 +84,8 @@
                 android:layout_weight="2"
                 android:gravity="right"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                tools:text="52,53 jodhpur park soc, near ramdev nagar opp courtyard marriott, satellite"/>
 
         </LinearLayout>
 
@@ -64,7 +104,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                tools:text="Rutvik Mehta"/>
 
             <TextView
                 android:id="@+id/tv_dashCustomerContact"
@@ -89,7 +130,7 @@
             <Button
                 android:id="@+id/btn_dashCancelTrip"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/reject_btn"
@@ -101,7 +142,7 @@
             <Button
                 android:id="@+id/btn_dashStopTrip"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/accept_btn"

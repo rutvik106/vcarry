@@ -17,6 +17,7 @@ import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -516,7 +517,7 @@ public class TransportRequestHandlerService extends Service
 
         // build notification
         // the addAction re-use the same intent to keep the example short
-        Notification n = new Notification.Builder(this)
+        NotificationCompat.Builder n = new NotificationCompat.Builder(this)
                 .setContentTitle(getResources().getString(R.string.transport_request))
                 .setContentText(getResources().getString(R.string.new_request))
                 .setSmallIcon(R.drawable.ic_local_shipping_black_24dp)
@@ -524,16 +525,16 @@ public class TransportRequestHandlerService extends Service
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setVibrate(new long[]{0, 500, 200, 500})
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
                 /*.addAction(R.drawable.ic_done_black_24dp, getResources().getString(R.string.accept), pAccept)
                 .addAction(R.drawable.ic_clear_black_24dp, getResources().getString(R.string.reject), pReject)*/
-                .build();
+        //.build();
 
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        notificationManager.notify(mRequestId, n);
+        notificationManager.notify(mRequestId, n.build());
 
     }
 
