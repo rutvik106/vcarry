@@ -57,6 +57,7 @@ import apimodels.DriverDetails;
 import apimodels.TripDetails;
 import extra.LocaleHelper;
 import extra.Log;
+import extra.Utils;
 import fragment.FragmentAccBalance;
 import fragment.FragmentCompletedTripDetails;
 import fragment.FragmentMap;
@@ -607,10 +608,10 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 searchMenu.setVisible(false);
                 break;
             case R.id.nav_share:
-                Toast.makeText(this, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();
+                Utils.ShareApp(this);
                 break;
             case R.id.nav_sendFeedback:
-                Toast.makeText(this, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();
+                Utils.sendFeedback(this);
                 break;
         }
 

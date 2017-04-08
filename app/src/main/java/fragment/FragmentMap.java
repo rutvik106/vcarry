@@ -164,7 +164,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         tv.setLayoutParams(tv.getLayoutParams());
                         tv.setText(tv.getTag().toString(), TextView.BufferType.SPANNABLE);
                         tv.invalidate();
-                        makeTextViewResizable(tv, 3, "View More", true);
+                        makeTextViewResizable(tv, 2, "View More", true);
                     }
 
                 }
@@ -191,9 +191,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         tvDashCustomerContact = (TextView) view.findViewById(R.id.tv_dashCustomerContact);
         tvDashCustomerName = (TextView) view.findViewById(R.id.tv_dashCustomerName);
         tvDashTripFrom = (TextView) view.findViewById(R.id.tv_dashTripFrom);
-        makeTextViewResizable(tvDashTripFrom, 2, "View More", true);
+
         tvDashTripTo = (TextView) view.findViewById(R.id.tv_dashTripTo);
-        makeTextViewResizable(tvDashTripFrom, 2, "View More", true);
 
         tvDashTripFromCompany = (TextView) view.findViewById(R.id.tv_dashTripFromCompany);
         tvDashTripToCompany = (TextView) view.findViewById(R.id.tv_dashTripToCompany);
@@ -338,6 +337,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         tvDashTripToCompany.setText(tripDetails.getToCompanyName());
                     }
                     tvDashCustomerName.setText(tripDetails.getCustomerName());
+
+                    makeTextViewResizable(tvDashTripFrom, 2, "View More", true);
+
+                    makeTextViewResizable(tvDashTripTo, 2, "View More", true);
 
                     btnDashStopTrip.setOnClickListener(new View.OnClickListener()
                     {
