@@ -240,6 +240,60 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     private String licenceNo;
     @SerializedName("cancel_desc")
     private String cancelDesc;
+    /**
+     * 0 : 422
+     * 1 : 2017-02-09 14:00:00
+     * 2 : 09/02/2017 02:00:00 PM
+     * 3 : 29
+     * 4 : 30
+     * 5 : Pioneer Hydraulics
+     * 6 : 21,Shayam Ind.Estate
+     * 7 : Near Soni Ni Chali BRTS, NH.No - 8
+     * 8 :  ૨૧ ,શયમ  ઇન્ડ .એસ્ટેટ  નેર  સોની  ની ચાલી  BRTS , NH.નો  - ૮
+     * 9 :
+     * 10 : 2
+     * 11 : Ahmedabad
+     * 12 : 580
+     * 13 : Soni ani chali
+     * 14 :
+     * from_lat_long :
+     * 15 : Perfect Honing
+     * 16 : 36 Gopinath Estate II,
+     * 17 : Near Soni Ni Chali BRTS, NH.No - 8
+     * 18 : ૩૬  ગોપીનાથ  એસ્ટેટ  II,   Near સોની  ની  ચાલી  BRTS, NH.No - 8
+     * 19 :
+     * 20 : 2
+     * 21 : Ahmedabad
+     * 22 : 580
+     * 23 : Soni ani chali
+     * 24 : 23.0232021,72.6393817
+     * to_lat_long : 23.0232021,72.6393817
+     * 25 : 2
+     * 26 : Three Wheel Tempo
+     * 27 : 9
+     * 28 : Desai Govind D
+     * 29 :
+     * 30 :
+     * 31 : 50
+     * 32 : 27
+     * 33 : 27
+     * 34 : 2017-02-09 13:48:41
+     * 35 : 2017-02-09 13:49:46
+     * 36 : 6
+     * 37 : 1667
+     * 38 : Finished
+     * 39 : Pioneer Hydraulics
+     * 40 : 9879017267
+     * 41 : 090220170000063
+     * 42 :
+     * 43 : 0
+     * 44 :
+     */
+
+    @SerializedName("from_lat_long")
+    private String fromLatLong;
+    @SerializedName("to_lat_long")
+    private String toLatLong;
 
 
     public boolean isReturnGujaratiAddress()
@@ -871,5 +925,25 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     public String getToCompanyName()
     {
         return toShippingLocation;
+    }
+
+    public String getFromLatLong()
+    {
+        return fromLatLong;
+    }
+
+    public void setFromLatLong(String fromLatLong)
+    {
+        this.fromLatLong = fromLatLong;
+    }
+
+    public String getToLatLong()
+    {
+        return toLatLong;
+    }
+
+    public void setToLatLong(String toLatLong)
+    {
+        this.toLatLong = toLatLong;
     }
 }

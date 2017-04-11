@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.ColorStateList;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -77,6 +78,7 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
             mService = null;
         }
     };
+    private Call<ResponseBody> updatingLocation;
 
     public static void start(Context context, String tripNumber)
     {
@@ -296,6 +298,36 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
             });
         }
 
+        if (tripDetails.getToLatLong() == null)
+        {
+            fabUpdateToLocation
+                    .setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_green_dark)));
+        } else if (tripDetails.getToLatLong().isEmpty())
+        {
+            fabUpdateToLocation
+                    .setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_green_dark)));
+        } else
+        {
+            fabUpdateToLocation
+                    .setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_dark)));
+        }
+
+
+        if (tripDetails.getFromLatLong() == null)
+        {
+            fabUpdateFromLocation
+                    .setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_green_dark)));
+
+        } else if (tripDetails.getFromLatLong().isEmpty())
+        {
+            fabUpdateFromLocation
+                    .setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_green_dark)));
+        } else
+        {
+            fabUpdateFromLocation
+                    .setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_dark)));
+        }
+
     }
 
     @Override
@@ -370,6 +402,10 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
     protected void onStop()
     {
         super.onStop();
+        if (updatingLocation != null)
+        {
+            updatingLocation.cancel();
+        }
         if (mServiceBound)
         {
             unbindService(mServiceConnection);
@@ -469,7 +505,7 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
         {
             showProgressDialog(getString(R.string.updating_location));
             fusedLocation = null;
-            API.getInstance().updateShippingLocationLatLng(shippingLocationId, latLng, this);
+            updatingLocation = API.getInstance().updateShippingLocationLatLng(shippingLocationId, latLng, this);
         }
 
         @Override
@@ -484,6 +520,7 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
                     if (response.body().string().contains("success"))
                     {
                         Toast.makeText(ActivityTripDetails.this, R.string.location_updated_successfully, Toast.LENGTH_SHORT).show();
+                        getTripDetails();
                     } else
                     {
                         Toast.makeText(ActivityTripDetails.this, R.string.failed_to_update_location, Toast.LENGTH_SHORT).show();

@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,8 +33,11 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
     private static final String TAG = App.APP_TAG + NewTripAlert.class.getSimpleName();
     final ActivityTransportRequest activityTransportRequest;
     private final String requestId;
+    private final LinearLayout llVehicleImageContainer;
     TextView tvFrom, tvTo, tvTime, tvFare, tvVehicle, tvWeight, tvDimension;
     LinearLayout llAcceptRejectButtonContainer;
+
+    ImageView ivVehicleImage;
 
     public NewTripAlert(final String requestId,
                         final ActivityTransportRequest activityTransportRequest,
@@ -50,6 +54,9 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
         this.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT));
+
+        llVehicleImageContainer = (LinearLayout) findViewById(R.id.ll_vehicleImageContainer);
+        ivVehicleImage = (ImageView) findViewById(R.id.iv_vehicleImage);
 
         llAcceptRejectButtonContainer = (LinearLayout) findViewById(R.id.ll_acceptRejectButtonContainer);
 
@@ -138,10 +145,13 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
             }
             tvTime.setText(Utils.convertDateToRequireFormat(details.get("date_time").toString()));
             tvFare.setText(getResources().getString(R.string.rs) + " " + details.get("fare").toString());
+
+
             //SET VEHICLE
             if (details.get("vehicle") != null)
             {
                 tvVehicle.setText(details.get("vehicle").toString());
+                setVehicleImage(details.get("vehicle").toString());
             } else
             {
                 tvVehicle.setVisibility(GONE);
@@ -149,18 +159,21 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
             //SET WEIGHT
             if (details.get("wt") != null)
             {
-                tvWeight.setText(details.get("wt").toString() + " Kg");
-            } else
-            {
-                tvWeight.setVisibility(GONE);
+                if (!details.get("wt").toString().isEmpty())
+                {
+                    if (!details.get("wt").toString().equals("0"))
+                    {
+                        tvWeight.setText(details.get("wt").toString() + " Kg");
+                    }
+                }
             }
             //SET DIMENSIONS
             if (details.get("dimension") != null)
             {
-                tvDimension.setText(details.get("dimension").toString());
-            } else
-            {
-                tvDimension.setVisibility(GONE);
+                if (!details.get("dimension").toString().isEmpty())
+                {
+                    tvDimension.setText(details.get("dimension").toString());
+                }
             }
         } else
         {
@@ -221,6 +234,8 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
         tvFare.setText(getResources().getString(R.string.rs) + " "
                 + tripDetails.getFare());
 
+        setVehicleImage(tripDetails.getVehicleType());
+
         if (tripDetails.getVehicleType() != null)
         {
             tvVehicle.setText(tripDetails.getVehicleType());
@@ -245,5 +260,38 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
             tvDimension.setVisibility(GONE);
         }
 
+    }
+
+    private void setVehicleImage(String vehicleType)
+    {
+        if (vehicleType != null)
+        {
+            if (!vehicleType.isEmpty())
+            {
+                llVehicleImageContainer.setVisibility(VISIBLE);
+                switch (vehicleType)
+                {
+                    case "Pickup Bolero":
+                        ivVehicleImage.setImageResource(R.drawable.bolero);
+                        break;
+
+                    case "Tata Ace":
+                        ivVehicleImage.setImageResource(R.drawable.tata_ace);
+                        break;
+
+                    case "Tempo Trailer":
+                        ivVehicleImage.setImageResource(R.drawable.eicher);
+                        break;
+
+                    case "Three Wheel Tempo":
+                        ivVehicleImage.setImageResource(R.drawable.atul_loading);
+                        break;
+
+                    default:
+                        llVehicleImageContainer.setVisibility(GONE);
+
+                }
+            }
+        }
     }
 }
