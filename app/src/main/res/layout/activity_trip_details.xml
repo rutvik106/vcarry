@@ -1,350 +1,361 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_trip_details"
+    android:id="@+id/cl_activityTripDetails"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="io.fusionbit.vcarry.ActivityTripDetails">
 
-    <ScrollView
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_trip_details"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:paddingBottom="60dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:clipToPadding="false"
+            android:paddingBottom="60dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:padding="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/trip_status"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripStatus"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"/>
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/trip_status"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/trip_number"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/trip_time"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripDetailTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/customer_name"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripCustomerName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        tools:text="Rutvik Mehta"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/from_company_name"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripFromCompanyName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        tools:text="Shankar chemicals "/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/fab_updateFromLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/ic_my_location_white_24dp"
+                        app:fabSize="mini"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/request_from"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        tools:text="52,53 Jodhpur park soc near ramdev nagar opp courtyad marriott hotel, satellite 380015"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/to_company_name"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripToCompanyName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        tools:text="Shankar chemicals "/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/fab_updateToLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:layout_marginRight="10dp"
+                        android:src="@drawable/ic_my_location_white_24dp"
+                        app:fabSize="mini"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/request_to"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripDestination"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        tools:text=" hotel, satellite 380015"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/weight"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripWeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/dimension"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripDimension"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:textColor="#333333"
+                        android:textSize="15sp"/>
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="#999999"/>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:text="@string/fare"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_tripFare"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="@string/rs"
+                        android:textColor="#333333"
+                        android:textSize="26sp"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/trip_number"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/trip_time"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripDetailTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"/>
-
-            </LinearLayout>
+        </ScrollView>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
+        <Button
+            android:id="@+id/btn_startTrip"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:text="@string/start_trip"
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/customer_name"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripCustomerName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"
-                    tools:text="Rutvik Mehta"/>
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/from_company_name"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripFromCompanyName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"
-                    tools:text="Shankar chemicals "/>
-
-            </LinearLayout>
+        <Button
+            android:id="@+id/btn_viewTripDetails"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:background="@color/colorAccent"
+            android:text="@string/trip_details"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+    </RelativeLayout>
 
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_updateFromLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_my_location_white_24dp"
-                    app:fabSize="mini"/>
+</android.support.design.widget.CoordinatorLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/request_from"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripLocation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"
-                    tools:text="52,53 Jodhpur park soc near ramdev nagar opp courtyad marriott hotel, satellite 380015"/>
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/to_company_name"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripToCompanyName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"
-                    tools:text="Shankar chemicals "/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab_updateToLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/ic_my_location_white_24dp"
-                    app:fabSize="mini"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/request_to"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripDestination"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"
-                    tools:text=" hotel, satellite 380015"/>
-
-            </LinearLayout>
-
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/weight"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripWeight"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/dimension"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripDimension"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:textColor="#333333"
-                    android:textSize="15sp"/>
-
-            </LinearLayout>
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:background="#999999"/>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:text="@string/fare"
-                    android:textSize="15sp"/>
-
-                <TextView
-                    android:id="@+id/tv_tripFare"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="@string/rs"
-                    android:textColor="#333333"
-                    android:textSize="26sp"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </ScrollView>
-
-
-    <Button
-        android:id="@+id/btn_startTrip"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        android:text="@string/start_trip"
-        android:textStyle="bold"
-        android:visibility="gone"/>
-
-    <Button
-        android:id="@+id/btn_viewTripDetails"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        android:background="@color/colorAccent"
-        android:text="@string/trip_details"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:visibility="gone"/>
-
-
-</RelativeLayout>

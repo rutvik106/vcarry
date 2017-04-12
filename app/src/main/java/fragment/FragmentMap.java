@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -75,6 +76,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
     private Context context;
     private Marker currentLocationMarker;
     private LatLng currentLatLng;
+    private TripDetails tripDetails;
 
     public static FragmentMap newInstance(int index, Context context, OnTripStopListener onTripStopListener)
     {
@@ -268,6 +270,27 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
             }
         });
 
+        if (tripDetails != null)
+        {
+            if (tripDetails.getToLatLong() != null)
+            {
+                if (!tripDetails.getToLatLong().isEmpty())
+                {
+                    final String[] stringLatLng = tripDetails.getToLatLong().split(",");
+                    final LatLng latLng = new LatLng(Double.parseDouble(stringLatLng[0]),
+                            Double.parseDouble(stringLatLng[1]));
+                    MarkerOptions marker = new MarkerOptions().position(latLng)
+                            .title(tripDetails.getToShippingLocation());
+
+                    mMap.clear();
+                    mMap.addMarker(marker);
+
+                    CameraUpdate c = CameraUpdateFactory.newLatLngZoom(latLng, 16);
+                    mMap.animateCamera(c);
+                }
+            }
+        }
+
     }
 
     @Override
@@ -299,7 +322,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                 final Realm realm = Realm.getDefaultInstance();
 
 
-                final TripDetails tripDetails = realm
+                tripDetails = realm
                         .where(TripDetails.class).equalTo("tripId", tripId).findFirst();
 
 

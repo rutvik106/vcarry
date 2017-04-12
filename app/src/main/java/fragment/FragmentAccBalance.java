@@ -2,7 +2,6 @@ package fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -36,22 +35,15 @@ import retrofit2.Response;
 public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.OnRefreshListener
 {
 
-    Context context;
-
-    RecyclerView rvAccountBalance;
-
-    AccountBalanceAdapter adapter;
-
-    SwipeRefreshLayout swipeRefreshLayout;
-
     final AccountSummary accountSummary = new AccountSummary();
-
-    String email;
-
     final String tripStatus = Constants.TRIP_STATUS_FINISHED + ","
             + Constants.TRIP_STATUS_CANCELLED_BY_DRIVER + ","
             + Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER;
-
+    Context context;
+    RecyclerView rvAccountBalance;
+    AccountBalanceAdapter adapter;
+    SwipeRefreshLayout swipeRefreshLayout;
+    String email;
     boolean busyLoadingData = false;
 
     public static FragmentAccBalance newInstance(int index, Context context)
@@ -117,6 +109,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     @Override
                     public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response)
                     {
+                        stopRefreshLayout();
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
@@ -124,16 +117,15 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                             {
                                 accountSummary.setReceivedToday(response.body().getReceived());
                                 accountSummary.setReceivableToday(response.body().getReceivable());
-                                if (busyLoadingData)
-                                {
-                                    if (swipeRefreshLayout.isRefreshing())
-                                    {
-                                        swipeRefreshLayout.setRefreshing(false);
-                                    }
-                                    busyLoadingData = false;
-                                }
                             }
                         }
+                    }
+
+                    @Override
+                    public void onFailure(Call<AccountSummary> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        stopRefreshLayout();
                     }
                 };
 
@@ -141,6 +133,18 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
 
         API.getInstance().getAccountSummary(email, today, today, onGetAccountSummary);
 
+    }
+
+    private void stopRefreshLayout()
+    {
+        if (busyLoadingData)
+        {
+            if (swipeRefreshLayout.isRefreshing())
+            {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+            busyLoadingData = false;
+        }
     }
 
     private void getAccountBalanceForThisMonth()
@@ -153,6 +157,8 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response)
                     {
                         super.onResponse(call, response);
+                        stopRefreshLayout();
+
                         if (response.isSuccessful())
                         {
                             if (response.body() != null)
@@ -162,6 +168,14 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                                 adapter.notifyDataSetChanged();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onFailure(Call<AccountSummary> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        stopRefreshLayout();
+
                     }
                 };
 
@@ -182,6 +196,8 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     public void onResponse(Call<AccountSummary> call, Response<AccountSummary> response)
                     {
                         super.onResponse(call, response);
+                        stopRefreshLayout();
+
                         if (response.isSuccessful())
                         {
                             if (response.body() != null)
@@ -191,6 +207,14 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                                 adapter.notifyDataSetChanged();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onFailure(Call<AccountSummary> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        stopRefreshLayout();
+
                     }
                 };
 
@@ -208,6 +232,8 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     public void onResponse(Call<List<TripsByDriverMail>> call, Response<List<TripsByDriverMail>> response)
                     {
                         super.onResponse(call, response);
+                        stopRefreshLayout();
+
                         if (response.isSuccessful())
                         {
                             if (response.body() != null)
@@ -219,6 +245,14 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                                 adapter.notifyDataSetChanged();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<TripsByDriverMail>> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        stopRefreshLayout();
+
                     }
                 };
 
@@ -239,6 +273,8 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     public void onResponse(Call<List<TripsByDriverMail>> call, Response<List<TripsByDriverMail>> response)
                     {
                         super.onResponse(call, response);
+                        stopRefreshLayout();
+
                         if (response.isSuccessful())
                         {
                             if (response.body() != null)
@@ -250,6 +286,14 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                                 adapter.notifyDataSetChanged();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<TripsByDriverMail>> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        stopRefreshLayout();
+
                     }
                 };
 
@@ -271,6 +315,8 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     public void onResponse(Call<List<TripsByDriverMail>> call, Response<List<TripsByDriverMail>> response)
                     {
                         super.onResponse(call, response);
+                        stopRefreshLayout();
+
                         if (response.isSuccessful())
                         {
                             if (response.body() != null)
@@ -282,6 +328,14 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                                 adapter.notifyDataSetChanged();
                             }
                         }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<TripsByDriverMail>> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        stopRefreshLayout();
+
                     }
                 };
 

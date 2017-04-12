@@ -12,7 +12,9 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,6 +55,8 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
 
     TripDetails tripDetails;
 
+    CoordinatorLayout clActivityTripDetails;
+
     Realm realm;
 
     //is activity connected to service
@@ -60,6 +64,8 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
 
     //main STICKY service running in foreground (also shows up in notifications)
     TransportRequestHandlerService mService;
+
+    Snackbar sbNoInternet;
 
     private ServiceConnection mServiceConnection = new ServiceConnection()
     {
@@ -110,6 +116,8 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
         tvTripNumber = (TextView) findViewById(R.id.tv_tripNumber);
 
         btnStartTrip = (Button) findViewById(R.id.btn_startTrip);
+
+        clActivityTripDetails = (CoordinatorLayout) findViewById(R.id.cl_activityTripDetails);
 
         fabUpdateFromLocation = (FloatingActionButton) findViewById(R.id.fab_updateFromLocation);
         fabUpdateToLocation = (FloatingActionButton) findViewById(R.id.fab_updateToLocation);
@@ -416,13 +424,23 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
     @Override
     protected void internetNotAvailable()
     {
-
+        if (sbNoInternet == null)
+        {
+            sbNoInternet = Snackbar.make(clActivityTripDetails, R.string.no_internet, Snackbar.LENGTH_INDEFINITE);
+            sbNoInternet.show();
+        }
     }
 
     @Override
     protected void internetAvailable()
     {
-
+        if (sbNoInternet != null)
+        {
+            if (sbNoInternet.isShown())
+            {
+                sbNoInternet.dismiss();
+            }
+        }
     }
 
     @Override

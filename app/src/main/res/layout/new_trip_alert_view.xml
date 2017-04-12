@@ -8,6 +8,12 @@
     android:background="@android:color/black"
     android:padding="10dp">
 
+    <ProgressBar
+        android:id="@+id/pb_loadingTripDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"/>
 
     <LinearLayout
         android:id="@+id/ll_acceptRejectButtonContainer"
