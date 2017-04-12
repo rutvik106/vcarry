@@ -144,5 +144,7 @@
     <string name="to_company_name">To Company Name</string>
     <string name="dimension">Dimension</string>
     <string name="weight">Weight</string>
+    <string name="not_on_trip">You are not on a Trip.</string>
+    <string name="destination_not_available">Destination location not available</string>
 
 </resources>

@@ -277,11 +277,17 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
             {
                 if (tripDetailsList.size() > 0)
                 {
-                    notificationCount.setText(tripDetailsList.size() + "");
-                    notificationMenuItem.setVisible(true);
+                    if (notificationMenuItem != null)
+                    {
+                        notificationCount.setText(tripDetailsList.size() + "");
+                        notificationMenuItem.setVisible(true);
+                    }
                 } else
                 {
-                    notificationMenuItem.setVisible(false);
+                    if (notificationMenuItem != null)
+                    {
+                        notificationMenuItem.setVisible(false);
+                    }
                 }
             }
         });
@@ -428,6 +434,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     @Override
     public void onBackPressed()
     {
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START))
         {

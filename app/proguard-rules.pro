@@ -18,8 +18,8 @@
 
 #-printmapping build/outputs/mapping/release/mapping.txt
 
-#-dontobfuscate
-#-optimizations !code/allocation/variable
+-dontobfuscate
+-optimizations !code/allocation/variable
 
 # FOR VALIDATION
 -keep class com.mobsandgeeks.saripaar.** {*;}

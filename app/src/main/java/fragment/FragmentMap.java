@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +27,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -77,6 +79,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
     private Marker currentLocationMarker;
     private LatLng currentLatLng;
     private TripDetails tripDetails;
+    private FloatingActionButton fabStartNavigation;
 
     public static FragmentMap newInstance(int index, Context context, OnTripStopListener onTripStopListener)
     {
@@ -201,6 +204,46 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
         btnDashStopTrip = (Button) view.findViewById(R.id.btn_dashStopTrip);
         btnDashCancelTrip = (Button) view.findViewById(R.id.btn_dashCancelTrip);
+
+        fabStartNavigation = (FloatingActionButton) view.findViewById(R.id.fab_startNavigation);
+
+        fabStartNavigation.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                        .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
+                if (!isOnTrip)
+                {
+                    Toast.makeText(getActivity(), R.string.not_on_trip, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (tripDetails != null)
+                {
+                    if (tripDetails.getToLatLong() != null)
+                    {
+                        if (!tripDetails.getToLatLong().isEmpty())
+                        {
+                            final String[] stringLatLng = tripDetails.getToLatLong().split(",");
+                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                    Uri.parse("http://maps.google.com/maps?daddr=" + stringLatLng[0] + "," + stringLatLng[1]));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                            intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                            startActivity(intent);
+                        } else
+                        {
+                            Toast.makeText(getActivity(), R.string.destination_not_available, Toast.LENGTH_SHORT).show();
+                        }
+                    } else
+                    {
+                        Toast.makeText(getActivity(), R.string.destination_not_available, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
 
         loadMapNow();
 
@@ -407,6 +450,8 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         }
                     });
 
+                    fabStartNavigation.setVisibility(View.VISIBLE);
+
                 }
 
             }
@@ -425,11 +470,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
                 if (response.isSuccessful())
                 {
-
                     llDashboardContainer.setVisibility(View.GONE);
-
+                    mMap.clear();
                     onTripStopListener.onTripStop(tripId);
-
+                    fabStartNavigation.setVisibility(View.GONE);
                 }
 
             }
@@ -449,11 +493,10 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
 
                         if (response.isSuccessful())
                         {
-
                             llDashboardContainer.setVisibility(View.GONE);
-
+                            mMap.clear();
                             onTripStopListener.onTripCancel(tripId);
-
+                            fabStartNavigation.setVisibility(View.GONE);
                         }
 
                     }
