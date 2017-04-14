@@ -22,6 +22,7 @@ public interface ApiInterface
     @FormUrlEncoded
     @POST("webservice.php")
     Call<List<TripsByDriverMail>> getTripsByDriverEmail(@Field("method") String method,
+                                                        @Field("page_no") int pageNo,
                                                         @Field("driver_email") String driverEmail);
 
     @FormUrlEncoded
@@ -59,6 +60,7 @@ public interface ApiInterface
     @FormUrlEncoded
     @POST("webservice.php")
     Call<List<TripDetails>> getTripsByTripStatus(@Field("method") String method,
+                                                 @Field("page_no") int pageNo,
                                                  @Field("trip_status") String tripStatus,
                                                  @Field("driver_email") String driverEmail,
                                                  @Field("customer_id") String customerId,

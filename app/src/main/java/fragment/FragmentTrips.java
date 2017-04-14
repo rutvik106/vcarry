@@ -49,6 +49,11 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
     RealmResults<TripsByDriverMail> tripResults;
     FrameLayout flTripListEmptyView;
+    int pageNo = 0;
+    int previous = 0, next = 20;
+    int pastVisibleItems, visibleItemCount, totalItemCount;
+    LinearLayoutManager llm;
+    boolean busyLoadingData = false;
     private SwipeRefreshLayout srlRefreshTrips;
 
     public static FragmentTrips newInstance(int index, Context context)
@@ -75,8 +80,11 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
         srlRefreshTrips.setOnRefreshListener(this);
 
         rvTrips = (RecyclerView) view.findViewById(R.id.rv_trips);
-        rvTrips.setLayoutManager(new LinearLayoutManager(getActivity()));
+        llm = new LinearLayoutManager(getActivity());
+        rvTrips.setLayoutManager(llm);
         rvTrips.setHasFixedSize(true);
+
+        rvTrips.addOnScrollListener(new OnScrollRecyclerView());
 
         adapter = new TripsAdapter(getActivity());
 
@@ -91,11 +99,22 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
         tripResults = realm.where(TripsByDriverMail.class).findAll();
 
-        for (TripsByDriverMail t : tripResults)
+        if (!tripResults.isEmpty())
         {
-            adapter.addTrip(t);
+            if (tripResults.size() > previous)
+            {
+                for (int i = previous; i < next; i++)
+                {
+                    adapter.addTrip(tripResults.get(i));
+                    if ((tripResults.size() - 1) == i)
+                    {
+                        break;
+                    }
+                }
+                previous = next;
+                adapter.notifyDataSetChanged();
+            }
         }
-        adapter.notifyDataSetChanged();
 
         if (adapter.getItemCount() > 0)
         {
@@ -128,7 +147,9 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
                 );
 
+        busyLoadingData = true;
         API.getInstance().getTripsByDriverMail(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                pageNo,
                 new RetrofitCallbacks<List<TripsByDriverMail>>()
                 {
 
@@ -136,6 +157,7 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                     public void onResponse(Call<List<TripsByDriverMail>> call, Response<List<TripsByDriverMail>> response)
                     {
                         super.onResponse(call, response);
+                        busyLoadingData = false;
                         if (response.isSuccessful())
                         {
                             realm = Realm.getDefaultInstance();
@@ -156,6 +178,17 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                                 srlRefreshTrips.setRefreshing(false);
                             }
 
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<TripsByDriverMail>> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        busyLoadingData = false;
+                        if (srlRefreshTrips.isRefreshing())
+                        {
+                            srlRefreshTrips.setRefreshing(false);
                         }
                     }
                 });
@@ -207,4 +240,34 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
         }
         return false;
     }
+
+
+    class OnScrollRecyclerView extends RecyclerView.OnScrollListener
+    {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+        {
+            if (dy > 0)
+            {
+                visibleItemCount = llm.getChildCount();
+                totalItemCount = llm.getItemCount();
+                pastVisibleItems = llm.findFirstVisibleItemPosition();
+                if (!busyLoadingData)
+                {
+                    if ((visibleItemCount + pastVisibleItems) >= totalItemCount)
+                    {
+                        Log.i(TAG, "---------------------------FETCHING NEW DATA--------------------------");
+                        pageNo++;
+                        Log.i(TAG, "PAGE NO: " + pageNo);
+                        Log.i(TAG, "PREVIOUS: " + previous);
+                        Log.i(TAG, "OLD_NEXT: " + next);
+                        next = next + 20;
+                        Log.i(TAG, "NEW_NEXT: " + next);
+                        getTrips();
+                    }
+                }
+            }
+        }
+    }
+
 }

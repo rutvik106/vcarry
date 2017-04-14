@@ -35,11 +35,11 @@ public class API
         return instance;
     }
 
-    public void getTripsByDriverMail(final String driverMail,
+    public void getTripsByDriverMail(final String driverMail, final int pageNo,
                                      final RetrofitCallbacks<List<TripsByDriverMail>> callback)
     {
         Call<List<TripsByDriverMail>> call = apiService.getTripsByDriverEmail("get_trips_by_driver_email",
-                driverMail);
+                pageNo, driverMail);
 
         call.enqueue(callback);
     }
@@ -93,14 +93,14 @@ public class API
         call.enqueue(callback);
     }
 
-    public void getTripsByTripStatus(final String tripStatus, final String driverEmail,
+    public void getTripsByTripStatus(final String tripStatus, final int pageNo, final String driverEmail,
                                      final String customerId, final String fromDate,
                                      final String toDate,
                                      final String unActionedByEmail,
                                      final RetrofitCallbacks<List<TripDetails>> callback)
     {
-        Call<List<TripDetails>> call = apiService.getTripsByTripStatus("get_trips_by_trip_status", tripStatus,
-                driverEmail, customerId, fromDate, toDate, unActionedByEmail);
+        Call<List<TripDetails>> call = apiService.getTripsByTripStatus("get_trips_by_trip_status", pageNo,
+                tripStatus, driverEmail, customerId, fromDate, toDate, unActionedByEmail);
 
         call.enqueue(callback);
     }

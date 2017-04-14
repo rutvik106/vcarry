@@ -25,16 +25,11 @@ public class App extends Application
 {
 
     public static final String APP_TAG = "VCRY ";
-
-    public static String PACKAGE_NAME;
-
     private static final String TAG = APP_TAG + App.class.getSimpleName();
-
-    private List<TripDetails> tripNotificationList = new ArrayList<>();
-
-    private TripNotificationListener tripNotificationListener;
-
+    public static String PACKAGE_NAME;
     public RealmConfiguration realmConfig;
+    private List<TripDetails> tripNotificationList = new ArrayList<>();
+    private TripNotificationListener tripNotificationListener;
 
     @Override
 
@@ -92,7 +87,7 @@ public class App extends Application
 
         final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
-        API.getInstance().getTripsByTripStatus(Constants.TRIP_STATUS_NEW,
+        API.getInstance().getTripsByTripStatus(Constants.TRIP_STATUS_NEW, 0,
                 null, null, null, null, email, TripsCallback);
 
     }

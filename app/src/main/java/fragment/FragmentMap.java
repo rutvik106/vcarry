@@ -38,6 +38,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Locale;
+
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.TripDetails;
@@ -227,12 +229,25 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         if (!tripDetails.getToLatLong().isEmpty())
                         {
                             final String[] stringLatLng = tripDetails.getToLatLong().split(",");
+                            String uri = String
+                                    .format(Locale.ENGLISH,
+                                            "http://maps.google.com/maps?daddr=%s,%s (%s)",
+                                            stringLatLng[0], stringLatLng[1], tripDetails.getToShippingLocation());
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                    Uri.parse("http://maps.google.com/maps?daddr=" + stringLatLng[0] + "," + stringLatLng[1]));
+                                    Uri.parse(uri));
+                            //Uri.parse("google.navigation:q=" + tripDetails.getToLatLong() + "&mode=d"));
+                                    /*Uri.parse("http://maps.google.com/maps?daddr=" +
+                                            stringLatLng[0] + "," + stringLatLng[1]));*/
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                            intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                            startActivity(intent);
+                            intent.setPackage("com.google.android.apps.maps");
+                            intent.setClassName("com.google.android.apps.maps",
+                                    "com.google.android.maps.MapsActivity");
+                            if (intent.resolveActivity(getActivity().getPackageManager()) != null)
+                            {
+                                startActivity(intent);
+                            }
+
                         } else
                         {
                             Toast.makeText(getActivity(), R.string.destination_not_available, Toast.LENGTH_SHORT).show();

@@ -148,5 +148,6 @@
     <string name="weight">વજન</string>
     <string name="not_on_trip">તમે ટ્રીપ પર નથી</string>
     <string name="destination_not_available">લક્ષ્યસ્થાન ઉપલબ્ધ નથી</string>
+    <string name="show_trip_on_map">નકશા પર ટ્રીપ બતાવો</string>
 
 </resources>

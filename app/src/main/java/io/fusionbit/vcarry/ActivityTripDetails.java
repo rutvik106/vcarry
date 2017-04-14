@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.ColorStateList;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -16,6 +17,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +28,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import api.API;
 import api.RetrofitCallbacks;
@@ -344,6 +347,55 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
         if (item.getItemId() == android.R.id.home)
         {
             finish();
+        } else if (item.getItemId() == R.id.action_showTripOnMap)
+        {
+            if (tripDetails.getFromLatLong() == null)
+            {
+                return true;
+            } else if (tripDetails.getFromLatLong().isEmpty())
+            {
+                return true;
+            }
+
+            final String[] stringFromLatLng = tripDetails.getFromLatLong().split(",");
+
+            String uri;
+
+            if (tripDetails.getToLatLong() != null)
+            {
+                if (!tripDetails.getToLatLong().isEmpty())
+                {
+                    final String[] stringToLatLng = tripDetails.getToLatLong().split(",");
+
+                    uri = String.format(Locale.ENGLISH,
+                            "http://maps.google.com/maps?saddr=%s,%s(%s)&daddr=%s,%s(%s)",
+                            stringFromLatLng[0], stringFromLatLng[1], tripDetails.getFromShippingLocation(),
+                            stringToLatLng[0], stringToLatLng[1], tripDetails.getToShippingLocation());
+                } else
+                {
+                    uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%s,%s(%s)",
+                            stringFromLatLng[0], stringFromLatLng[1], tripDetails.getFromShippingLocation());
+                }
+            } else
+            {
+                uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%s,%s(%s)",
+                        stringFromLatLng[0], stringFromLatLng[1], tripDetails.getFromShippingLocation());
+            }
+
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    Uri.parse(uri));
+            //Uri.parse("google.navigation:q=" + tripDetails.getToLatLong() + "&mode=d"));
+                                    /*Uri.parse("http://maps.google.com/maps?daddr=" +
+                                            stringLatLng[0] + "," + stringLatLng[1]));*/
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.setPackage("com.google.android.apps.maps");
+            intent.setClassName("com.google.android.apps.maps",
+                    "com.google.android.maps.MapsActivity");
+            if (intent.resolveActivity(getPackageManager()) != null)
+            {
+                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -480,6 +532,13 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
                 break;
 
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.activity_trip_details, menu);
+        return true;
     }
 
     private class UpdateShippingLocationLatLng extends RetrofitCallbacks<ResponseBody>
