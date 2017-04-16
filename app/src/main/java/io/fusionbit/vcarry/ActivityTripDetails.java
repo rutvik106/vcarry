@@ -351,9 +351,11 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
         {
             if (tripDetails.getFromLatLong() == null)
             {
+                Toast.makeText(this, R.string.from_not_found, Toast.LENGTH_SHORT).show();
                 return true;
             } else if (tripDetails.getFromLatLong().isEmpty())
             {
+                Toast.makeText(this, R.string.from_not_found, Toast.LENGTH_SHORT).show();
                 return true;
             }
 
@@ -361,7 +363,7 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
 
             String uri;
 
-            if (tripDetails.getToLatLong() != null)
+            /*if (tripDetails.getToLatLong() != null)
             {
                 if (!tripDetails.getToLatLong().isEmpty())
                 {
@@ -377,10 +379,10 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
                             stringFromLatLng[0], stringFromLatLng[1], tripDetails.getFromShippingLocation());
                 }
             } else
-            {
+            {*/
                 uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%s,%s(%s)",
                         stringFromLatLng[0], stringFromLatLng[1], tripDetails.getFromShippingLocation());
-            }
+            //}
 
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                     Uri.parse(uri));
@@ -395,6 +397,9 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
             if (intent.resolveActivity(getPackageManager()) != null)
             {
                 startActivity(intent);
+            } else
+            {
+                Toast.makeText(this, R.string.maps_app_not_found, Toast.LENGTH_SHORT).show();
             }
         }
         return super.onOptionsItemSelected(item);

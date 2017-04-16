@@ -126,8 +126,8 @@
     <string name="enter_cash_received">કૃપા કરીને કેશ દાખલ કરો</string>
     <string name="finished_trip_details">સમાપ્ત ટ્રીપ ની વિગતો</string>
     <string name="trip_number">ટ્રીપ નંબર</string>
-    <string name="trip_accepted_successfully">Trip Accepted Successfully</string>
-    <string name="wait_for_trip_confirmation">Please wait for confirmation message form V-Carry</string>
+    <string name="trip_accepted_successfully">ટ્રીપ સફળતાપૂર્વક સ્વીકારાયું</string>
+    <string name="wait_for_trip_confirmation">V-Carry માંથી પુષ્ટિકરણ સંદેશ માટે કૃપા કરીને રાહ જુઓ</string>
     <string name="trip_rejection_prompt_msg">તમે આ ટ્રીપ રિજેક્ટ કરવા માંગો છો?</string>
     <string name="no_internet">ઇન્ટરનેટ સાથે જોડાયેલ નથી</string>
     <string name="something_went_wrong">કંઈક ખોટું થયું.</string>
@@ -135,13 +135,13 @@
     <string name="trip_not_found">માફ કરશો, ટ્રીપ ની વિગતો મળી નથી</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="are_you_sure_update_from_location">Are you sure you want to update From Shipping Location?</string>
-    <string name="are_you_sure_update_to_location">Are you sure you want to update To Shipping Location?</string>
-    <string name="getting_location">Getting Your Location...</string>
-    <string name="cannot_connect_location_api">Cannot connect to location API</string>
-    <string name="updating_location">Updating Location...</string>
-    <string name="location_updated_successfully">Location Updated Successfully</string>
-    <string name="failed_to_update_location">Failed to update Location</string>
+    <string name="are_you_sure_update_from_location">શું તમે ખરેખર પ્રારંભ સ્થળ અપડેટ કરવા માંગો છો?</string>
+    <string name="are_you_sure_update_to_location">શું તમે ખરેખર ગંતવ્ય સ્થળ અપડેટ કરવા માંગો છો?</string>
+    <string name="getting_location">તમારું સ્થાન મેળવતી...</string>
+    <string name="cannot_connect_location_api">સ્થાન API ને કનેક્ટ કરી શકાતું નથી</string>
+    <string name="updating_location">સ્થાન અપડેટ કરી રહ્યું...</string>
+    <string name="location_updated_successfully">લોકેશન સફળતાપૂર્વક અપડેટ</string>
+    <string name="failed_to_update_location">સ્થાન અપડેટ કરવામાં નિષ્ફળ</string>
     <string name="from_company_name">પ્રારંભ કંપનીના નામ</string>
     <string name="to_company_name">ગંતવ્ય કંપનીના નામ</string>
     <string name="dimension">માપ</string>
@@ -149,5 +149,7 @@
     <string name="not_on_trip">તમે ટ્રીપ પર નથી</string>
     <string name="destination_not_available">લક્ષ્યસ્થાન ઉપલબ્ધ નથી</string>
     <string name="show_trip_on_map">નકશા પર ટ્રીપ બતાવો</string>
+    <string name="maps_app_not_found">Google Maps એપ્લિકેશન મળી નથી</string>
+    <string name="from_not_found">પ્રારંભ સ્થળ મળ્યું નથી</string>
 
 </resources>

@@ -147,5 +147,7 @@
     <string name="not_on_trip">You are not on a Trip.</string>
     <string name="destination_not_available">Destination location not available</string>
     <string name="show_trip_on_map">Show Trip On Map</string>
+    <string name="maps_app_not_found">Google Maps Application not found</string>
+    <string name="from_not_found">From Location not found</string>
 
 </resources>
