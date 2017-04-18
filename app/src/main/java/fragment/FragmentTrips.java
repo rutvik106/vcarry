@@ -95,6 +95,15 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
 
     public void getTrips()
     {
+
+        getTripsFromRealm();
+
+        getTripsFromAPI();
+
+    }
+
+    private void getTripsFromRealm()
+    {
         realm = Realm.getDefaultInstance();
 
         tripResults = realm.where(TripsByDriverMail.class).findAll();
@@ -112,7 +121,6 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                     }
                 }
                 previous = next;
-                adapter.notifyDataSetChanged();
             }
         }
 
@@ -124,29 +132,36 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
             flTripListEmptyView.setVisibility(View.VISIBLE);
         }
 
-        tripResults
-                .addChangeListener(new RealmChangeListener<RealmResults<TripsByDriverMail>>()
-                                   {
-                                       @Override
-                                       public void onChange(RealmResults<TripsByDriverMail> results)
-                                       {
-                                           for (TripsByDriverMail trip : results)
-                                           {
-                                               adapter.addTrip(trip);
-                                           }
-                                           adapter.notifyDataSetChanged();
-                                           if (adapter.getItemCount() > 0)
-                                           {
-                                               flTripListEmptyView.setVisibility(View.GONE);
-                                           } else
-                                           {
-                                               flTripListEmptyView.setVisibility(View.VISIBLE);
-                                           }
-                                       }
-                                   }
+        tripResults.addChangeListener(
+                new RealmChangeListener<RealmResults<TripsByDriverMail>>()
+                {
+                    @Override
+                    public void onChange(RealmResults<TripsByDriverMail> results)
+                    {
+                        Log.i(TAG, "On Change REALM Objects SIZE: " + results.size());
+                        for (TripsByDriverMail trip : results)
+                        {
+                            adapter.addTrip(trip);
+                        }
+                        if (adapter.getItemCount() > 0)
+                        {
+                            flTripListEmptyView.setVisibility(View.GONE);
+                        } else
+                        {
+                            flTripListEmptyView.setVisibility(View.VISIBLE);
+                        }
+                        adapter.notifyDataSetChanged();
 
-                );
+                        Log.i(TAG, "ADAPTER SIZE: " + adapter.getItemCount());
 
+                    }
+                }
+
+        );
+    }
+
+    private void getTripsFromAPI()
+    {
         busyLoadingData = true;
         API.getInstance().getTripsByDriverMail(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
                 pageNo,
@@ -164,13 +179,9 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
                             realm.beginTransaction();
                             for (final TripsByDriverMail trip : response.body())
                             {
-                                if (trip instanceof TripsByDriverMail)
-                                {
-                                    Log.i(TAG, "TRIP ID: " + trip.getTripId());
-                                    realm.copyToRealmOrUpdate(trip);
-                                }
+                                Log.i(TAG, "TRIP ID: " + trip.getTripId());
+                                realm.copyToRealmOrUpdate(trip);
                             }
-
                             realm.commitTransaction();
 
                             if (srlRefreshTrips.isRefreshing())
@@ -242,7 +253,7 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
 
-    class OnScrollRecyclerView extends RecyclerView.OnScrollListener
+    private class OnScrollRecyclerView extends RecyclerView.OnScrollListener
     {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy)
