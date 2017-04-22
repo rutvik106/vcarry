@@ -106,7 +106,9 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     {
         realm = Realm.getDefaultInstance();
 
-        tripResults = realm.where(TripsByDriverMail.class).findAll();
+        tripResults = realm.where(TripsByDriverMail.class)
+                .findAll()
+                .sort("tripDatetime");
 
         if (!tripResults.isEmpty())
         {

@@ -4,6 +4,9 @@ package api;
  * Created by rutvik on 11/27/2016 at 3:46 PM.
  */
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -33,10 +36,14 @@ public class ApiClient
 
         if (retrofit == null)
         {
+            Gson gson = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                    .create();
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(API_BASE_URL)
                     .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit;

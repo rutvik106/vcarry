@@ -89,6 +89,15 @@ public class Utils
         return null;
     }
 
+    public static String convertDateToRequireFormat(final Date date)
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+        sdf.applyPattern("d-E, h:mm a");
+        System.out.println("CONVERTED DATE: " + sdf.format(date));
+        return sdf.format(date);
+    }
+
     public static Date convertToDate(String stringDate)
     {
         Date date = null;

@@ -4,14 +4,17 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.Tasks;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import apimodels.TripsByDriverMail;
-import extra.Utils;
+import extra.Log;
+import io.fusionbit.vcarry.App;
 import viewholders.VHSingleTrip;
 
 /**
@@ -20,6 +23,7 @@ import viewholders.VHSingleTrip;
 
 public class TripsAdapter extends RecyclerView.Adapter
 {
+    private static final String TAG = App.APP_TAG + TripsAdapter.class.getSimpleName();
 
     final List<TripsByDriverMail> tripsByDriverMailList;
     //final List<Integer> tripIdList;
@@ -46,12 +50,20 @@ public class TripsAdapter extends RecyclerView.Adapter
                 @Override
                 public int compare(TripsByDriverMail tripsByDriverMail, TripsByDriverMail t1)
                 {
-                    Date date1 = Utils.convertToDate(tripsByDriverMail.getTripDatetime());
-                    Date date2 = Utils.convertToDate(t1.getTripDatetime());
-                    return date2.compareTo(date1);
+                    return t1.getTripDatetime().compareTo(tripsByDriverMail.getTripDatetime());
                 }
             });
-            notifyItemInserted(tripsByDriverMailList.size());
+            Log.i(TAG, "TRIP ADDED TO ADAPTER TRIP NO: " + tripsByDriverMail.getTripNo());
+
+            Tasks.call(new Callable<Void>()
+            {
+                @Override
+                public Void call() throws Exception
+                {
+                    notifyItemInserted(tripsByDriverMailList.size());
+                    return null;
+                }
+            });
         }
     }
 

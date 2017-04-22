@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import io.fusionbit.vcarry.Constants;
 import io.realm.RealmObject;
@@ -62,7 +63,7 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     @SerializedName("trip_id")
     private String tripId;
     @SerializedName("trip_datetime")
-    private String tripDatetime;
+    private Date tripDatetime;
     @SerializedName("from_shipping_location_id")
     private String fromShippingLocationId;
     @SerializedName("from_shipping_location")
@@ -83,7 +84,7 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     private String vehicleTypeId;
     @SerializedName("driver_id")
     private String driverId;
-    @SerializedName("fare")
+    @SerializedName("driver_fare")
     private String fare;
     @SerializedName("created_by")
     private String createdBy;
@@ -237,7 +238,7 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     protected TripsByDriverMail(Parcel in)
     {
         this.tripId = in.readString();
-        this.tripDatetime = in.readString();
+        //this.tripDatetime = in.readString();
         this.fromShippingLocationId = in.readString();
         this.fromShippingLocation = in.readString();
         this.fromCityId = in.readString();
@@ -280,12 +281,12 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
         this.tripId = tripId;
     }
 
-    public String getTripDatetime()
+    public Date getTripDatetime()
     {
         return tripDatetime;
     }
 
-    public void setTripDatetime(String tripDatetime)
+    public void setTripDatetime(Date tripDatetime)
     {
         this.tripDatetime = tripDatetime;
     }
@@ -629,7 +630,7 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     public void writeToParcel(Parcel dest, int flags)
     {
         dest.writeString(this.tripId);
-        dest.writeString(this.tripDatetime);
+        //dest.writeString(this.tripDatetime);
         dest.writeString(this.fromShippingLocationId);
         dest.writeString(this.fromShippingLocation);
         dest.writeString(this.fromCityId);

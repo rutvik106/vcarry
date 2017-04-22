@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -101,22 +100,17 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
 
         vh.tvTripNumber.setText(model.getTripNo());
 
-        try
+
+        Date tripDate = model.getTripDatetime();
+        final Date currentDate = new Date();
+        if (!currentDate.after(tripDate))
         {
-            Date tripDate = vh.sdf.parse(model.getTripDatetime());
-            final Date currentDate = new Date();
-            if (!currentDate.after(tripDate))
-            {
-                vh.setupCountDown(tripDate);
-                vh.tvTimeLeft.setVisibility(View.VISIBLE);
-            } else
-            {
-                vh.removeCountDown();
-                vh.tvTimeLeft.setVisibility(View.GONE);
-            }
-        } catch (ParseException e)
+            vh.setupCountDown(tripDate);
+            vh.tvTimeLeft.setVisibility(View.VISIBLE);
+        } else
         {
-            e.printStackTrace();
+            vh.removeCountDown();
+            vh.tvTimeLeft.setVisibility(View.GONE);
         }
 
         final int tripStatus = Integer.valueOf(model.getTripStatus());

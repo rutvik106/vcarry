@@ -235,6 +235,7 @@ public class TransportRequestHandlerService extends Service
                     .setContentTitle("V-Carry")
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setContentText(getResources().getString(R.string.you_are_on_a_trip))
+                    .setPriority(Notification.PRIORITY_HIGH)
                     .setSmallIcon(R.drawable.ic_local_shipping_black_24dp);
 
             // create the pending intent and add to the notification

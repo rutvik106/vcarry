@@ -73,7 +73,7 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     private String driverId;
     @SerializedName("driver_name")
     private String driverName;
-    @SerializedName("fare")
+    @SerializedName("driver_fare")
     private String fare;
     @SerializedName("created_by")
     private String createdBy;
