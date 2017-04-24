@@ -48,6 +48,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -236,6 +237,33 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     }
 
+    private void updateDriverProfilePicture(final String driverId)
+    {
+        API.getInstance().updateDriverImage(driverId,
+                FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl() != null ?
+                        FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString() :
+                        "https://lh3.googleusercontent.com/-Wlkp-_tMv-Y/AAAAAAAAAAI/AAAAAAAAAAA/NbvcGT31kjM/s120-c/photo.jpg",
+                new RetrofitCallbacks<ResponseBody>()
+                {
+
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            try
+                            {
+                                Log.i(TAG, response.body().string());
+                            } catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+    }
+
     @Override
     protected void onStart()
     {
@@ -321,6 +349,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                 updateFcmDeviceToken();
 
                                 getUserDetails(String.valueOf(response.body()));
+                                updateDriverProfilePicture(driverId);
 
                             } else
                             {

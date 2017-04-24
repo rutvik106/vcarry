@@ -139,5 +139,11 @@ public interface ApiInterface
                                           @Field("driver_id") String driverId,
                                           @Field("lat_long") String tripNo);
 
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<ResponseBody> updateDriverImage(@Field("method") String method,
+                                         @Field("driver_id") String driverId,
+                                         @Field("image_url") String imageUrl);
+
 
 }

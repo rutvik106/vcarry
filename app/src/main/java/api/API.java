@@ -225,4 +225,12 @@ public class API
         return call;
     }
 
+    public Call<ResponseBody> updateDriverImage(final String driverId, final String imageUrl,
+                                                final RetrofitCallbacks<ResponseBody> callback)
+    {
+        Call<ResponseBody> call = apiService.updateDriverImage("update_driver_image", driverId, imageUrl);
+        call.enqueue(callback);
+        return call;
+    }
+
 }
