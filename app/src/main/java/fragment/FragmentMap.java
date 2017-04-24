@@ -417,7 +417,23 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         tvDashTripFromCompany.setText(tripDetails.getFromCompanyName());
                         tvDashTripToCompany.setText(tripDetails.getToCompanyName());
                     }
-                    tvDashCustomerName.setText(tripDetails.getCustomerName());
+                    if (tripDetails.getFromContactNo() != null)
+                    {
+                        tvDashCustomerName.setText(tripDetails.getFromContactNo());
+                        tvDashCustomerContact.setOnClickListener(new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View view)
+                            {
+                                Intent intent = new Intent(Intent.ACTION_CALL,
+                                        Uri.parse("tel:" + tripDetails.getFromContactNo()));
+                                startActivity(intent);
+                            }
+                        });
+                    } else
+                    {
+                        tvDashCustomerName.setText("NA");
+                    }
 
                     makeTextViewResizable(tvDashTripFrom, 2, "View More", true);
 

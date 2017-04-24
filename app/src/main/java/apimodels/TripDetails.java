@@ -294,6 +294,70 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     private String fromLatLong;
     @SerializedName("to_lat_long")
     private String toLatLong;
+    /**
+     * 0 : 378
+     * 1 : 2017-02-05 11:36:56
+     * 2 : 05/02/2017 11:36:56 AM
+     * 3 : 35
+     * 4 : jeet patel
+     * 5 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
+     * 6 : Rangin Park Soc
+     * 7 :
+     * 8 : 2
+     * 9 : Ahmedabad
+     * 10 : 566
+     * 11 : S g highway
+     * 12 : 25
+     * 13 : Amishi Mehta
+     * 14 : Jodhpur park society
+     * 15 : Jodhpur park society Near Ramdev Nagar BRTS Bus stop
+     * 16 :
+     * 17 : 2
+     * 18 : Ahmedabad
+     * 19 : 567
+     * 20 : Kankriya
+     * 21 : 1
+     * 22 : Tata Ace
+     * 23 : 2
+     * 24 : 200
+     * fare : 200
+     * 25 : 27
+     * 26 : 27
+     * 27 : 2017-02-05 11:36:59
+     * 28 : 2017-02-05 11:37:14
+     * 29 : 6
+     * 30 : 1664
+     * 31 : Finished
+     * 32 : Amishi Mehta
+     * 33 : 9409210477
+     * 34 : 050220170000019
+     * 35 : 1486274882049
+     * 36 : 1486276669613
+     * 37 : 23.0265168,72.5147056
+     * 38 : 23.026514,72.5147277
+     * 39 : 0
+     * 40 : 0
+     * 41 : 0
+     * 42 : 0
+     * 43 : 23.0333222,72.5104536
+     * 44 : 23.0265273,72.5147981
+     * 45 : 0
+     * 46 :
+     * 47 : 0
+     * 48 : https://lh6.googleusercontent.com/-8twv_aWLqtY/AAAAAAAAAAI/AAAAAAAAAQ8/K1r--rxdH3w/s96-c/photo.jpg
+     * driver_image : https://lh6.googleusercontent.com/-8twv_aWLqtY/AAAAAAAAAAI/AAAAAAAAAQ8/K1r--rxdH3w/s96-c/photo.jpg
+     * 49 : 9824143009
+     * from_contact_no : 9824143009
+     * 50 : 9409210477
+     * to_contact_no : 9409210477
+     */
+
+    @SerializedName("driver_image")
+    private String driverImage;
+    @SerializedName("from_contact_no")
+    private String fromContactNo;
+    @SerializedName("to_contact_no")
+    private String toContactNo;
 
 
     public boolean isReturnGujaratiAddress()
@@ -945,5 +1009,35 @@ public class TripDetails extends RealmObject implements Comparable<TripDetails>
     public void setToLatLong(String toLatLong)
     {
         this.toLatLong = toLatLong;
+    }
+
+    public String getDriverImage()
+    {
+        return driverImage;
+    }
+
+    public void setDriverImage(String driverImage)
+    {
+        this.driverImage = driverImage;
+    }
+
+    public String getFromContactNo()
+    {
+        return fromContactNo;
+    }
+
+    public void setFromContactNo(String fromContactNo)
+    {
+        this.fromContactNo = fromContactNo;
+    }
+
+    public String getToContactNo()
+    {
+        return toContactNo;
+    }
+
+    public void setToContactNo(String toContactNo)
+    {
+        this.toContactNo = toContactNo;
     }
 }
