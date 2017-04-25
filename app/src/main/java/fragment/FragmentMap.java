@@ -267,23 +267,6 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
         return view;
     }
 
-    public void placeCurrentLocationMarker(final LatLng latLng)
-    {
-        if (isReady)
-        {
-
-            currentLocationMarker = mMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title("Shop Name"));
-
-            currentLatLng = latLng;
-
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-
-
-        }
-    }
-
     private void loadMapNow()
     {
         mapFragment.getMapAsync(this);
@@ -387,22 +370,22 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                 if (tripDetails != null)
                 {
                     llDashboardContainer.setVisibility(View.VISIBLE);
-                    if (tripDetails.getCustomerContactNo() != null)
+                    if (tripDetails.getToContactNo() != null)
                     {
-                        tvDashCustomerContact.setText(tripDetails.getCustomerContactNo());
+                        tvDashCustomerContact.setText(tripDetails.getToContactNo());
                         tvDashCustomerContact.setOnClickListener(new View.OnClickListener()
                         {
                             @Override
                             public void onClick(View view)
                             {
                                 Intent intent = new Intent(Intent.ACTION_CALL,
-                                        Uri.parse("tel:" + tripDetails.getCustomerContactNo()));
+                                        Uri.parse("tel:" + tripDetails.getToContactNo()));
                                 startActivity(intent);
                             }
                         });
                     } else
                     {
-                        tvDashCustomerContact.setText("");
+                        tvDashCustomerContact.setVisibility(View.GONE);
                     }
                     if (LocaleHelper.getLanguage(getActivity()).equalsIgnoreCase("gu"))
                     {
@@ -420,7 +403,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                     if (tripDetails.getFromContactNo() != null)
                     {
                         tvDashCustomerName.setText(tripDetails.getFromContactNo());
-                        tvDashCustomerContact.setOnClickListener(new View.OnClickListener()
+                        tvDashCustomerName.setOnClickListener(new View.OnClickListener()
                         {
                             @Override
                             public void onClick(View view)
@@ -432,7 +415,7 @@ public class FragmentMap extends Fragment implements OnMapReadyCallback, GoogleM
                         });
                     } else
                     {
-                        tvDashCustomerName.setText("NA");
+                        tvDashCustomerName.setVisibility(View.GONE);
                     }
 
                     makeTextViewResizable(tvDashTripFrom, 2, "View More", true);

@@ -11,8 +11,8 @@ android {
         applicationId "io.fusionbit.vcarry"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 12
-        versionName "1.8"
+        versionCode 14
+        versionName "2.0"
     }
 
     /**splits {
