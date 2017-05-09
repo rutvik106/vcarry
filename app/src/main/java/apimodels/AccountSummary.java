@@ -15,6 +15,9 @@ public class AccountSummary
 {
 
 
+    private final List<TripsByDriverMail> tripToday = new ArrayList<>();
+    private final List<TripsByDriverMail> tripThisMonth = new ArrayList<>();
+    private final List<TripsByDriverMail> totalTrips = new ArrayList<>();
     /**
      * received : 300
      * receivable : 320
@@ -24,13 +27,19 @@ public class AccountSummary
     private float received = 0;
     @SerializedName("receivable")
     private float receivable = 0;
-
     private float receivedToday = 0, receivableToday = 0, receivedThisMonth = 0, receivableThisMonth = 0,
             totalReceived = 0, totalReceivable = 0;
+    private AccountSummaryNew accountSummaryNew;
 
-    private final List<TripsByDriverMail> tripToday = new ArrayList<>();
-    private final List<TripsByDriverMail> tripThisMonth = new ArrayList<>();
-    private final List<TripsByDriverMail> totalTrips = new ArrayList<>();
+    public AccountSummaryNew getAccountSummaryNew()
+    {
+        return accountSummaryNew;
+    }
+
+    public void setAccountSummaryNew(AccountSummaryNew accountSummaryNew)
+    {
+        this.accountSummaryNew = accountSummaryNew;
+    }
 
     public void clearData()
     {

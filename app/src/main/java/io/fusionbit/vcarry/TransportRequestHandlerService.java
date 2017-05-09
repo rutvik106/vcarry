@@ -350,7 +350,14 @@ public class TransportRequestHandlerService extends Service
                 {
                     if (details.get("vehicle") != null)
                     {
-                        if (driverDetails.getVehicleType().equals(details.get("vehicle")))
+                        if (!driverDetails.getMultiTrip().equals("1"))
+                        {
+                            if (driverDetails.getVehicleType().equals(details.get("vehicle")))
+                            {
+                                showNotification(dataSnapshot.getKey());
+                                showAlert(dataSnapshot.getKey());
+                            }
+                        } else
                         {
                             showNotification(dataSnapshot.getKey());
                             showAlert(dataSnapshot.getKey());

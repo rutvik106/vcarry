@@ -17,7 +17,6 @@ import java.util.Locale;
 
 import apimodels.TripsByDriverMail;
 import extra.CountDownTimer;
-import extra.LocaleHelper;
 import extra.Utils;
 import io.fusionbit.vcarry.ActivityTripDetails;
 import io.fusionbit.vcarry.Constants;
@@ -52,6 +51,7 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
 
         tvTripFrom = (TextView) itemView.findViewById(R.id.tv_tripFrom);
         tvTripTo = (TextView) itemView.findViewById(R.id.tv_tripTo);
+
         tvTripTime = (TextView) itemView.findViewById(R.id.tv_tripTime);
         tvCurrentTripStatus = (TextView) itemView.findViewById(R.id.tv_currentTripStatus);
         tvTripTimeCountdown = (TextView) itemView.findViewById(R.id.tv_tripTimeCountdown);
@@ -85,10 +85,12 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
     public static void bind(final VHSingleTrip vh, final TripsByDriverMail model)
     {
         vh.model = model;
-        if (LocaleHelper.getLanguage(vh.context).equalsIgnoreCase("gu"))
+        if (true)//LocaleHelper.getLanguage(vh.context).equalsIgnoreCase("gu"))
         {
-            vh.tvTripFrom.setText(model.getFromGujaratiAddress());
-            vh.tvTripTo.setText(model.getToGujaratiAddress());
+            /*vh.tvTripFrom.setText(model.getFromGujaratiAddress());
+            vh.tvTripTo.setText(model.getToGujaratiAddress());*/
+            vh.tvTripFrom.setText(model.getFromCompanyName());
+            vh.tvTripTo.setText(model.getToCompanyName());
         } else
         {
             vh.tvTripFrom.setText(model.getFromShippingLocation());

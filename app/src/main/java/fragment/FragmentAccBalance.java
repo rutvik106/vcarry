@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -21,6 +22,7 @@ import adapters.AccountBalanceAdapter;
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.AccountSummary;
+import apimodels.AccountSummaryNew;
 import apimodels.TripsByDriverMail;
 import extra.Utils;
 import io.fusionbit.vcarry.Constants;
@@ -90,14 +92,47 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
             accountSummary.clearData();
             //adapter.notifyDataSetChanged();
             email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-            getAccountBalanceForToday();
-            getAccountBalanceForThisMonth();
-            getTotalAccountBalance();
+            //getAccountBalanceForToday();
+            //getAccountBalanceForThisMonth();
+            //getTotalAccountBalance();
+
+            getAccountBalanceSummary(email);
 
             getTripForToday();
             getTripForThisMonth();
             getTotalTrips();
         }
+    }
+
+    private void getAccountBalanceSummary(String email)
+    {
+        API.getInstance().getAccountSummary(email,
+                new RetrofitCallbacks<AccountSummaryNew>()
+                {
+
+                    @Override
+                    public void onResponse(Call<AccountSummaryNew> call, Response<AccountSummaryNew> response)
+                    {
+                        super.onResponse(call, response);
+                        if (response.isSuccessful())
+                        {
+                            if (response.body() instanceof AccountSummaryNew)
+                            {
+                                accountSummary.setAccountSummaryNew(response.body());
+                            }
+                        } else
+                        {
+                            Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<AccountSummaryNew> call, Throwable t)
+                    {
+                        super.onFailure(call, t);
+                        Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void getAccountBalanceForToday()

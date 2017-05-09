@@ -72,7 +72,27 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
     {
         vh.accountSummary = accountSummary;
 
+
         vh.tvAccountPaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getToday().getReceived());
+
+        vh.tvAccountUnpaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getToday().getReceivable());
+
+        vh.tvAccountPaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getThisMonth().getReceived());
+
+        vh.tvAccountUnpaidThisMonth.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getThisMonth().getReceivable());
+
+        vh.tvAccountPaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getAllTime().getReceived());
+
+        vh.tvAccountUnpaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                accountSummary.getAccountSummaryNew().getAllTime().getReceivable());
+
+
+        /*vh.tvAccountPaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 accountSummary.getReceivedToday());
 
         vh.tvAccountUnpaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
@@ -91,7 +111,7 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
 
         vh.tvAccountUnpaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 (accountSummary.getTotalReceivable() != 0 ?
-                        accountSummary.getTotalReceivable() - accountSummary.getTotalReceived() : 0));
+                        accountSummary.getTotalReceivable() - accountSummary.getTotalReceived() : 0));*/
 
         vh.tvCompletedTripToday.setText(vh.context.getResources().getString(R.string.trip_completed) + " " +
                 accountSummary.getTodayCompletedTrips());

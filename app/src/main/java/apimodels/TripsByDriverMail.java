@@ -35,6 +35,7 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
             return new TripsByDriverMail[size];
         }
     };
+
     /**
      * trip_id : 2
      * trip_datetime : 2016-09-07 16:17:18
@@ -102,6 +103,7 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     private String status;
     @SerializedName("customer_name")
     private String customerName;
+
     /**
      * trip_datetime_dmy : 05/02/2017 11:36:56 AM
      * from_address_line1 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
@@ -138,67 +140,21 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     private String customerContactNo;
     @SerializedName("trip_no")
     private String tripNo;
+
     /**
-     * 0 : 783
-     * 1 : 2017-03-23 17:10:38
-     * 2 : 23/03/2017 05:10:38 PM
-     * 3 : 25
-     * 4 : Amishi Mehta
-     * 5 : Jodhpur park society
-     * 6 : Jodhpur park society Near Ramdev Nagar BRTS Bus stop
-     * 7 :
      * from_gujarati_address :
-     * 8 : 2
-     * 9 : Ahmedabad
-     * 10 : 567
-     * 11 : Kankriya
-     * 12 : 35
-     * 13 : jeet patel
-     * 14 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
-     * 15 : Rangin Park Soc
-     * 16 :
      * to_gujarati_address :
-     * 17 : 2
-     * 18 : Ahmedabad
-     * 19 : 566
-     * 20 : S g highway
-     * 21 : 1
-     * 22 : Tata Ace
      * vehicle_type : Tata Ace
-     * 23 : 2
-     * 24 : 212
-     * 25 : 27
-     * 26 : 27
-     * 27 : 2017-03-23 17:11:01
-     * 28 : 2017-03-23 17:11:22
-     * 29 : 6
-     * 30 : 1664
-     * 31 : Finished
-     * 32 : Amishi Mehta
-     * 33 : 9409210477
-     * 34 : 201703230000424
-     * 35 : 1490269349122
      * trip_start_time : 1490269349122
-     * 36 : 1490269386949
      * trip_stop_time : 1490269386949
-     * 37 : 23.0260084,72.5149829
      * trip_start_latlong : 23.0260084,72.5149829
-     * 38 : 23.0261119,72.5146944
      * trip_stop_latlong : 23.0261119,72.5146944
-     * 39 : 0
      * trip_distance : 0
-     * 40 : 0
      * memo_amount : 0
-     * 41 : 0
      * labour_amount : 0
-     * 42 : 212
      * cash_received : 212
-     * 43 :
      * lat_long : 23.0333222,72.5104536
-     * 44 : 23.0333222,72.5104536
-     * 45 : 200
      * weight : 200
-     * 46 : 23x123
      * dimensions : 23x123
      */
 
@@ -230,62 +186,10 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     private String weight;
     @SerializedName("dimensions")
     private String dimensions;
+
     /**
-     * 0 : 378
-     * 1 : 2017-02-05 11:36:56
-     * trip_datetime : 2017-02-05 11:36:56
-     * 2 : 05/02/2017 11:36:56 AM
-     * 3 : 35
-     * 4 : jeet patel
-     * 5 : 54, Rangin Park Soc, S.G.Highway. Bodakdev
-     * 6 : Rangin Park Soc
-     * 7 :
-     * 8 : 2
-     * 9 : Ahmedabad
-     * 10 : 566
-     * 11 : S g highway
-     * 12 : 25
-     * 13 : Amishi Mehta
-     * 14 : Jodhpur park society
-     * 15 : Jodhpur park society Near Ramdev Nagar BRTS Bus stop
-     * 16 :
-     * 17 : 2
-     * 18 : Ahmedabad
-     * 19 : 567
-     * 20 : Kankriya
-     * 21 : 1
-     * 22 : Tata Ace
-     * 23 : 2
-     * 24 : 200
-     * fare : 200
-     * 25 : 27
-     * 26 : 27
-     * 27 : 2017-02-05 11:36:59
-     * 28 : 2017-02-05 11:37:14
-     * 29 : 6
-     * 30 : 1664
-     * 31 : Finished
-     * 32 : Amishi Mehta
-     * 33 : 9409210477
-     * 34 : 050220170000019
-     * 35 : 1486274882049
-     * 36 : 1486276669613
-     * 37 : 23.0265168,72.5147056
-     * 38 : 23.026514,72.5147277
-     * 39 : 0
-     * 40 : 0
-     * 41 : 0
-     * 42 : 0
-     * 43 : 23.0333222,72.5104536
-     * 44 : 23.0265273,72.5147981
-     * 45 : 0
-     * 46 :
-     * 47 : 0
-     * 48 : https://lh6.googleusercontent.com/-8twv_aWLqtY/AAAAAAAAAAI/AAAAAAAAAQ8/K1r--rxdH3w/s96-c/photo.jpg
      * driver_image : https://lh6.googleusercontent.com/-8twv_aWLqtY/AAAAAAAAAAI/AAAAAAAAAQ8/K1r--rxdH3w/s96-c/photo.jpg
-     * 49 : 9824143009
      * from_contact_no : 9824143009
-     * 50 : 9409210477
      * to_contact_no : 9409210477
      */
 
@@ -377,6 +281,16 @@ public class TripsByDriverMail extends RealmObject implements Comparable<TripsBy
     public void setFromShippingLocation(String fromShippingLocation)
     {
         this.fromShippingLocation = fromShippingLocation;
+    }
+
+    public String getFromCompanyName()
+    {
+        return fromShippingLocation;
+    }
+
+    public String getToCompanyName()
+    {
+        return toShippingLocation;
     }
 
     public String getFromCityId()

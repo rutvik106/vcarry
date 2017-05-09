@@ -141,6 +141,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     private Snackbar snackbarNoInternet;
 
+    private NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -192,7 +194,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
@@ -395,13 +397,17 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
-                            Log.i(TAG, "SUCCESSFULLY GOT DRIVER DETAILS SAVING TO REALM");
-                            final Realm realm = Realm.getDefaultInstance();
-                            realm.beginTransaction();
-                            realm.copyToRealmOrUpdate(response.body());
-                            realm.commitTransaction();
-                            realm.close();
-                            Log.i(TAG, "DRIVER DETAILS SAVED AND CLOSED REALM");
+                            if (response.body() instanceof DriverDetails)
+                            {
+                                Log.i(TAG, "SUCCESSFULLY GOT DRIVER DETAILS SAVING TO REALM");
+                                final Realm realm = Realm.getDefaultInstance();
+                                realm.beginTransaction();
+                                realm.copyToRealmOrUpdate(response.body());
+                                realm.commitTransaction();
+                                realm.close();
+                                setNavDrawerBackground(response.body());
+                                Log.i(TAG, "DRIVER DETAILS SAVED AND CLOSED REALM");
+                            }
                         }
                     }
                 };
@@ -409,6 +415,14 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         API.getInstance().getDriverDetailsByDriverId(driverId, onGetDriverDetails);
     }
 
+    private void setNavDrawerBackground(DriverDetails body)
+    {
+        if (body.getMultiTrip().equals("1"))
+        {
+            navigationView.getHeaderView(0).findViewById(R.id.ll_navContainer)
+                    .setBackground(getResources().getDrawable(R.drawable.side_nav_bar_blue));
+        }
+    }
 
     private void updateFcmDeviceToken()
     {

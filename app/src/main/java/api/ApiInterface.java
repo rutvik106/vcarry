@@ -3,6 +3,7 @@ package api;
 import java.util.List;
 
 import apimodels.AccountSummary;
+import apimodels.AccountSummaryNew;
 import apimodels.DriverDetails;
 import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
@@ -144,6 +145,11 @@ public interface ApiInterface
     Call<ResponseBody> updateDriverImage(@Field("method") String method,
                                          @Field("driver_id") String driverId,
                                          @Field("image_url") String imageUrl);
+
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<AccountSummaryNew> getAccountSummary(@Field("method") String method,
+                                              @Field("driver_email") String email);
 
 
 }

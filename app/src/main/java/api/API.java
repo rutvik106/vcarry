@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import apimodels.AccountSummary;
+import apimodels.AccountSummaryNew;
 import apimodels.DriverDetails;
 import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
@@ -229,6 +230,15 @@ public class API
                                                 final RetrofitCallbacks<ResponseBody> callback)
     {
         Call<ResponseBody> call = apiService.updateDriverImage("update_driver_image", driverId, imageUrl);
+        call.enqueue(callback);
+        return call;
+    }
+
+    public Call<AccountSummaryNew> getAccountSummary(final String email,
+                                                     final RetrofitCallbacks<AccountSummaryNew> callback)
+    {
+        Call<AccountSummaryNew> call = apiService.getAccountSummary("get_full_driver_balance_summary",
+                email);
         call.enqueue(callback);
         return call;
     }
