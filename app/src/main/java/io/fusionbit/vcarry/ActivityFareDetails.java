@@ -38,6 +38,8 @@ public class ActivityFareDetails extends BaseActivity
     @BindView(R.id.tv_totalCharges)
     TextView tvTotalCharges;
 
+    double totalDriverShare = 0;
+
     public static void start(Context context, String tripId)
     {
         final Intent i = new Intent(context, ActivityFareDetails.class);
@@ -73,6 +75,9 @@ public class ActivityFareDetails extends BaseActivity
                     {
                         for (int i = 0; i < response.body().size(); i++)
                         {
+                            totalDriverShare = totalDriverShare +
+                                    response.body().get(i).getTotalDriverShare();
+
                             if (i == 0)
                             {
                                 bindDataToUi(response.body().get(i));
@@ -84,18 +89,18 @@ public class ActivityFareDetails extends BaseActivity
                                         .inflate(R.layout.single_charge_item, llChargesItemContainer, false);
 
                                 TextView tv1 = (TextView) v.findViewById(R.id.tv_chargeItemName);
-                                tv1.setText(response.body().get(i).getItemName() +
+                                tv1.setText(response.body().get(i).getItemName() + " : " +
                                         response.body().get(i).getItemDesc());
 
                                 TextView tv2 = (TextView) v.findViewById(R.id.tv_chargeItemShare);
                                 tv2.setText(getResources().getString(R.string.rs) + " " +
-                                        response.body().get(i).getDriverShare());
+                                        response.body().get(i).getTotalDriverShare());
 
                                 llChargesItemContainer.addView(v);
                             }
                         }
 
-                        tvTotalCharges.setText(getResources().getString(R.string.rs) + " " + "450");
+                        tvTotalCharges.setText(getResources().getString(R.string.rs) + " " + totalDriverShare);
 
                     }
                 }

@@ -13,6 +13,7 @@
         android:layout_weight="1"
         android:gravity="left"
         android:padding="10dp"
+        android:textColor="@android:color/black"
         tools:text="ITEM"/>
 
     <TextView
@@ -22,6 +23,7 @@
         android:layout_weight="1"
         android:gravity="right"
         android:padding="10dp"
+        android:textColor="@android:color/black"
         tools:text="YOUR SHARE"/>
 
 </LinearLayout>
