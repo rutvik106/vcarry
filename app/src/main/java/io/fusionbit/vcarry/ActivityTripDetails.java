@@ -93,6 +93,17 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
     {
         Intent i = new Intent(context, ActivityTripDetails.class);
         i.putExtra(Constants.INTENT_EXTRA_TRIP_NUMBER, tripNumber);
+
+        final TripDetails td = Realm.getDefaultInstance()
+                .where(TripDetails.class)
+                .equalTo("tripNo", tripNumber)
+                .findFirst();
+
+        if (td != null)
+        {
+            i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, td.getTripId());
+        }
+
         context.startActivity(i);
     }
 
@@ -137,6 +148,15 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
         tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
 
         tripNumber = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_NUMBER);
+
+        findViewById(R.id.tv_tripChargesDetails).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                ActivityFareDetails.start(ActivityTripDetails.this, tripId);
+            }
+        });
 
         Log.i(TAG, "TRIP ID IN ACTIVITY TRIP DETAILS IS: " + tripId);
 
@@ -380,8 +400,8 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
                 }
             } else
             {*/
-                uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%s,%s(%s)",
-                        stringFromLatLng[0], stringFromLatLng[1], tripDetails.getFromShippingLocation());
+            uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?daddr=%s,%s(%s)",
+                    stringFromLatLng[0], stringFromLatLng[1], tripDetails.getFromShippingLocation());
             //}
 
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,

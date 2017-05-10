@@ -6,6 +6,7 @@ import java.util.List;
 import apimodels.AccountSummary;
 import apimodels.AccountSummaryNew;
 import apimodels.DriverDetails;
+import apimodels.TripBreakUpDetails;
 import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
 import io.fusionbit.vcarry.App;
@@ -239,6 +240,15 @@ public class API
     {
         Call<AccountSummaryNew> call = apiService.getAccountSummary("get_full_driver_balance_summary",
                 email);
+        call.enqueue(callback);
+        return call;
+    }
+
+    public Call<List<TripBreakUpDetails>> getTripBreakUpDetails(final String tripId,
+                                                                final RetrofitCallbacks<List<TripBreakUpDetails>> callback)
+    {
+        Call<List<TripBreakUpDetails>> call = apiService.getTripBreakUpDetails("getTripBreakUpForTripIdDriver",
+                tripId);
         call.enqueue(callback);
         return call;
     }

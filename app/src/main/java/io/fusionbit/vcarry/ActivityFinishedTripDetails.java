@@ -4,10 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import apimodels.TripDetails;
 import fragment.FragmentCompletedTripDetails;
-import io.realm.Realm;
-import models.TripDistanceDetails;
 
 public class ActivityFinishedTripDetails extends AppCompatActivity
 {
@@ -34,9 +31,12 @@ public class ActivityFinishedTripDetails extends AppCompatActivity
 
         tripId = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_ID);
 
-        if (!tripId.isEmpty())
+        if (tripId != null)
         {
             bindDataToUi();
+        } else
+        {
+            finish();
         }
 
     }
@@ -64,7 +64,7 @@ public class ActivityFinishedTripDetails extends AppCompatActivity
     {
 
         fragmentCompletedTripDetails = FragmentCompletedTripDetails.newInstance(this, tripId,
-                true,null);
+                true, null);
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fl_completedTripDetails, fragmentCompletedTripDetails)

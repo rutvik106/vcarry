@@ -149,5 +149,13 @@
     <string name="show_trip_on_map">Show Trip On Map</string>
     <string name="maps_app_not_found">Google Maps Application not found</string>
     <string name="from_not_found">From Location not found</string>
+    <string name="total_driver_share">Total Driver Share</string>
+    <string name="driver_premium">Driver Premium</string>
+    <string name="driver_share">Driver Share</string>
+    <string name="discounted_customer_fare">Discounted Customer Fare</string>
+    <string name="trip_charges">Trip Charges</string>
+    <string name="item">ITEM</string>
+    <string name="your_share">YOUR SHARE</string>
+    <string name="trip_charges_details">Trip Charges Details</string>
 
 </resources>

@@ -35,11 +35,11 @@ public class TripBreakUpDetails
     @SerializedName("discounted_customer_fare")
     private String discountedCustomerFare;
     @SerializedName("driver_share")
-    private int driverShare;
+    private double driverShare;
     @SerializedName("driver_premium")
-    private int driverPremium;
+    private double driverPremium;
     @SerializedName("total_driver_share")
-    private int totalDriverShare;
+    private double totalDriverShare;
     @SerializedName("discount")
     private String discount;
     @SerializedName("net_amount")
@@ -75,7 +75,7 @@ public class TripBreakUpDetails
         this.discountedCustomerFare = discountedCustomerFare;
     }
 
-    public int getDriverShare()
+    public double getDriverShare()
     {
         return driverShare;
     }
@@ -85,7 +85,7 @@ public class TripBreakUpDetails
         this.driverShare = driverShare;
     }
 
-    public int getDriverPremium()
+    public double getDriverPremium()
     {
         return driverPremium;
     }
@@ -95,7 +95,7 @@ public class TripBreakUpDetails
         this.driverPremium = driverPremium;
     }
 
-    public int getTotalDriverShare()
+    public double getTotalDriverShare()
     {
         return totalDriverShare;
     }
