@@ -149,15 +149,6 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
 
         tripNumber = getIntent().getStringExtra(Constants.INTENT_EXTRA_TRIP_NUMBER);
 
-        findViewById(R.id.tv_tripChargesDetails).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                ActivityFareDetails.start(ActivityTripDetails.this, tripId);
-            }
-        });
-
         Log.i(TAG, "TRIP ID IN ACTIVITY TRIP DETAILS IS: " + tripId);
 
     }
@@ -327,6 +318,22 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
                     startActivity(i);
                 }
             });
+        }
+
+        if (tripStatus == Integer.valueOf(Constants.TRIP_STATUS_FINISHED))
+        {
+            findViewById(R.id.tv_tripChargesDetails).setVisibility(View.VISIBLE);
+            findViewById(R.id.tv_tripChargesDetails).setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    ActivityFareDetails.start(ActivityTripDetails.this, tripId);
+                }
+            });
+        } else
+        {
+            findViewById(R.id.tv_tripChargesDetails).setVisibility(View.GONE);
         }
 
         if (tripDetails.getToLatLong() == null)

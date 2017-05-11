@@ -151,14 +151,14 @@
     <string name="show_trip_on_map">નકશા પર ટ્રીપ બતાવો</string>
     <string name="maps_app_not_found">Google Maps એપ્લિકેશન મળી નથી</string>
     <string name="from_not_found">પ્રારંભ સ્થળ મળ્યું નથી</string>
-    <string name="total_driver_share">Total Driver Share</string>
-    <string name="driver_premium">Driver Premium</string>
-    <string name="driver_share">Driver Share</string>
-    <string name="discounted_customer_fare">Discounted Customer Fare</string>
-    <string name="trip_charges">Trip Charges</string>
-    <string name="item">ITEM</string>
-    <string name="your_share">YOUR SHARE</string>
-    <string name="trip_charges_details">Trip Charges Details</string>
-    <string name="fare_details_not_found">Trip Fare details not found</string>
+    <string name="total_driver_share">કુલ મોટરિસ્ટર શેર</string>
+    <string name="driver_premium">મોટરિસ્ટ્રેટર પ્રીમિયમ</string>
+    <string name="driver_share">મોટરિસ્ટર્સ શેર</string>
+    <string name="discounted_customer_fare">ડિસ્કાઉન્ટેડ ગ્રાહક ભાડું</string>
+    <string name="trip_charges">ટ્રિપ ચાર્જિસ</string>
+    <string name="item">આઇટમ</string>
+    <string name="your_share">તમારા શેર</string>
+    <string name="trip_charges_details">ટ્રીપનો ચાર્જિસ વિગતો</string>
+    <string name="fare_details_not_found">ટ્રીપની વિગતો મળી નથી</string>
 
 </resources>
