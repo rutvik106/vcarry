@@ -28,8 +28,10 @@ import java.util.Map;
 
 import api.API;
 import api.RetrofitCallbacks;
+import apimodels.DriverDetails;
 import extra.Utils;
 import fcm.FCM;
+import io.realm.Realm;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -184,6 +186,23 @@ public class NotificationHandler
                                 {
                                     extraDetails.put("lat", location.getLatitude());
                                     extraDetails.put("lng", location.getLongitude());
+
+                                    final DriverDetails dd = Realm.getDefaultInstance()
+                                            .where(DriverDetails.class).findFirst();
+
+                                    if (dd != null)
+                                    {
+                                        if (dd.getMultiTrip().equals("1"))
+                                        {
+                                            extraDetails.put("driver_type", 1);
+                                        } else
+                                        {
+                                            extraDetails.put("driver_type", 0);
+                                        }
+                                    } else
+                                    {
+                                        extraDetails.put("driver_type", -1);
+                                    }
 
                                     new AsyncTask<Void, Void, Void>()
                                     {

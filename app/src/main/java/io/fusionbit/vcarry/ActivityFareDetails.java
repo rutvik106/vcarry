@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,8 @@ public class ActivityFareDetails extends BaseActivity
     TextView tvTotalCharges;
 
     double totalDriverShare = 0;
+    @BindView(R.id.fl_loadingFareDetails)
+    FrameLayout flLoadingFareDetails;
 
     public static void start(Context context, String tripId)
     {
@@ -71,6 +74,7 @@ public class ActivityFareDetails extends BaseActivity
                 public void onResponse(Call<List<TripBreakUpDetails>> call, Response<List<TripBreakUpDetails>> response)
                 {
                     super.onResponse(call, response);
+                    flLoadingFareDetails.setVisibility(View.GONE);
                     if (response.isSuccessful())
                     {
                         if (response.body() == null)
@@ -111,9 +115,18 @@ public class ActivityFareDetails extends BaseActivity
 
                     }
                 }
+
+                @Override
+                public void onFailure(Call<List<TripBreakUpDetails>> call, Throwable t)
+                {
+                    super.onFailure(call, t);
+                    Toast.makeText(ActivityFareDetails.this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                    flLoadingFareDetails.setVisibility(View.GONE);
+                }
             });
         } else
         {
+            Toast.makeText(this, "Trip Id NULL", Toast.LENGTH_SHORT).show();
             finish();
         }
 

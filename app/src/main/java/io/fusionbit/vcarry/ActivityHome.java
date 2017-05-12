@@ -654,7 +654,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 searchMenu.setVisible(false);
                 break;
             case R.id.nav_tripsOnOffer:
-                showFragment(fragmentTripsOnOffer);
+                Toast.makeText(mService, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();
+                //showFragment(fragmentTripsOnOffer);
                 searchMenu.setVisible(false);
                 break;
             case R.id.nav_share:
