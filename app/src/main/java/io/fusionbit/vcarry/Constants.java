@@ -38,6 +38,7 @@ public class Constants
     public static final String INTENT_EXTRA_FROM = "INTENT_EXTRA_FROM";
     public static final String INTENT_EXTRA_TO = "INTENT_EXTRA_TO";
 
+    public static final String TRIP_STATUS_PENDING = "0";
     public static final String TRIP_STATUS_NEW = "1";
     public static final String TRIP_STATUS_DRIVER_ALLOCATED = "2";
     public static final String TRIP_STATUS_LOADING = "3";
@@ -46,6 +47,7 @@ public class Constants
     public static final String TRIP_STATUS_FINISHED = "6";
     public static final String TRIP_STATUS_CANCELLED_BY_DRIVER = "7";
     public static final String TRIP_STATUS_CANCELLED_BY_CUSTOMER = "8";
+    public static final String TRIP_STATUS_CANCELLED_BY_VCARRY = "9";
 
     public static final String IS_DRIVER_ON_TRIP = "IS_DRIVER_ON_TRIP";
 

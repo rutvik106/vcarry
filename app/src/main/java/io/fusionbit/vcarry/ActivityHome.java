@@ -232,6 +232,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
             navigationView.getMenu().getItem(0).setChecked(true);
 
+            getDriverIdByDriverEmail();
+
         } else
         {
             finish();
@@ -322,8 +324,6 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
             }
         });
 
-        getDriverIdByDriverEmail();
-
     }
 
     private void getDriverIdByDriverEmail()
@@ -340,6 +340,12 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                         super.onResponse(call, response);
                         if (response.isSuccessful())
                         {
+                            if (response.body() == null)
+                            {
+                                Toast.makeText(mService, "driver ID not found on server RESPONSE:" +
+                                        " NULL", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                             if (response.body() > 0)
                             {
                                 driverId = String.valueOf(response.body());
@@ -353,16 +359,23 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                 getUserDetails(String.valueOf(response.body()));
                                 updateDriverProfilePicture(driverId);
 
+                                Toast.makeText(mService, "You are a registered Motorist."
+                                        + response.body(), Toast.LENGTH_SHORT).show();
+
                             } else
                             {
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                                         .edit()
                                         .putString(Constants.DRIVER_ID, null)
                                         .apply();
+                                Toast.makeText(mService, "driver ID not found on server RESPONSE: " + response.body(),
+                                        Toast.LENGTH_SHORT).show();
                                 showDriverNotRegistered();
                             }
                         } else
                         {
+                            Toast.makeText(mService, "cannot get DRIVER ID RESPONSE not OK: " +
+                                    response.code(), Toast.LENGTH_SHORT).show();
                             showDriverNotRegistered();
                         }
                     }
@@ -371,13 +384,9 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                     public void onFailure(Call<Integer> call, Throwable t)
                     {
                         super.onFailure(call, t);
-                        driverId = PreferenceManager
-                                .getDefaultSharedPreferences(ActivityHome.this)
-                                .getString(Constants.DRIVER_ID, null);
-                        if (driverId == null)
-                        {
-                            showDriverNotRegistered();
-                        }
+                        Toast.makeText(ActivityHome.this, "cannot get driver ID RETROFIT ON" +
+                                " FAILURE", Toast.LENGTH_SHORT).show();
+                        showDriverNotRegistered();
                     }
                 };
 
@@ -968,13 +977,19 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     public void showDriverNotRegistered()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.unauthorized)
-                .setMessage(R.string.not_registered)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setCancelable(false);
-        AlertDialog alert = builder.create();
-        alert.show();
+        driverId = PreferenceManager
+                .getDefaultSharedPreferences(ActivityHome.this)
+                .getString(Constants.DRIVER_ID, null);
+        if (driverId == null)
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.unauthorized)
+                    .setMessage(R.string.not_registered)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setCancelable(false);
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     public class ServiceResultReceiver extends ResultReceiver

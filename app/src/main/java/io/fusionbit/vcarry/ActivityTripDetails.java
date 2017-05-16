@@ -253,6 +253,52 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
         tvTripStatus.setText(tripDetails.getStatus());
 
 
+        final int tripStatus = Integer.valueOf(tripDetails.getTripStatus());
+        final int tripStatusStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
+        final int tripStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
+        final int tripCanceledByDriver = Integer.valueOf(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER);
+        final int tripCanceledByCustomer = Integer.valueOf(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER);
+        final int tripCanceledByVcarry = Integer.valueOf(Constants.TRIP_STATUS_CANCELLED_BY_VCARRY);
+        final int tripFinished = Integer.valueOf(Constants.TRIP_STATUS_FINISHED);
+
+        if (tripStatus < tripStatusStarted)
+        {
+            tvTripStatus.setTextColor(getResources()
+                    .getColor(android.R.color.holo_green_light));
+            tvTripStatus.setText(R.string.driver_allocated);
+        } else if (tripStatus == tripStarted)
+        {
+            tvTripStatus.setTextColor(getResources()
+                    .getColor(android.R.color.holo_orange_light));
+            tvTripStatus.setText(R.string.trip_started);
+        } else if (tripStatus == tripCanceledByDriver)
+        {
+            tvTripStatus.setTextColor(getResources()
+                    .getColor(android.R.color.holo_red_light));
+            tvTripStatus.setText(R.string.cancelled_by_motorist);
+        } else if (tripStatus == tripCanceledByCustomer)
+        {
+            tvTripStatus.setTextColor(getResources()
+                    .getColor(android.R.color.holo_red_light));
+            tvTripStatus.setText(R.string.cancelled_by_customer);
+        } else if (tripStatus == tripCanceledByVcarry)
+        {
+            tvTripStatus.setTextColor(getResources()
+                    .getColor(android.R.color.holo_red_light));
+            tvTripStatus.setText(R.string.cancelled_by_vcarry);
+        } else if (tripStatus == tripFinished)
+        {
+            tvTripStatus.setTextColor(getResources()
+                    .getColor(android.R.color.black));
+            tvTripStatus.setText(R.string.trip_finished);
+        } else
+        {
+            tvTripStatus.setTextColor(getResources()
+                    .getColor(android.R.color.black));
+            tvTripStatus.setText(tripDetails.getStatus());
+        }
+
+
         if (LocaleHelper.getLanguage(this).equalsIgnoreCase("gu"))
         {
             tvTripLocation.setText(tripDetails.getFromGujaratiAddress());
@@ -275,10 +321,6 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
         tvTripDimension.setText(tripDetails.getDimensions());
 
         tvTripNumber.setText(tripDetails.getTripNo());
-
-        final int tripStatus = Integer.valueOf(tripDetails.getTripStatus());
-        final int tripStatusStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
-        final int tripStatusFinished = Integer.valueOf(Constants.TRIP_STATUS_FINISHED);
 
         if (tripStatus < tripStatusStarted)
         {
@@ -305,7 +347,7 @@ public class ActivityTripDetails extends BaseActivity implements View.OnClickLis
                             .show();
                 }
             });
-        } else if (tripStatus == tripStatusFinished)
+        } else if (tripStatus == tripFinished)
         {
             findViewById(R.id.btn_viewTripDetails).setVisibility(View.VISIBLE);
             findViewById(R.id.btn_viewTripDetails).setOnClickListener(new View.OnClickListener()

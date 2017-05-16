@@ -96,7 +96,6 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
             vh.tvTripFrom.setText(model.getFromShippingLocation());
             vh.tvTripTo.setText(model.getToShippingLocation());
         }
-        vh.tvCurrentTripStatus.setText(model.getStatus());
 
         vh.tvTripTime.setText(Utils.convertDateToRequireFormat(model.getTripDatetime()));
 
@@ -119,6 +118,10 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
         final int tripStatusStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
         final int tripStarted = Integer.valueOf(Constants.TRIP_STATUS_TRIP_STARTED);
         final int tripCanceledByDriver = Integer.valueOf(Constants.TRIP_STATUS_CANCELLED_BY_DRIVER);
+        final int tripCanceledByCustomer = Integer.valueOf(Constants.TRIP_STATUS_CANCELLED_BY_CUSTOMER);
+        final int tripCanceledByVcarry = Integer.valueOf(Constants.TRIP_STATUS_CANCELLED_BY_VCARRY);
+        final int tripFinished = Integer.valueOf(Constants.TRIP_STATUS_FINISHED);
+
 
         if (tripStatus < tripStatusStarted)
         {
@@ -126,24 +129,49 @@ public class VHSingleTrip extends RecyclerView.ViewHolder implements CountDownTi
                     .getColor(android.R.color.holo_green_light));
             vh.rlSingleTrip.setBackground(vh.context.getResources()
                     .getDrawable(R.drawable.trip_card_bg_green));
+            vh.tvCurrentTripStatus.setText(R.string.driver_allocated);
         } else if (tripStatus == tripStarted)
         {
             vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
                     .getColor(android.R.color.holo_orange_light));
             vh.rlSingleTrip.setBackground(vh.context.getResources()
                     .getDrawable(R.drawable.trip_card_bg_orange));
+            vh.tvCurrentTripStatus.setText(R.string.trip_started);
         } else if (tripStatus == tripCanceledByDriver)
         {
             vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
                     .getColor(android.R.color.holo_red_light));
             vh.rlSingleTrip.setBackground(vh.context.getResources()
                     .getDrawable(R.drawable.trip_card_bg_red));
+            vh.tvCurrentTripStatus.setText(R.string.cancelled_by_motorist);
+        } else if (tripStatus == tripCanceledByCustomer)
+        {
+            vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
+                    .getColor(android.R.color.holo_red_light));
+            vh.rlSingleTrip.setBackground(vh.context.getResources()
+                    .getDrawable(R.drawable.trip_card_bg_red));
+            vh.tvCurrentTripStatus.setText(R.string.cancelled_by_customer);
+        } else if (tripStatus == tripCanceledByVcarry)
+        {
+            vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
+                    .getColor(android.R.color.holo_red_light));
+            vh.rlSingleTrip.setBackground(vh.context.getResources()
+                    .getDrawable(R.drawable.trip_card_bg_red));
+            vh.tvCurrentTripStatus.setText(R.string.cancelled_by_vcarry);
+        } else if (tripStatus == tripFinished)
+        {
+            vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
+                    .getColor(android.R.color.black));
+            vh.rlSingleTrip.setBackground(vh.context.getResources()
+                    .getDrawable(R.drawable.trip_card_bg_black));
+            vh.tvCurrentTripStatus.setText(R.string.trip_finished);
         } else
         {
             vh.tvCurrentTripStatus.setTextColor(vh.context.getResources()
                     .getColor(android.R.color.black));
             vh.rlSingleTrip.setBackground(vh.context.getResources()
                     .getDrawable(R.drawable.trip_card_bg_black));
+            vh.tvCurrentTripStatus.setText(model.getStatus());
         }
     }
 
