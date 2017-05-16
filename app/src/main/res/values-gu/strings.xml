@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">V-Carry Motorist</string>
+    <string name="app_name">V Carry Motorist</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -167,5 +167,6 @@
     <string name="cancelled_by_customer">ગ્રાહક દ્વારા રદ કર્યું</string>
     <string name="cancelled_by_vcarry">Vcarry દ્વારા રદ કર્યું</string>
     <string name="trip_finished">ટ્રીપ સમાપ્ત</string>
+    <string name="registered_motorist">તમે નોંધાયેલા મોટરિસ્ટ છો</string>
 
 </resources>

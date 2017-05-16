@@ -165,7 +165,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setActionBarTitle("V-Carry");
+        setActionBarTitle(getString(R.string.app_name));
 
 /*       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
@@ -342,7 +342,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                         {
                             if (response.body() == null)
                             {
-                                Toast.makeText(mService, "driver ID not found on server RESPONSE:" +
+                                Toast.makeText(ActivityHome.this, "driver ID not found on server RESPONSE:" +
                                         " NULL", Toast.LENGTH_SHORT).show();
                                 return;
                             }
@@ -359,7 +359,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                 getUserDetails(String.valueOf(response.body()));
                                 updateDriverProfilePicture(driverId);
 
-                                Toast.makeText(mService, "You are a registered Motorist."
+                                Toast.makeText(ActivityHome.this, getString(R.string.registered_motorist)
                                         + response.body(), Toast.LENGTH_SHORT).show();
 
                             } else
@@ -368,13 +368,13 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                         .edit()
                                         .putString(Constants.DRIVER_ID, null)
                                         .apply();
-                                Toast.makeText(mService, "driver ID not found on server RESPONSE: " + response.body(),
+                                Toast.makeText(ActivityHome.this, "driver ID not found on server RESPONSE: " + response.body(),
                                         Toast.LENGTH_SHORT).show();
                                 showDriverNotRegistered();
                             }
                         } else
                         {
-                            Toast.makeText(mService, "cannot get DRIVER ID RESPONSE not OK: " +
+                            Toast.makeText(ActivityHome.this, "cannot get DRIVER ID RESPONSE not OK: " +
                                     response.code(), Toast.LENGTH_SHORT).show();
                             showDriverNotRegistered();
                         }
@@ -663,7 +663,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 searchMenu.setVisible(false);
                 break;
             case R.id.nav_tripsOnOffer:
-                Toast.makeText(mService, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityHome.this, R.string.feature_coming_soon, Toast.LENGTH_SHORT).show();
                 //showFragment(fragmentTripsOnOffer);
                 searchMenu.setVisible(false);
                 break;

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">V-Carry Motorist</string>
+    <string name="app_name">V Carry Motorist</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -165,5 +165,6 @@
     <string name="cancelled_by_customer">Cancelled By Customer</string>
     <string name="cancelled_by_vcarry">Cancelled By Vcarry</string>
     <string name="trip_finished">Trip Finished</string>
+    <string name="registered_motorist">You are a registered Motorist.</string>
 
 </resources>
