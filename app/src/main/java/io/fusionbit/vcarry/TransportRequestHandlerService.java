@@ -91,7 +91,7 @@ public class TransportRequestHandlerService extends Service
     private void getDriverIdByDriverEmail()
     {
 
-        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        final String contactNo = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
 
         final RetrofitCallbacks<Integer> onGetDriverIdCallback =
                 new RetrofitCallbacks<Integer>()
@@ -137,7 +137,7 @@ public class TransportRequestHandlerService extends Service
                     }
                 };
 
-        API.getInstance().getDriverIdByDriverEmail(driverEmail, onGetDriverIdCallback);
+        API.getInstance().getDriverIdByDriverContact(contactNo, onGetDriverIdCallback);
 
     }
 

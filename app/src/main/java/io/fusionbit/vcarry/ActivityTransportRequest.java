@@ -201,7 +201,7 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     public void rejectRequest(final String requestId)
     {
         this.requestId = requestId;
-        TransportRequestHandler.insertTripRejectedDataUsingApi(requestId);
+        TransportRequestHandler.insertTripRejectedDataUsingApi(this, requestId);
         notificationManager.cancel(Integer.valueOf(requestId));
         removeView(getCurrentPage());
     }
@@ -217,7 +217,7 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
     {
         Log.i(TAG, "FAILED TO GET LOCATION TRIP ACCEPTED");
-        TransportRequestHandler.acceptRequest(requestId, null, this);
+        TransportRequestHandler.acceptRequest(this, requestId, null, this);
     }
 
 
@@ -255,7 +255,7 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
 
                 Log.i(TAG, "GOT LOCATION TRIP ACCEPTED");
 
-                TransportRequestHandler.acceptRequest(requestId, location.getLatitude() + "," + location.getLongitude()
+                TransportRequestHandler.acceptRequest(ActivityTransportRequest.this, requestId, location.getLatitude() + "," + location.getLongitude()
                         , ActivityTransportRequest.this);
 
                 fusedLocation.stopGettingLocation();

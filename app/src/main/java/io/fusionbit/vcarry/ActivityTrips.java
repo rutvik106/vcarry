@@ -1,6 +1,7 @@
 package io.fusionbit.vcarry;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,8 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -36,7 +35,7 @@ public class ActivityTrips extends BaseActivity
     private String tripsType = null;
     private RecyclerView rvTrips;
     private TripsAdapter adapter;
-    private String email;
+    private String driverId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,7 +49,8 @@ public class ActivityTrips extends BaseActivity
 
         tripsType = getIntent().getStringExtra(Constants.ACCOUNT_TRIP_TYPE);
 
-        email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        driverId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.DRIVER_ID, "");
 
         if (getSupportActionBar() != null)
         {
@@ -154,7 +154,7 @@ public class ActivityTrips extends BaseActivity
 
         final String today = Utils.getDate(Calendar.getInstance().getTime());
 
-        API.getInstance().getTripSummary(email, tripStatus, today, today, null,
+        API.getInstance().getTripSummary(driverId, tripStatus, today, today, null,
                 onGetTripSummary);
 
     }
@@ -198,7 +198,7 @@ public class ActivityTrips extends BaseActivity
                 -1 * (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1));
         final String monthInString = Utils.getDate(month);
 
-        API.getInstance().getTripSummary(email, tripStatus, monthInString, today, null,
+        API.getInstance().getTripSummary(driverId, tripStatus, monthInString, today, null,
                 onGetTripSummary);
     }
 
@@ -237,7 +237,7 @@ public class ActivityTrips extends BaseActivity
                     }
                 };
 
-        API.getInstance().getTripSummary(email, tripStatus, null, null, null,
+        API.getInstance().getTripSummary(driverId, tripStatus, null, null, null,
                 onGetTripSummary);
     }
 

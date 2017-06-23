@@ -34,12 +34,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -65,7 +63,6 @@ import fragment.FragmentMap;
 import fragment.FragmentTrips;
 import fragment.FragmentTripsOnOffer;
 import io.realm.Realm;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -200,15 +197,15 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         if (FirebaseAuth.getInstance().getCurrentUser() != null)
         {
 
-            Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
+            /*Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
                     .bitmapTransform(new CropCircleTransformation(this))
-                    .into((ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userPic));
+                    .into((ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_userPic));*/
 
-            ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_titleUserName))
-                    .setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            /*((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_titleUserName))
+                    .setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());*/
 
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_subTitle))
-                    .setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                    .setText(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
 
             fragmentMap = FragmentMap.newInstance(0, this, this);
             fragmentTrips = FragmentTrips.newInstance(1, this);
@@ -232,7 +229,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
             navigationView.getMenu().getItem(0).setChecked(true);
 
-            getDriverIdByDriverEmail();
+            getDriverIdByDriverContact();
 
         } else
         {
@@ -326,10 +323,10 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     }
 
-    private void getDriverIdByDriverEmail()
+    private void getDriverIdByDriverContact()
     {
 
-        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        final String contactNo = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
 
         final RetrofitCallbacks<Integer> onGetDriverIdCallback =
                 new RetrofitCallbacks<Integer>()
@@ -359,8 +356,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                 getUserDetails(String.valueOf(response.body()));
                                 updateDriverProfilePicture(driverId);
 
-                                Toast.makeText(ActivityHome.this, getString(R.string.registered_motorist)
-                                        + response.body(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ActivityHome.this, getString(R.string.registered_motorist),
+                                        Toast.LENGTH_SHORT).show();
 
                             } else
                             {
@@ -390,7 +387,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                     }
                 };
 
-        API.getInstance().getDriverIdByDriverEmail(driverEmail, onGetDriverIdCallback);
+        API.getInstance().getDriverIdByDriverContact(contactNo, onGetDriverIdCallback);
 
     }
 
@@ -435,7 +432,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     private void updateFcmDeviceToken()
     {
-        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        final String driverEmail = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.DRIVER_ID, "");
 
         final String fcmDeviceToken = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.FCM_DRIVER_INSTANCE_ID, null);
@@ -647,7 +645,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
             case R.id.nav_home:
                 fragmentMap.checkIfDriverOnTrip();
                 showFragment(fragmentMap);
-                setActionBarTitle("V-Carry");
+                setActionBarTitle(getString(R.string.app_name));
                 searchMenu.setVisible(false);
                 break;
             case R.id.nav_trips:

@@ -2,6 +2,7 @@ package fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +23,7 @@ import api.RetrofitCallbacks;
 import apimodels.TripsByDriverMail;
 import extra.Log;
 import io.fusionbit.vcarry.App;
+import io.fusionbit.vcarry.Constants;
 import io.fusionbit.vcarry.R;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -165,7 +165,9 @@ public class FragmentTrips extends Fragment implements SwipeRefreshLayout.OnRefr
     private void getTripsFromAPI()
     {
         busyLoadingData = true;
-        API.getInstance().getTripsByDriverMail(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+        final String driverId = PreferenceManager.getDefaultSharedPreferences(getContext())
+                .getString(Constants.DRIVER_ID, "");
+        API.getInstance().getTripsByDriverMail(driverId,
                 pageNo,
                 new RetrofitCallbacks<List<TripsByDriverMail>>()
                 {

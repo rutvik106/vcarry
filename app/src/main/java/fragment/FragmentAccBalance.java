@@ -2,6 +2,7 @@ package fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -45,7 +44,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
     RecyclerView rvAccountBalance;
     AccountBalanceAdapter adapter;
     SwipeRefreshLayout swipeRefreshLayout;
-    String email;
+    String driverId;
     boolean busyLoadingData = false;
 
     public static FragmentAccBalance newInstance(int index, Context context)
@@ -91,12 +90,13 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
             busyLoadingData = true;
             accountSummary.clearData();
             //adapter.notifyDataSetChanged();
-            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            driverId = PreferenceManager.getDefaultSharedPreferences(getContext())
+                    .getString(Constants.DRIVER_ID, "");
             //getAccountBalanceForToday();
             //getAccountBalanceForThisMonth();
             //getTotalAccountBalance();
 
-            getAccountBalanceSummary(email);
+            getAccountBalanceSummary(driverId);
 
             getTripForToday();
             getTripForThisMonth();
@@ -166,7 +166,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
 
         final String today = Utils.getDate(Calendar.getInstance().getTime());
 
-        API.getInstance().getAccountSummary(email, today, today, onGetAccountSummary);
+        API.getInstance().getAccountSummary(driverId, today, today, onGetAccountSummary);
 
     }
 
@@ -219,7 +219,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                 -1 * (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1));
         final String monthInString = Utils.getDate(month);
 
-        API.getInstance().getAccountSummary(email, monthInString, today, onGetAccountSummary);
+        API.getInstance().getAccountSummary(driverId, monthInString, today, onGetAccountSummary);
     }
 
     private void getTotalAccountBalance()
@@ -254,7 +254,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     }
                 };
 
-        API.getInstance().getAccountSummary(email, "", "", onGetAccountSummary);
+        API.getInstance().getAccountSummary(driverId, "", "", onGetAccountSummary);
     }
 
 
@@ -294,7 +294,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
 
         final String today = Utils.getDate(Calendar.getInstance().getTime());
 
-        API.getInstance().getTripSummary(email, tripStatus, today, today, null,
+        API.getInstance().getTripSummary(driverId, tripStatus, today, today, null,
                 onGetTripSummary);
 
     }
@@ -338,7 +338,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                 -1 * (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1));
         final String monthInString = Utils.getDate(month);
 
-        API.getInstance().getTripSummary(email, tripStatus, monthInString, today, null,
+        API.getInstance().getTripSummary(driverId, tripStatus, monthInString, today, null,
                 onGetTripSummary);
     }
 
@@ -376,7 +376,7 @@ public class FragmentAccBalance extends Fragment implements SwipeRefreshLayout.O
                     }
                 };
 
-        API.getInstance().getTripSummary(email, tripStatus, null, null, null,
+        API.getInstance().getTripSummary(driverId, tripStatus, null, null, null,
                 onGetTripSummary);
     }
 

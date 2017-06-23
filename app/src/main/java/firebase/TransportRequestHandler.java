@@ -1,5 +1,8 @@
 package firebase;
 
+import android.content.Context;
+import android.preference.PreferenceManager;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +21,7 @@ import api.API;
 import api.RetrofitCallbacks;
 import extra.Log;
 import io.fusionbit.vcarry.App;
+import io.fusionbit.vcarry.Constants;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -118,6 +122,7 @@ public class TransportRequestHandler
     }
 
     //Not Using this function As we are receiving FCM notification
+
     /**
      * public static void startListeningForTripConfirmation(final String tripId, final ConfirmationListener confirmationListener)
      * {
@@ -162,13 +167,13 @@ public class TransportRequestHandler
      * }
      */
 
-    public static void acceptRequest(final String requestId, final String latLng, final TripAcceptedCallback tripAcceptedCallback)
+    public static void acceptRequest(final Context context, final String requestId, final String latLng, final TripAcceptedCallback tripAcceptedCallback)
     {
         final String acceptedTime = Calendar.getInstance().getTimeInMillis() + "";
 
         final Map data = new HashMap<>();
 
-        insertTripAcceptedDataUsingApi(requestId, latLng, acceptedTime);
+        insertTripAcceptedDataUsingApi(context, requestId, latLng, acceptedTime);
 
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
@@ -230,40 +235,6 @@ public class TransportRequestHandler
 
     }
 
-    public interface TransportRequestListener
-    {
-
-        void OnReceiveNewTransportRequest(DataSnapshot dataSnapshot);
-
-        void OnRequestChanged();
-
-        void OnRequestRemoved();
-
-    }
-
-    public interface TripAcceptedCallback
-    {
-        void tripAcceptedSuccessfully(final String tripId);
-
-        void failedToAcceptTrip(final String tripId, final String location,
-                                final String acceptedTime, final DatabaseError databaseError);
-    }
-
-    public interface RequestDetailsCallback
-    {
-        void onGetRequestDetails(DataSnapshot dataSnapshot);
-
-        void onRequestDetailsNotFound(DatabaseError databaseError);
-    }
-
-    public interface ConfirmationListener
-    {
-        void tripConfirmed(String tripId);
-
-        void tripNotConfirmed(String tripId);
-    }
-
-
     public static void setupConnectivityLogic()
     {
         Log.i(TAG, "SETTING UP CONNECTIVITY LOGIC");
@@ -313,10 +284,11 @@ public class TransportRequestHandler
         });
     }
 
-    public static void insertTripRejectedDataUsingApi(final String tripId)
+    public static void insertTripRejectedDataUsingApi(final Context context, final String tripId)
     {
-        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        API.getInstance().insertTripRejectedData(driverEmail, tripId,
+        final String driverId = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(Constants.DRIVER_ID, "");
+        API.getInstance().insertTripRejectedData(driverId, tripId,
                 new RetrofitCallbacks<ResponseBody>()
                 {
 
@@ -346,11 +318,12 @@ public class TransportRequestHandler
                 });
     }
 
-    private static void insertTripAcceptedDataUsingApi(final String tripId, final String location,
+    private static void insertTripAcceptedDataUsingApi(final Context context, final String tripId, final String location,
                                                        final String acceptedTime)
     {
-        final String driverEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        API.getInstance().insertTripAcceptedData(driverEmail, tripId, location, acceptedTime,
+        final String driverId = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(Constants.DRIVER_ID, "");
+        API.getInstance().insertTripAcceptedData(driverId, tripId, location, acceptedTime,
                 new RetrofitCallbacks<ResponseBody>()
                 {
 
@@ -378,6 +351,40 @@ public class TransportRequestHandler
                         Log.i(TAG, "FAILED TO INSERTED ACCEPTED TRIP DATA IN DATABASE");
                     }
                 });
+    }
+
+    public interface TransportRequestListener
+    {
+
+        void OnReceiveNewTransportRequest(DataSnapshot dataSnapshot);
+
+        void OnRequestChanged();
+
+        void OnRequestRemoved();
+
+    }
+
+
+    public interface TripAcceptedCallback
+    {
+        void tripAcceptedSuccessfully(final String tripId);
+
+        void failedToAcceptTrip(final String tripId, final String location,
+                                final String acceptedTime, final DatabaseError databaseError);
+    }
+
+    public interface RequestDetailsCallback
+    {
+        void onGetRequestDetails(DataSnapshot dataSnapshot);
+
+        void onRequestDetailsNotFound(DatabaseError databaseError);
+    }
+
+    public interface ConfirmationListener
+    {
+        void tripConfirmed(String tripId);
+
+        void tripNotConfirmed(String tripId);
     }
 
 

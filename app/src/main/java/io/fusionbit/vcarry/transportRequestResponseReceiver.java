@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,7 +37,7 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
     Context context;
 
     @Override
-    public void onReceive(Context context, Intent intent)
+    public void onReceive(final Context context, Intent intent)
     {
         this.context = context;
 
@@ -62,7 +61,7 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
                         if (response.equals(Constants.ACCEPT))
                         {
                             TransportRequestHandler
-                                    .acceptRequest(requestId,
+                                    .acceptRequest(context, requestId,
                                             location.getLatitude() + "," + location.getLongitude()
                                             , TransportRequestResponseReceiver.this);
                         } else if (response.equals(Constants.REJECT))
@@ -81,7 +80,7 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
             {
                 if (response.equals(Constants.ACCEPT))
                 {
-                    TransportRequestHandler.acceptRequest(requestId, null, null);
+                    TransportRequestHandler.acceptRequest(context, requestId, null, null);
                 } else if (response.equals(Constants.REJECT))
                 {
                     //TransportRequestHandler.rejectRequest();
@@ -100,7 +99,7 @@ public class TransportRequestResponseReceiver extends BroadcastReceiver
     {
         if (response.equals(Constants.ACCEPT))
         {
-            TransportRequestHandler.acceptRequest(requestId, null, null);
+            TransportRequestHandler.acceptRequest(context, requestId, null, null);
         } else if (response.equals(Constants.REJECT))
         {
             //TransportRequestHandler.rejectRequest();

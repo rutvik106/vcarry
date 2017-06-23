@@ -1,8 +1,7 @@
 package io.fusionbit.vcarry;
 
 import android.app.Application;
-
-import com.google.firebase.auth.FirebaseAuth;
+import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,10 +84,11 @@ public class App extends Application
             }
         };
 
-        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        final String driverId = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Constants.DRIVER_ID, "");
 
         API.getInstance().getTripsByTripStatus(Constants.TRIP_STATUS_NEW, 0,
-                null, null, null, null, email, TripsCallback);
+                null, null, null, null, driverId, TripsCallback);
 
     }
 

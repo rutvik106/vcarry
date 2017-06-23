@@ -26,7 +26,7 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
             tvAccountPaidThisMonth, tvAccountUnpaidThisMonth, tvAccountPaidTotal,
             tvAccountUnpaidTotal, tvCompletedTripToday, tvCompletedTripThisMonth,
             tvCompletedTripTotal, tvIncompleteTripToday, tvIncompleteTripThisMonth,
-            tvIncompleteTripTotal;
+            tvIncompleteTripTotal, tvNetAmount;
 
     private CardView cvAccountToday, cvAccountThisMonth, cvAccountTotal;
 
@@ -55,6 +55,8 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
         cvAccountToday = (CardView) itemView.findViewById(R.id.cv_accountToday);
         cvAccountThisMonth = (CardView) itemView.findViewById(R.id.cv_accountThisMonth);
         cvAccountTotal = (CardView) itemView.findViewById(R.id.cv_accountTotal);
+
+        tvNetAmount = (TextView) itemView.findViewById(R.id.tv_netAmount);
 
         cvAccountToday.setOnClickListener(this);
         cvAccountThisMonth.setOnClickListener(this);
@@ -90,6 +92,10 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
 
         vh.tvAccountUnpaidTotal.setText(vh.context.getResources().getString(R.string.rs) + " " +
                 accountSummary.getAccountSummaryNew().getAllTime().getReceivable());
+
+        vh.tvNetAmount.setText(vh.context.getResources().getString(R.string.rs) + " " +
+                (accountSummary.getAccountSummaryNew().getAllTime().getReceivable() -
+                        accountSummary.getAccountSummaryNew().getAllTime().getReceived()));
 
 
         /*vh.tvAccountPaidToday.setText(vh.context.getResources().getString(R.string.rs) + " " +
@@ -144,23 +150,21 @@ public class VHAccountSummaryCard extends RecyclerView.ViewHolder implements Vie
                 i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.TODAY);
                 /*i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
                         new ArrayList<Parcelable>(accountSummary.getTripToday()));*/
-                context.startActivity(i);
                 break;
 
             case R.id.cv_accountThisMonth:
                 i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.THIS_MONTH);
                 /*i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
                         new ArrayList<Parcelable>(accountSummary.getTripThisMonth()));*/
-                context.startActivity(i);
                 break;
 
             case R.id.cv_accountTotal:
                 i.putExtra(Constants.ACCOUNT_TRIP_TYPE, Constants.AccountTripType.TOTAL);
                 /*i.putParcelableArrayListExtra(Constants.PARCELABLE_TRIP_LIST,
                         new ArrayList<Parcelable>(accountSummary.getTotalTrips()));*/
-                context.startActivity(i);
                 break;
 
         }
+        context.startActivity(i);
     }
 }

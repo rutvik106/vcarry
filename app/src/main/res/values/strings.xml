@@ -166,5 +166,14 @@
     <string name="cancelled_by_vcarry">Cancelled By Vcarry</string>
     <string name="trip_finished">Trip Finished</string>
     <string name="registered_motorist">You are a registered Motorist.</string>
+    <string name="phone_verification">Phone Verification</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="please_wait_you_will_receive_a_otp">Please wait you will receive a OTP in 60 Seconds</string>
+    <string name="resend">Resend</string>
+    <string name="enter_mobile_no">Enter Mobile No</string>
+    <string name="select_country_code">Select Country Code</string>
+    <string name="code_not_sent">Code not yet sent. Please wait for OTP.</string>
+    <string name="verifying_otp">Verifying OTP...</string>
+    <string name="verify_phone">Verifying Phone Number...</string>
 
 </resources>

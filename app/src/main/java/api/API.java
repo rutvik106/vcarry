@@ -40,7 +40,7 @@ public class API
     public void getTripsByDriverMail(final String driverMail, final int pageNo,
                                      final RetrofitCallbacks<List<TripsByDriverMail>> callback)
     {
-        Call<List<TripsByDriverMail>> call = apiService.getTripsByDriverEmail("get_trips_by_driver_email",
+        Call<List<TripsByDriverMail>> call = apiService.getTripsByDriverEmail("get_trips_by_driver_id",
                 pageNo, driverMail);
 
         call.enqueue(callback);
@@ -80,7 +80,7 @@ public class API
                                        final String location, final String acceptedTime,
                                        final RetrofitCallbacks<ResponseBody> callback)
     {
-        Call<ResponseBody> call = apiService.insertTripAcceptedData("insert_trip_accepted_data",
+        Call<ResponseBody> call = apiService.insertTripAcceptedData("insert_trip_accepted_data_by_driver_id",
                 driverEmail, tripId, location, acceptedTime);
 
         call.enqueue(callback);
@@ -89,7 +89,7 @@ public class API
     public void insertTripRejectedData(final String driverEmail, final String tripId,
                                        final RetrofitCallbacks<ResponseBody> callback)
     {
-        Call<ResponseBody> call = apiService.insertTripRejectedData("insert_trip_rejected_data",
+        Call<ResponseBody> call = apiService.insertTripRejectedData("insert_trip_rejected_data_by_driver_id",
                 driverEmail, tripId, "0,0", Calendar.getInstance().getTimeInMillis() + "");
 
         call.enqueue(callback);
@@ -101,7 +101,7 @@ public class API
                                      final String unActionedByEmail,
                                      final RetrofitCallbacks<List<TripDetails>> callback)
     {
-        Call<List<TripDetails>> call = apiService.getTripsByTripStatus("get_trips_by_trip_status", pageNo,
+        Call<List<TripDetails>> call = apiService.getTripsByTripStatus("get_trips_by_trip_status_by_driver_id", pageNo,
                 tripStatus, driverEmail, customerId, fromDate, toDate, unActionedByEmail);
 
         call.enqueue(callback);
@@ -111,7 +111,7 @@ public class API
                                   final String fromDate,
                                   final String toDate, final RetrofitCallbacks<AccountSummary> callback)
     {
-        Call<AccountSummary> call = apiService.getAccountSummary("get_driver_balance",
+        Call<AccountSummary> call = apiService.getAccountSummary("get_driver_balance_by_driver_id",
                 fromDate, toDate, email);
 
         call.enqueue(callback);
@@ -134,7 +134,7 @@ public class API
                                           final String tripId,
                                           final RetrofitCallbacks<ResponseBody> callback)
     {
-        Call<ResponseBody> call = apiService.getAcceptedRejectedStatus("getAcceptedRejectedStatus",
+        Call<ResponseBody> call = apiService.getAcceptedRejectedStatus("getAcceptedRejectedStatus_by_driver_id",
                 email, tripId);
 
         call.enqueue(callback);
@@ -145,7 +145,7 @@ public class API
                                                       RetrofitCallbacks<ResponseBody> callback)
     {
         Call<ResponseBody> call =
-                apiService.updateDeviceTokenDriver("update_device_token_driver",
+                apiService.updateDeviceTokenDriver("'update_device_token_driver_by_driver_id",
                         driverEmail, deviceToken);
 
         call.enqueue(callback);
@@ -153,12 +153,16 @@ public class API
         return call;
     }
 
-    public Call<Integer> getDriverIdByDriverEmail(final String driverEmail,
-                                                  RetrofitCallbacks<Integer> callback)
+    public Call<Integer> getDriverIdByDriverContact(String contact,
+                                                    RetrofitCallbacks<Integer> callback)
     {
+        if (contact.contains("+91"))
+        {
+            contact = contact.replace("+91", "");
+        }
         Call<Integer> call =
-                apiService.getDriverIdByDriverEmail("get_driver_id_by_driver_email",
-                        driverEmail);
+                apiService.getDriverIdByDriverEmail("get_driver_id_by_driver_contact_no",
+                        contact);
 
         call.enqueue(callback);
 
@@ -238,7 +242,7 @@ public class API
     public Call<AccountSummaryNew> getAccountSummary(final String email,
                                                      final RetrofitCallbacks<AccountSummaryNew> callback)
     {
-        Call<AccountSummaryNew> call = apiService.getAccountSummary("get_full_driver_balance_summary",
+        Call<AccountSummaryNew> call = apiService.getAccountSummary("get_full_driver_balance_summary_by_driver_id",
                 email);
         call.enqueue(callback);
         return call;

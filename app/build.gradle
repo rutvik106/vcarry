@@ -11,17 +11,17 @@ android {
         applicationId "io.fusionbit.vcarry"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 18
-        versionName "2.4"
+        versionCode 19
+        versionName "2.4.1"
 
-        splits {
+        /*splits {
             abi {
                 enable true
                 reset()
                 include 'x86_64', 'x86', 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'mips'
                 universalApk false
             }
-        }
+        }*/
 
     }
 
@@ -42,13 +42,15 @@ dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+
+
     compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.android.support:support-fragment:25.3.1'
     compile 'com.android.support:design:25.3.1'
-    compile 'com.google.android.gms:play-services-maps:10.2.1'
-    compile 'com.google.android.gms:play-services-location:10.2.1'
-    compile 'com.google.android.gms:play-services-auth:10.2.1'
+    compile 'com.google.android.gms:play-services-maps:11.0.0'
+    compile 'com.google.android.gms:play-services-location:11.0.0'
+    compile 'com.google.android.gms:play-services-auth:11.0.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
     compile 'gun0912.ted:tedpermission:1.0.2'
@@ -56,21 +58,19 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
-    compile 'com.google.firebase:firebase-config:10.2.1'
-    compile 'com.google.firebase:firebase-messaging:10.2.1'
-    compile 'com.google.firebase:firebase-core:10.2.1'
-    compile 'com.google.firebase:firebase-database:10.2.1'
-    compile 'com.google.firebase:firebase-crash:10.2.1'
-    compile 'com.google.firebase:firebase-auth:10.2.1'
+    compile 'com.google.firebase:firebase-config:11.0.0'
+    compile 'com.google.firebase:firebase-messaging:11.0.0'
+    compile 'com.google.firebase:firebase-core:11.0.0'
+    compile 'com.google.firebase:firebase-database:11.0.0'
+    compile 'com.google.firebase:firebase-crash:11.0.0'
+    compile 'com.google.firebase:firebase-auth:11.0.0'
     compile 'com.firebaseui:firebase-ui-auth:1.2.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
-
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-
 }
 
-// map for the version code that gives each ABI a value. make sure to list all ABIs mentioned in splits block, an keep the order.
+/*// map for the version code that gives each ABI a value. make sure to list all ABIs mentioned in splits block, an keep the order.
 ext.versionCodes = ['armeabi': 3, 'armeabi-v7a': 4, 'arm64-v8a': 5, mips: 6, 'x86': 7, 'x86_64': 8]
 import com.android.build.OutputFile
 
@@ -82,7 +82,7 @@ android.applicationVariants.all { variant ->
         output.versionCodeOverride =
                 project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) * 1000 + android.defaultConfig.versionCode
     }
-}
+}*/
 
 
 apply plugin: 'com.google.gms.google-services'

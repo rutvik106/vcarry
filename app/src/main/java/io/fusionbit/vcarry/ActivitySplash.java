@@ -1,22 +1,9 @@
 package io.fusionbit.vcarry;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.MotionEvent;
-import android.view.View;
-
-import java.util.List;
-
-import extra.Log;
+import android.support.v7.app.AppCompatActivity;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -37,7 +24,7 @@ public class ActivitySplash extends AppCompatActivity
             @Override
             public void run()
             {
-                Intent i = new Intent(ActivitySplash.this, ActivityLogin.class);
+                Intent i = new Intent(ActivitySplash.this, ActivityPhoneAuth.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(i);
             }
