@@ -178,8 +178,7 @@ public class TransportRequestHandler
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
 
-        data.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        data.put("name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        data.put("phone", FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
         data.put("time", acceptedTime);
         data.put("location", latLng);
         data.put("trip_id", requestId);
@@ -239,7 +238,7 @@ public class TransportRequestHandler
     {
         Log.i(TAG, "SETTING UP CONNECTIVITY LOGIC");
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        final String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        final String phoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
 
         //final DatabaseReference lastSeenRef = FirebaseDatabase.getInstance().getReference("/users/" + uid + "/last-seen");
         final DatabaseReference connectivity = FirebaseDatabase.getInstance().getReference("/users/" + uid + "/connectivity");
@@ -261,14 +260,14 @@ public class TransportRequestHandler
 
                     //if connected to databse set value to "online" and onDisconnect set value to "offline"
                     final Map connectivityMap = new HashMap();
-                    connectivityMap.put("email", email);
+                    connectivityMap.put("phone", phoneNumber);
                     connectivityMap.put("connected", 1);
                     connectivityMap.put("last-connected", ServerValue.TIMESTAMP);
                     connectivity.updateChildren(connectivityMap);
 
                     // when I disconnect, update the last time I was seen online
                     final Map connectivityMap2 = new HashMap();
-                    connectivityMap2.put("email", email);
+                    connectivityMap2.put("phone", phoneNumber);
                     connectivityMap2.put("connected", 0);
                     connectivityMap2.put("last-connected", ServerValue.TIMESTAMP);
                     connectivity.onDisconnect().updateChildren(connectivityMap2);
