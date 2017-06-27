@@ -97,6 +97,11 @@ public class NotificationHandler
         } catch (JSONException e)
         {
             e.printStackTrace();
+        } catch (NullPointerException e)
+        {
+            showBigNotification(0,
+                    remoteMessage.getNotification().getTitle(),
+                    remoteMessage.getNotification().getBody());
         }
     }
 

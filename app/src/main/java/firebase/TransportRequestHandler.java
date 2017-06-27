@@ -19,9 +19,11 @@ import java.util.Map;
 
 import api.API;
 import api.RetrofitCallbacks;
+import apimodels.DriverDetails;
 import extra.Log;
 import io.fusionbit.vcarry.App;
 import io.fusionbit.vcarry.Constants;
+import io.realm.Realm;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -167,7 +169,8 @@ public class TransportRequestHandler
      * }
      */
 
-    public static void acceptRequest(final Context context, final String requestId, final String latLng, final TripAcceptedCallback tripAcceptedCallback)
+    public static void acceptRequest(final Context context, final String requestId,
+                                     final String latLng, final TripAcceptedCallback tripAcceptedCallback)
     {
         final String acceptedTime = Calendar.getInstance().getTimeInMillis() + "";
 
@@ -178,7 +181,12 @@ public class TransportRequestHandler
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
 
-        data.put("phone", FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
+        final Realm realm = Realm.getDefaultInstance();
+        final DriverDetails driverDetails = realm.where(DriverDetails.class).findFirst();
+
+        data.put("email", PreferenceManager
+                .getDefaultSharedPreferences(context).getString(Constants.DRIVER_ID, ""));
+        data.put("name", driverDetails.getDriverName());
         data.put("time", acceptedTime);
         data.put("location", latLng);
         data.put("trip_id", requestId);

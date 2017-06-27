@@ -145,7 +145,7 @@ public class API
                                                       RetrofitCallbacks<ResponseBody> callback)
     {
         Call<ResponseBody> call =
-                apiService.updateDeviceTokenDriver("'update_device_token_driver_by_driver_id",
+                apiService.updateDeviceTokenDriver("update_device_token_driver_by_driver_id",
                         driverEmail, deviceToken);
 
         call.enqueue(callback);
