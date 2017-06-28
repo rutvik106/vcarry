@@ -11,17 +11,17 @@ android {
         applicationId "io.fusionbit.vcarry"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 19
-        versionName "2.4.1"
+        versionCode 21
+        versionName "2.4.3"
 
-        /*splits {
+        splits {
             abi {
                 enable true
                 reset()
                 include 'x86_64', 'x86', 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'mips'
                 universalApk false
             }
-        }*/
+        }
 
     }
 
@@ -70,7 +70,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }
 
-/*// map for the version code that gives each ABI a value. make sure to list all ABIs mentioned in splits block, an keep the order.
+// map for the version code that gives each ABI a value. make sure to list all ABIs mentioned in splits block, an keep the order.
 ext.versionCodes = ['armeabi': 3, 'armeabi-v7a': 4, 'arm64-v8a': 5, mips: 6, 'x86': 7, 'x86_64': 8]
 import com.android.build.OutputFile
 
@@ -82,7 +82,7 @@ android.applicationVariants.all { variant ->
         output.versionCodeOverride =
                 project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) * 1000 + android.defaultConfig.versionCode
     }
-}*/
+}
 
 
 apply plugin: 'com.google.gms.google-services'
