@@ -178,4 +178,7 @@
     <string name="verifying_otp">Verifying OTP...</string>
     <string name="verify_phone">Verifying Phone Number...</string>
 
+    <string name="nav_signOut">સાઇન આઉટ કરો</string>
+    <string name="logout_message">શું તમે ખરેખર લૉગઆઉટ કરવા માંગો છો?</string>
+
 </resources>

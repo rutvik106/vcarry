@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
@@ -671,11 +672,31 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
             case R.id.nav_sendFeedback:
                 Utils.sendFeedback(this);
                 break;
+            case R.id.nav_signOut:
+                confirmLogout();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void confirmLogout() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.nav_signOut))
+                .setMessage(getString(R.string.logout_message))
+                .setPositiveButton(getString(R.string.nav_signOut), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int j) {
+                        FirebaseAuth.getInstance().signOut();
+                        final Intent i = new Intent(ActivityHome.this, ActivityPhoneAuth.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), null)
+                .show();
     }
 
 

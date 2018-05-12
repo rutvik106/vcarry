@@ -176,4 +176,7 @@
     <string name="verifying_otp">Verifying OTP...</string>
     <string name="verify_phone">Verifying Phone Number...</string>
 
+    <string name="nav_signOut">Sign Out</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
+
 </resources>

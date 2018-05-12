@@ -21,6 +21,8 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import extra.Log;
 
@@ -58,7 +60,7 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
 
     private void checkForPermissions()
     {
-        new TedPermission(this)
+        TedPermission.with(this)
                 .setPermissionListener(this)
                 .setDeniedMessage("If you reject any permission, you can not use this App\n\nPlease turn on permissions at [Setting] > [Permission]")
                 .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -113,6 +115,14 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
             return;
         }
 
+        // Choose authentication providers
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build());
+
         //user not logged in
         //show firebase login methods using firebase auth UI
         startActivityForResult(
@@ -120,7 +130,7 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
                         .setTheme(getSelectedTheme())
                         .setTosUrl(getSelectedTosUrl())
                         .setLogo(getSelectedLogo())
-                        .setProviders(getSelectedProviders())
+                        .setAvailableProviders(providers)
                         .build(), RC_SIGN_IN);
 
 
