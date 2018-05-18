@@ -63,6 +63,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_confirmation_number_black_18dp"
             android:drawablePadding="5dp"
+            android:maxLength="6"
             android:hint="@string/enter_otp"
             android:inputType="number"/>
 

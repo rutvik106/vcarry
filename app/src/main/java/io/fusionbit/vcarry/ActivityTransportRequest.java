@@ -72,13 +72,11 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     private ViewPager vpNewTripPager = null;
     private NewTripPagerAdapter adapter = null;
 
-    private Timer timer;
+    private Timer timer=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        timer = new Timer();
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -139,6 +137,9 @@ public class ActivityTransportRequest extends FusedLocation.LocationAwareActivit
     protected void onStart() {
         super.onStart();
 
+        if(timer==null){
+            timer = new Timer();
+        }
 
         timer.schedule(new TimerTask() {
             @Override
