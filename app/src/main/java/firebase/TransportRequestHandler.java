@@ -32,8 +32,7 @@ import retrofit2.Response;
  * Created by rutvik on 10/27/2016 at 1:03 PM.
  */
 
-public class TransportRequestHandler
-{
+public class TransportRequestHandler {
 
     private static final String TAG = App.APP_TAG + TransportRequestHandler.class.getSimpleName();
 
@@ -41,82 +40,67 @@ public class TransportRequestHandler
 
     private long requestCount = 0;
 
-    public TransportRequestHandler(final TransportRequestListener transportRequestListener)
-    {
+    public TransportRequestHandler(final TransportRequestListener transportRequestListener) {
 
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
 
-        dbRef.child("request").addListenerForSingleValueEvent(new ValueEventListener()
-        {
+        dbRef.child("request").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 totalRequest = dataSnapshot.getChildrenCount();
-                dbRef.child("request").addChildEventListener(new ChildEventListener()
-                {
+                dbRef.child("request").addChildEventListener(new ChildEventListener() {
                     @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s)
-                    {
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         requestCount++;
-                        if (requestCount > totalRequest)
-                        {
+                        if (requestCount > totalRequest) {
                             totalRequest++;
                             transportRequestListener.OnReceiveNewTransportRequest(dataSnapshot);
                         }
                     }
 
                     @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s)
-                    {
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                         transportRequestListener.OnRequestChanged();
                     }
 
                     @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot)
-                    {
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
                         transportRequestListener.OnRequestRemoved();
                     }
 
                     @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s)
-                    {
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError)
-                    {
+                    public void onCancelled(DatabaseError databaseError) {
 
                     }
                 });
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
 
     }
 
-    public static void getRequestDetails(final String requestId, final RequestDetailsCallback callback)
-    {
+    public static void getRequestDetails(final String requestId, final RequestDetailsCallback callback) {
         final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
         dbRef.getRoot();
 
-        dbRef.child("request").child(requestId).addListenerForSingleValueEvent(new ValueEventListener()
-        {
+        dbRef.child("request").child(requestId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 callback.onGetRequestDetails(dataSnapshot);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
+            public void onCancelled(DatabaseError databaseError) {
                 callback.onRequestDetailsNotFound(databaseError);
             }
         });
@@ -170,8 +154,7 @@ public class TransportRequestHandler
      */
 
     public static void acceptRequest(final Context context, final String requestId,
-                                     final String latLng, final TripAcceptedCallback tripAcceptedCallback)
-    {
+                                     final String latLng, final TripAcceptedCallback tripAcceptedCallback) {
         final String acceptedTime = Calendar.getInstance().getTimeInMillis() + "";
 
         final Map data = new HashMap<>();
@@ -192,40 +175,29 @@ public class TransportRequestHandler
         data.put("trip_id", requestId);
         data.put("confirm", 0);
 
-        dbRef.child("request").child(requestId).addListenerForSingleValueEvent(new ValueEventListener()
-        {
+        dbRef.child("request").child(requestId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                if (dataSnapshot.hasChildren())
-                {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
                     dbRef.getRoot();
-                    dbRef.child("request").child(requestId).removeValue(new DatabaseReference.CompletionListener()
-                    {
+                    dbRef.child("request").child(requestId).removeValue(new DatabaseReference.CompletionListener() {
                         @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference)
-                        {
-                            if (databaseError == null)
-                            {
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if (databaseError == null) {
                                 dbRef.getRoot();
 
-                                dbRef.child("accepted").child(requestId).updateChildren(data, new DatabaseReference.CompletionListener()
-                                {
+                                dbRef.child("accepted").child(requestId).updateChildren(data, new DatabaseReference.CompletionListener() {
                                     @Override
-                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference)
-                                    {
-                                        if (databaseError == null)
-                                        {
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        if (databaseError == null) {
                                             tripAcceptedCallback.tripAcceptedSuccessfully(requestId);
-                                        } else
-                                        {
+                                        } else {
                                             tripAcceptedCallback.failedToAcceptTrip(requestId, latLng, acceptedTime, databaseError);
                                         }
                                     }
                                 });
 
-                            } else
-                            {
+                            } else {
                                 tripAcceptedCallback.failedToAcceptTrip(requestId, latLng, acceptedTime, databaseError);
                             }
                         }
@@ -234,16 +206,14 @@ public class TransportRequestHandler
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
 
     }
 
-    public static void setupConnectivityLogic()
-    {
+    public static void setupConnectivityLogic() {
         Log.i(TAG, "SETTING UP CONNECTIVITY LOGIC");
         final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         final String phoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
@@ -255,15 +225,12 @@ public class TransportRequestHandler
         final DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
 
         //add value listener on server side (will be triggered when user is disconnected/connected)
-        connectedRef.addValueEventListener(new ValueEventListener()
-        {
+        connectedRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot)
-            {
+            public void onDataChange(DataSnapshot snapshot) {
                 boolean connected = snapshot.getValue(Boolean.class);
 
-                if (connected)
-                {
+                if (connected) {
                     Log.i(TAG, "CONNECTIVITY LOGIC SUCCESSFULLY SET");
 
                     //if connected to databse set value to "online" and onDisconnect set value to "offline"
@@ -284,41 +251,33 @@ public class TransportRequestHandler
             }
 
             @Override
-            public void onCancelled(DatabaseError error)
-            {
+            public void onCancelled(DatabaseError error) {
                 Log.i(TAG, "CONNECTIVITY Listener was cancelled at .info/connected");
             }
         });
     }
 
-    public static void insertTripRejectedDataUsingApi(final Context context, final String tripId)
-    {
+    public static void insertTripRejectedDataUsingApi(final Context context, final String tripId) {
         final String driverId = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(Constants.DRIVER_ID, "");
         API.getInstance().insertTripRejectedData(driverId, tripId,
-                new RetrofitCallbacks<ResponseBody>()
-                {
+                new RetrofitCallbacks<ResponseBody>() {
 
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-                    {
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
+                        if (response.isSuccessful()) {
                             Log.i(TAG, "REJECTED TRIP DATA WAS INSERTED IN DATABASE");
-                            try
-                            {
+                            try {
                                 Log.i(TAG, "RESPONSE: " + response.body().string());
-                            } catch (IOException e)
-                            {
+                            } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t)
-                    {
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
                         super.onFailure(call, t);
                         Log.i(TAG, "FAILED TO INSERTED REJECTED TRIP DATA IN DATABASE");
                     }
@@ -326,42 +285,34 @@ public class TransportRequestHandler
     }
 
     private static void insertTripAcceptedDataUsingApi(final Context context, final String tripId, final String location,
-                                                       final String acceptedTime)
-    {
+                                                       final String acceptedTime) {
         final String driverId = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(Constants.DRIVER_ID, "");
         API.getInstance().insertTripAcceptedData(driverId, tripId, location, acceptedTime,
-                new RetrofitCallbacks<ResponseBody>()
-                {
+                new RetrofitCallbacks<ResponseBody>() {
 
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-                    {
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
+                        if (response.isSuccessful()) {
                             Log.i(TAG, "ACCEPTED TRIP DATA WAS INSERTED IN DATABASE");
-                            try
-                            {
+                            try {
                                 Log.i(TAG, "RESPONSE: " + response.body().string());
-                            } catch (IOException e)
-                            {
+                            } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t)
-                    {
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
                         super.onFailure(call, t);
                         Log.i(TAG, "FAILED TO INSERTED ACCEPTED TRIP DATA IN DATABASE");
                     }
                 });
     }
 
-    public interface TransportRequestListener
-    {
+    public interface TransportRequestListener {
 
         void OnReceiveNewTransportRequest(DataSnapshot dataSnapshot);
 
@@ -372,23 +323,20 @@ public class TransportRequestHandler
     }
 
 
-    public interface TripAcceptedCallback
-    {
+    public interface TripAcceptedCallback {
         void tripAcceptedSuccessfully(final String tripId);
 
         void failedToAcceptTrip(final String tripId, final String location,
                                 final String acceptedTime, final DatabaseError databaseError);
     }
 
-    public interface RequestDetailsCallback
-    {
+    public interface RequestDetailsCallback {
         void onGetRequestDetails(DataSnapshot dataSnapshot);
 
         void onRequestDetailsNotFound(DatabaseError databaseError);
     }
 
-    public interface ConfirmationListener
-    {
+    public interface ConfirmationListener {
         void tripConfirmed(String tripId);
 
         void tripNotConfirmed(String tripId);

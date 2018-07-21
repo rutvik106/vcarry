@@ -31,12 +31,11 @@ import java.util.List;
  * Created by rutvik on 9/26/2016 at 12:19 PM.
  */
 
-public class FusedLocation implements LocationListener
-{
+public class FusedLocation implements LocationListener {
 
     private static final String TAG = "LOC " + FusedLocation.class.getSimpleName();
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 7000; //2000;
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 3000; //UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 30000; //30 Seconds;
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2; //10 Seconds;
 
 
     private GoogleApiClient mGoogleApiClient;
@@ -45,33 +44,29 @@ public class FusedLocation implements LocationListener
     private Context mContext;
     private GetLocation mGetCurrentLocation;
 
-    ApiConnectionCallbacks connectionCallbacks;
-    GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener;
+    private ApiConnectionCallbacks connectionCallbacks;
+    private GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener;
 
     public static final int FORCE_TO_TURN_ON_LOCATION = 4444;
 
-    public enum Status
-    {
+    public enum Status {
         UNAVAILABLE,
         UPDATE_REQUIRE,
         AVAILABLE
     }
 
-    public interface GetLocation
-    {
+    public interface GetLocation {
         void onLocationChanged(Location location);
     }
 
-    public FusedLocation(Context context, ApiConnectionCallbacks connectionCallbacks, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener)
-    {
+    public FusedLocation(Context context, ApiConnectionCallbacks connectionCallbacks, GoogleApiClient.OnConnectionFailedListener onConnectionFailedListener) {
         mContext = context;
         this.onConnectionFailedListener = onConnectionFailedListener;
         this.connectionCallbacks = connectionCallbacks;
         buildGoogleApiClient();
     }
 
-    private synchronized void buildGoogleApiClient()
-    {
+    private synchronized void buildGoogleApiClient() {
         Log.i(TAG, "Building GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(mContext)
                 .addConnectionCallbacks(connectionCallbacks)
@@ -84,21 +79,18 @@ public class FusedLocation implements LocationListener
     }
 
 
-    public Location getLastKnownLocation(final Context context)
-    {
+    public Location getLastKnownLocation(final Context context) {
 
 
         Log.i(TAG, "GETTING LAST KNOWN LOCATION");
         int coarse = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION);
         int fine = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION);
-        if (coarse == PackageManager.PERMISSION_GRANTED && fine == PackageManager.PERMISSION_GRANTED)
-        {
+        if (coarse == PackageManager.PERMISSION_GRANTED && fine == PackageManager.PERMISSION_GRANTED) {
 
             Log.i(TAG, "LOCATION PERMISSION GRANTED!!!");
             Log.i(TAG, "TRYING TO GET LOCATION FROM FUSED API!!!");
             final Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (location != null)
-            {
+            if (location != null) {
                 Log.i(TAG, "GOT LAST KNOWN LOCATION FROM FUSED API");
                 return location;
             }
@@ -114,74 +106,61 @@ public class FusedLocation implements LocationListener
     }
 
 
-    public void startGettingLocation(GetLocation location)
-    {
+    public void startGettingLocation(GetLocation location) {
         mGetCurrentLocation = location;
         startLocationUpdates();
     }
 
-    public void stopGettingLocation() throws IllegalStateException
-    {
+    public void stopGettingLocation() throws IllegalStateException {
         stopLocationUpdates();
         disconnect();
     }
 
 
     @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         mGetCurrentLocation.onLocationChanged(location);
     }
 
 
-    public static Status isGooglePlayServiceAvailable(Context context)
-    {
+    public static Status isGooglePlayServiceAvailable(Context context) {
         int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
 
-        if (status == ConnectionResult.SUCCESS)
-        {
+        if (status == ConnectionResult.SUCCESS) {
             return Status.AVAILABLE;
-        } else if (status == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED)
-        {
+        } else if (status == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) {
             return Status.UPDATE_REQUIRE;
-        } else
-        {
+        } else {
             return Status.UNAVAILABLE;
         }
     }
 
 
-    private void createLocationRequest()
-    {
+    private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    public Location getLastKnownLocationFromLocationManager(final Context context)
-    {
+    public Location getLastKnownLocationFromLocationManager(final Context context) {
         LocationManager mLocationManager;
         mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         List<String> providers = mLocationManager.getProviders(true);
         Location bestLocation = null;
         Log.i(TAG, "TOTAL LOCATION PROVIDERS: " + providers.size());
-        for (String provider : providers)
-        {
+        for (String provider : providers) {
             int coarse = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION);
             int fine = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION);
-            if (coarse == PackageManager.PERMISSION_GRANTED && fine == PackageManager.PERMISSION_GRANTED)
-            {
+            if (coarse == PackageManager.PERMISSION_GRANTED && fine == PackageManager.PERMISSION_GRANTED) {
                 Location l = mLocationManager.getLastKnownLocation(provider);
 
-                if (l == null)
-                {
+                if (l == null) {
                     Log.i(TAG, "FOR NULL LOCATION FROM: " + provider);
                     continue;
                 }
-                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy())
-                {
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
                     Log.i(TAG, "GOT LOCATION FROM: " + provider);
                     //Log.i(TAG, "LOCATION ACCURACY: " + bestLocation.getAccuracy());
                     // Found best last known location: %s", l);
@@ -193,74 +172,61 @@ public class FusedLocation implements LocationListener
     }
 
 
-    private void startLocationUpdates()
-    {
-        if (mGoogleApiClient.isConnected())
-        {
+    private void startLocationUpdates() {
+        if (mGoogleApiClient.isConnected()) {
             int coarse = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION);
             int fine = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION);
-            if (coarse == PackageManager.PERMISSION_GRANTED && fine == PackageManager.PERMISSION_GRANTED)
-            {
+            if (coarse == PackageManager.PERMISSION_GRANTED && fine == PackageManager.PERMISSION_GRANTED) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(
                         mGoogleApiClient, mLocationRequest, this);
             }
         }
     }
 
-    private void stopLocationUpdates()
-    {
-        if (mGoogleApiClient.isConnected())
-        {
+    private void stopLocationUpdates() {
+        if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
         mGoogleApiClient.unregisterConnectionCallbacks(connectionCallbacks);
         mGoogleApiClient.unregisterConnectionFailedListener(onConnectionFailedListener);
     }
 
-    private void connect()
-    {
+    private void connect() {
         mGoogleApiClient.connect();
     }
 
-    private void disconnect()
-    {
-        if (mGoogleApiClient.isConnected())
-        {
+    private void disconnect() {
+        if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
     }
 
-    public GoogleApiClient getmGoogleApiClient()
-    {
+    public GoogleApiClient getmGoogleApiClient() {
         return mGoogleApiClient;
     }
 
 
-    public static abstract class ApiConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks
-    {
+    public static abstract class ApiConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks {
         final ForceLocationCallbacks forceLocationCallbacks;
 
         GoogleApiClient mGoogleApiClient;
 
-        public ApiConnectionCallbacks(final LocationAwareActivity locationAwareActivity)
-        {
+        public ApiConnectionCallbacks(final LocationAwareActivity locationAwareActivity) {
             this.forceLocationCallbacks = new ForceLocationCallbacks(locationAwareActivity);
         }
 
 
-        public void setmGoogleApiClient(GoogleApiClient mGoogleApiClient)
-        {
+        public void setmGoogleApiClient(GoogleApiClient mGoogleApiClient) {
             this.mGoogleApiClient = mGoogleApiClient;
         }
 
         @Override
-        public void onConnected(@Nullable Bundle bundle)
-        {
+        public void onConnected(@Nullable Bundle bundle) {
             //generate request location msg to check locationing enable/disable status
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(10000);
-            locationRequest.setFastestInterval(10000 / 2);
+            locationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+            locationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
 
             LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
             builder.setAlwaysShow(true);
@@ -274,45 +240,37 @@ public class FusedLocation implements LocationListener
         }
 
         @Override
-        public void onConnectionSuspended(int i)
-        {
+        public void onConnectionSuspended(int i) {
 
         }
     }
 
-    private static class ForceLocationCallbacks implements ResultCallback<LocationSettingsResult>
-    {
+    private static class ForceLocationCallbacks implements ResultCallback<LocationSettingsResult> {
         final LocationAwareActivity requestingActivity;
 
-        public ForceLocationCallbacks(final LocationAwareActivity requestingActivity)
-        {
+        public ForceLocationCallbacks(final LocationAwareActivity requestingActivity) {
             this.requestingActivity = requestingActivity;
         }
 
         @Override
-        public final void onResult(LocationSettingsResult result)
-        {
+        public final void onResult(LocationSettingsResult result) {
             final com.google.android.gms.common.api.Status status = result.getStatus();
 
-            switch (status.getStatusCode())
-            {
+            switch (status.getStatusCode()) {
                 case LocationSettingsStatusCodes.SUCCESS:
                     requestingActivity.locationServiceAlreadyOn();
                     break;
                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                     Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
                     //locationing is disabled on user device, and needs to be enbled
-                    try
-                    {
+                    try {
                         //request user to turm locationing on
                         // Show the dialog by calling startResolutionForResult(), and check the result
                         // in onActivityResult().
-                        if (requestingActivity != null)
-                        {
+                        if (requestingActivity != null) {
                             status.startResolutionForResult(requestingActivity, FORCE_TO_TURN_ON_LOCATION);
                         }
-                    } catch (IntentSender.SendIntentException e)
-                    {
+                    } catch (IntentSender.SendIntentException e) {
                         Log.i(TAG, "PendingIntent unable to execute request.");
                     }
                     break;
@@ -326,8 +284,7 @@ public class FusedLocation implements LocationListener
 
     }
 
-    public interface ForceLocationResultCallbacks
-    {
+    public interface ForceLocationResultCallbacks {
         void locationServiceAlreadyOn();
 
         void locationServiceTurnedOn();
@@ -335,21 +292,17 @@ public class FusedLocation implements LocationListener
         void locationSettingChangeUnavailable();
     }
 
-    public static abstract class LocationAwareActivity extends BaseActivity implements ForceLocationResultCallbacks
-    {
+    public static abstract class LocationAwareActivity extends BaseActivity implements ForceLocationResultCallbacks {
 
         @Override
-        protected void onActivityResult(int requestCode, int resultCode, Intent data)
-        {
+        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            switch (requestCode)
-            {
+            switch (requestCode) {
 
                 case FORCE_TO_TURN_ON_LOCATION:
                     //user allowed to access location, now location service on
                     Log.i(TAG, "REQUEST CHECK SETTING RESULT: " + resultCode);
-                    if (resultCode == Activity.RESULT_OK)
-                    {
+                    if (resultCode == Activity.RESULT_OK) {
                         locationServiceTurnedOn();
                     }
                     break;

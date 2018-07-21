@@ -29,8 +29,7 @@ import io.fusionbit.vcarry.R;
  * Created by rutvik on 12/29/2016 at 9:14 AM.
  */
 
-public class NewTripAlert extends FrameLayout implements TransportRequestHandler.RequestDetailsCallback, App.TripNotificationListener
-{
+public class NewTripAlert extends FrameLayout implements TransportRequestHandler.RequestDetailsCallback, App.TripNotificationListener {
     private static final String TAG = App.APP_TAG + NewTripAlert.class.getSimpleName();
     final ActivityTransportRequest activityTransportRequest;
     private final String requestId;
@@ -44,8 +43,7 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
     public NewTripAlert(final String requestId,
                         final ActivityTransportRequest activityTransportRequest,
-                        final Context context)
-    {
+                        final Context context) {
         super(context);
 
         this.requestId = requestId;
@@ -65,22 +63,18 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
         llAcceptRejectButtonContainer = (LinearLayout) findViewById(R.id.ll_acceptRejectButtonContainer);
 
-        findViewById(R.id.btn_accept).setOnClickListener(new View.OnClickListener()
-        {
+        findViewById(R.id.btn_accept).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 llAcceptRejectButtonContainer.setVisibility(View.GONE);
                 NewTripAlert.this
                         .activityTransportRequest.acceptRequest(requestId);
             }
         });
 
-        findViewById(R.id.btn_reject).setOnClickListener(new View.OnClickListener()
-        {
+        findViewById(R.id.btn_reject).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 promptForTripRejection();
             }
         });
@@ -97,9 +91,12 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
     }
 
-    private void promptForTripRejection()
-    {
-        new AlertDialog.Builder(activityTransportRequest)
+    private void promptForTripRejection() {
+        llAcceptRejectButtonContainer.setVisibility(View.GONE);
+        NewTripAlert.this
+                .activityTransportRequest.rejectRequest(requestId);
+
+        /*new AlertDialog.Builder(activityTransportRequest)
                 .setMessage(R.string.trip_rejection_prompt_msg)
                 .setPositiveButton(R.string.reject, new DialogInterface.OnClickListener()
                 {
@@ -113,26 +110,21 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)
-                .show();
+                .show();*/
     }
 
-    private void getRequestDetails()
-    {
+    private void getRequestDetails() {
         TransportRequestHandler.getRequestDetails(requestId, this);
     }
 
     @Override
-    public void onGetRequestDetails(DataSnapshot dataSnapshot)
-    {
+    public void onGetRequestDetails(DataSnapshot dataSnapshot) {
         pbLoadingTripDetails.setVisibility(GONE);
 
         Map details = (Map) dataSnapshot.getValue();
-        if (details != null)
-        {
-            if (LocaleHelper.getLanguage(activityTransportRequest).equalsIgnoreCase("gu"))
-            {
-                if (details.get("from_guj_address") != null && details.get("to_guj_address") != null)
-                {
+        if (details != null) {
+            if (LocaleHelper.getLanguage(activityTransportRequest).equalsIgnoreCase("gu")) {
+                if (details.get("from_guj_address") != null && details.get("to_guj_address") != null) {
                     tvFrom.setText(getResources().getString(R.string.request_from) + ": " +
                             (details.get("from_guj_address").toString().isEmpty() ?
                                     details.get("from").toString() : details.get("from_guj_address").toString()));
@@ -140,13 +132,11 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
                     tvTo.setText(getResources().getString(R.string.request_to) + ": " +
                             (details.get("to_guj_address").toString().isEmpty() ?
                                     details.get("to").toString() : details.get("to_guj_address").toString()));
-                } else
-                {
+                } else {
                     tvFrom.setText(getResources().getString(R.string.request_from) + ": " + details.get("from").toString());
                     tvTo.setText(getResources().getString(R.string.request_to) + ": " + details.get("to").toString());
                 }
-            } else
-            {
+            } else {
                 tvFrom.setText(getResources().getString(R.string.request_from) + ": " + details.get("from").toString());
                 tvTo.setText(getResources().getString(R.string.request_to) + ": " + details.get("to").toString());
             }
@@ -155,52 +145,42 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
 
             //SET VEHICLE
-            if (details.get("vehicle") != null)
-            {
+            if (details.get("vehicle") != null) {
                 tvVehicle.setText(details.get("vehicle").toString());
                 setVehicleImage(details.get("vehicle").toString());
-            } else
-            {
+            } else {
                 tvVehicle.setVisibility(GONE);
             }
             //SET WEIGHT
-            if (details.get("wt") != null)
-            {
-                if (!details.get("wt").toString().isEmpty())
-                {
-                    if (!details.get("wt").toString().equals("0"))
-                    {
+            if (details.get("wt") != null) {
+                if (!details.get("wt").toString().isEmpty()) {
+                    if (!details.get("wt").toString().equals("0")) {
                         tvWeight.setVisibility(VISIBLE);
-                        tvWeight.setText(details.get("wt").toString() + " Kg");
+                        tvWeight.setText(details.get("wt").toString().toLowerCase().contains("kg") ?
+                                details.get("wt").toString() : details.get("wt").toString() + " Kg");
                     }
                 }
             }
             //SET DIMENSIONS
-            if (details.get("dimension") != null)
-            {
-                if (!details.get("dimension").toString().isEmpty())
-                {
+            if (details.get("dimension") != null) {
+                if (!details.get("dimension").toString().isEmpty()) {
                     tvDimension.setVisibility(VISIBLE);
                     tvDimension.setText(details.get("dimension").toString());
                 }
             }
-        } else
-        {
+        } else {
             onRequestDetailsNotFound(null);
         }
     }
 
     @Override
-    public void onRequestDetailsNotFound(DatabaseError databaseError)
-    {
+    public void onRequestDetailsNotFound(DatabaseError databaseError) {
         Log.i(TAG, "TRIP YOU ARE TRYING TO ACCEPT WAS NOT FOUND IN FIREBASE");
         Log.i(TAG, "TRYING TO GET IT FROM DATABASE");
 
 
-        for (TripDetails tripDetails : ((App) activityTransportRequest.getApplication()).getTripNotificationList())
-        {
-            if (tripDetails.getTripId().equals(requestId))
-            {
+        for (TripDetails tripDetails : ((App) activityTransportRequest.getApplication()).getTripNotificationList()) {
+            if (tripDetails.getTripId().equals(requestId)) {
                 setTripRequestData(tripDetails);
             }
         }
@@ -209,27 +189,21 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
     }
 
     @Override
-    public void onGetTripNotificationList(List<TripDetails> tripDetailsList)
-    {
-        for (TripDetails tripDetails : tripDetailsList)
-        {
-            if (tripDetails.getTripId().equals(requestId))
-            {
+    public void onGetTripNotificationList(List<TripDetails> tripDetailsList) {
+        for (TripDetails tripDetails : tripDetailsList) {
+            if (tripDetails.getTripId().equals(requestId)) {
                 setTripRequestData(tripDetails);
             }
         }
     }
 
-    private void setTripRequestData(TripDetails tripDetails)
-    {
+    private void setTripRequestData(TripDetails tripDetails) {
         pbLoadingTripDetails.setVisibility(GONE);
 
-        if (LocaleHelper.getLanguage(activityTransportRequest).equalsIgnoreCase("gu"))
-        {
+        if (LocaleHelper.getLanguage(activityTransportRequest).equalsIgnoreCase("gu")) {
             Log.i(TAG, "setTripRequestData: LANGUAGE IS GUJARATI");
             tripDetails.setReturnGujaratiAddress(true);
-        } else
-        {
+        } else {
             Log.i(TAG, "setTripRequestData: LANGUAGE IS NOT GUJARATI");
         }
 
@@ -246,30 +220,24 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
         setVehicleImage(tripDetails.getVehicleType());
 
-        if (tripDetails.getVehicleType() != null)
-        {
+        if (tripDetails.getVehicleType() != null) {
             tvVehicle.setText(tripDetails.getVehicleType());
-        } else
-        {
+        } else {
             tvVehicle.setVisibility(GONE);
         }
 
-        if (tripDetails.getWeight() != null)
-        {
-            if (!tripDetails.getWeight().isEmpty())
-            {
-                if (!tripDetails.getWeight().equals("0"))
-                {
+        if (tripDetails.getWeight() != null) {
+            if (!tripDetails.getWeight().isEmpty()) {
+                if (!tripDetails.getWeight().equals("0")) {
                     tvWeight.setVisibility(VISIBLE);
-                    tvWeight.setText(tripDetails.getWeight() + " Kg");
+                    tvWeight.setText(tripDetails.getWeight().toLowerCase().contains("kg") ?
+                            tripDetails.getWeight() : tripDetails.getWeight() + " Kg");
                 }
             }
         }
 
-        if (tripDetails.getDimensions() != null)
-        {
-            if (!tripDetails.getDimensions().isEmpty())
-            {
+        if (tripDetails.getDimensions() != null) {
+            if (!tripDetails.getDimensions().isEmpty()) {
                 tvDimension.setVisibility(VISIBLE);
                 tvDimension.setText(tripDetails.getDimensions());
             }
@@ -277,15 +245,11 @@ public class NewTripAlert extends FrameLayout implements TransportRequestHandler
 
     }
 
-    private void setVehicleImage(String vehicleType)
-    {
-        if (vehicleType != null)
-        {
-            if (!vehicleType.isEmpty())
-            {
+    private void setVehicleImage(String vehicleType) {
+        if (vehicleType != null) {
+            if (!vehicleType.isEmpty()) {
                 llVehicleImageContainer.setVisibility(VISIBLE);
-                switch (vehicleType)
-                {
+                switch (vehicleType) {
                     case "Pickup Bolero":
                         ivVehicleImage.setImageResource(R.drawable.bolero);
                         break;

@@ -5,6 +5,7 @@ import java.util.List;
 import apimodels.AccountSummary;
 import apimodels.AccountSummaryNew;
 import apimodels.DriverDetails;
+import apimodels.LocationUpdateResponse;
 import apimodels.TripBreakUpDetails;
 import apimodels.TripDetails;
 import apimodels.TripsByDriverMail;
@@ -157,5 +158,10 @@ public interface ApiInterface
     Call<List<TripBreakUpDetails>> getTripBreakUpDetails(@Field("method") String method,
                                                          @Field("trip_id") String tripId);
 
+    @FormUrlEncoded
+    @POST("webservice.php")
+    Call<LocationUpdateResponse> updateLocation(@Field("method") String method,
+                                                @Field("driver_id") String driverId,
+                                                @Field("current_location") String locationLatLng);
 
 }

@@ -19,6 +19,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +37,7 @@ import java.util.Map;
 import api.API;
 import api.RetrofitCallbacks;
 import apimodels.DriverDetails;
+import apimodels.LocationUpdateResponse;
 import apimodels.TripDetails;
 import broadcastreceivers.UpcomingTripNotificationReceiver;
 import extra.Log;
@@ -54,8 +57,7 @@ import static io.fusionbit.vcarry.Constants.NOTIFICATION_ID;
 public class TransportRequestHandlerService extends Service
         implements TransportRequestHandler.TransportRequestListener,
         GoogleApiClient.OnConnectionFailedListener,
-        FusedLocation.GetLocation, TransportRequestHandler.ConfirmationListener
-{
+        FusedLocation.GetLocation, TransportRequestHandler.ConfirmationListener {
     private static final String TAG =
             App.APP_TAG + TransportRequestHandlerService.class.getSimpleName();
 
@@ -73,60 +75,53 @@ public class TransportRequestHandlerService extends Service
 
     //private TransportRequestResponseReceiver transportRequestResponseReceiver;
 
-    public TransportRequestHandlerService()
-    {
+    private String driverId;
+    private Call<LocationUpdateResponse> updatingLocation;
+
+    public TransportRequestHandlerService() {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-        {
-            getDriverIdByDriverEmail();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            final String contactNo = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+
+            getDriverIdByPhoneNumber(contactNo);
         }
 
         return START_STICKY;
     }
 
-    private void getDriverIdByDriverEmail()
-    {
-
-        final String contactNo = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
-
+    private void getDriverIdByPhoneNumber(final String contactNo) {
         final RetrofitCallbacks<Integer> onGetDriverIdCallback =
-                new RetrofitCallbacks<Integer>()
-                {
+                new RetrofitCallbacks<Integer>() {
                     @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response)
-                    {
+                    public void onResponse(Call<Integer> call, Response<Integer> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() > 0)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() > 0) {
                                 PreferenceManager
                                         .getDefaultSharedPreferences(TransportRequestHandlerService.this)
                                         .edit()
                                         .putString(Constants.DRIVER_ID, String.valueOf(response.body()))
                                         .apply();
 
-                                if (transportRequestHandler == null)
-                                {
+                                driverId = String.valueOf(response.body());
+
+                                if (transportRequestHandler == null) {
                                     transportRequestHandler = new TransportRequestHandler(TransportRequestHandlerService.this);
                                     addNotification(getString(R.string.service_listening));
                                 }
 
                                 TransportRequestHandler.setupConnectivityLogic();
 
-                            } else
-                            {
+                            } else {
                                 PreferenceManager
                                         .getDefaultSharedPreferences(TransportRequestHandlerService.this)
                                         .edit()
                                         .putString(Constants.DRIVER_ID, null)
                                         .apply();
-                                if (transportRequestHandler != null)
-                                {
+                                if (transportRequestHandler != null) {
                                     transportRequestHandler = null;
                                     addNotification(getString(R.string.driver_not_registered));
                                 }
@@ -141,14 +136,12 @@ public class TransportRequestHandlerService extends Service
 
     }
 
-    public void setResultReceiver(ResultReceiver resultReceiver)
-    {
+    public void setResultReceiver(ResultReceiver resultReceiver) {
         this.resultReceiver = resultReceiver;
     }
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate() {
         /*transportRequestResponseReceiver = new TransportRequestResponseReceiver()
         {
             @Override
@@ -185,19 +178,16 @@ public class TransportRequestHandlerService extends Service
      */
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         //unregisterReceiver(transportRequestResponseReceiver);
         unregisterReceiver(upcomingTripNotificationReceiver);
         super.onDestroy();
     }
 
-    private void addNotification(String message)
-    {
+    private void addNotification(String message) {
         final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
-        if (isOnTrip)
-        {
+        if (isOnTrip) {
             addTripNotification();
             startCalculatingDistanceIfDriverOnTrip();
             return;
@@ -219,14 +209,12 @@ public class TransportRequestHandlerService extends Service
 
     }
 
-    private void addTripNotification()
-    {
+    private void addTripNotification() {
         Log.i(TAG, "ADDING START TRIP NOTIFICATION");
 
         final boolean isOnTrip = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Constants.IS_DRIVER_ON_TRIP, false);
-        if (isOnTrip)
-        {
+        if (isOnTrip) {
 
             final String tripId = PreferenceManager.getDefaultSharedPreferences(this)
                     .getString(Constants.CURRENT_TRIP_ID, "");
@@ -252,13 +240,11 @@ public class TransportRequestHandlerService extends Service
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent)
-    {
+    public IBinder onBind(Intent intent) {
         return transportRequestServiceBinder;
     }
 
-    public void startTrip(String tripId)
-    {
+    public void startTrip(String tripId) {
         Log.i(TAG, "SERVICE IS STARTING TRIP NOW");
 
         PreferenceManager.getDefaultSharedPreferences(this)
@@ -278,8 +264,7 @@ public class TransportRequestHandlerService extends Service
         startCalculatingDistanceIfDriverOnTrip();
     }
 
-    public void stopTrip(String tripId)
-    {
+    public void stopTrip(String tripId) {
         Log.i(TAG, "STOPPING TRIP WITH TRIP ID: " + tripId);
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
@@ -289,8 +274,7 @@ public class TransportRequestHandlerService extends Service
         startCalculatingDistanceIfDriverOnTrip();
     }
 
-    public void cancelTrip(final String tripId)
-    {
+    public void cancelTrip(final String tripId) {
         Log.i(TAG, "CANCELING THIS TRIP ID: " + tripId);
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
@@ -298,10 +282,8 @@ public class TransportRequestHandlerService extends Service
                 .apply();
         addNotification(getString(R.string.service_listening));
 
-        if (!tripId.isEmpty())
-        {
-            if (mFusedLocation != null)
-            {
+        if (!tripId.isEmpty()) {
+            if (mFusedLocation != null) {
                 Log.i(TAG, "DESTROYING FUSED LOCATION PROVIDER");
                 mFusedLocation.stopGettingLocation();
                 mFusedLocation = null;
@@ -319,15 +301,13 @@ public class TransportRequestHandlerService extends Service
     }
 
     @Override
-    public void OnReceiveNewTransportRequest(DataSnapshot dataSnapshot)
-    {
+    public void OnReceiveNewTransportRequest(DataSnapshot dataSnapshot) {
         Log.i(TAG, "New Request arrived!!!!");
 
         final String driverId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.DRIVER_ID, null);
 
-        if (driverId == null)
-        {
+        if (driverId == null) {
             return;
         }
 
@@ -335,30 +315,22 @@ public class TransportRequestHandlerService extends Service
         final DriverDetails driverDetails
                 = realm.where(DriverDetails.class).equalTo("driverId", driverId).findFirst();
 
-        if (driverDetails == null)
-        {
+        if (driverDetails == null) {
             return;
         }
 
-        TransportRequestHandler.getRequestDetails(dataSnapshot.getKey(), new TransportRequestHandler.RequestDetailsCallback()
-        {
+        TransportRequestHandler.getRequestDetails(dataSnapshot.getKey(), new TransportRequestHandler.RequestDetailsCallback() {
             @Override
-            public void onGetRequestDetails(DataSnapshot dataSnapshot)
-            {
+            public void onGetRequestDetails(DataSnapshot dataSnapshot) {
                 Map details = (Map) dataSnapshot.getValue();
-                if (details != null)
-                {
-                    if (details.get("vehicle") != null)
-                    {
-                        if (!driverDetails.getMultiTrip().equals("1"))
-                        {
-                            if (driverDetails.getVehicleType().equals(details.get("vehicle")))
-                            {
+                if (details != null) {
+                    if (details.get("vehicle") != null) {
+                        if (!driverDetails.getMultiTrip().equals("1")) {
+                            if (driverDetails.getVehicleType().equals(details.get("vehicle"))) {
                                 showNotification(dataSnapshot.getKey());
                                 showAlert(dataSnapshot.getKey());
                             }
-                        } else
-                        {
+                        } else {
                             showNotification(dataSnapshot.getKey());
                             showAlert(dataSnapshot.getKey());
                         }
@@ -367,8 +339,7 @@ public class TransportRequestHandlerService extends Service
             }
 
             @Override
-            public void onRequestDetailsNotFound(DatabaseError databaseError)
-            {
+            public void onRequestDetailsNotFound(DatabaseError databaseError) {
 
             }
         });
@@ -377,20 +348,17 @@ public class TransportRequestHandlerService extends Service
     }
 
     @Override
-    public void OnRequestChanged()
-    {
+    public void OnRequestChanged() {
         Log.i(TAG, "Request changed!!!!");
     }
 
     @Override
-    public void OnRequestRemoved()
-    {
+    public void OnRequestRemoved() {
 
     }
 
     @Override
-    public void tripConfirmed(String tripId)
-    {
+    public void tripConfirmed(String tripId) {
 
         final Intent intent = new Intent(this, ActivityTripDetails.class);
         intent.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
@@ -408,30 +376,22 @@ public class TransportRequestHandlerService extends Service
                 getResources().getString(R.string.trip_confirm_notification_message), pendingIntent);
     }
 
-    public void insertTripDataIntoRealmAndSetupAlarm(final String tripId)
-    {
-        final RetrofitCallbacks<TripDetails> callback = new RetrofitCallbacks<TripDetails>()
-        {
+    public void insertTripDataIntoRealmAndSetupAlarm(final String tripId) {
+        final RetrofitCallbacks<TripDetails> callback = new RetrofitCallbacks<TripDetails>() {
 
             @Override
-            public void onResponse(Call<TripDetails> call, final Response<TripDetails> response)
-            {
+            public void onResponse(Call<TripDetails> call, final Response<TripDetails> response) {
                 super.onResponse(call, response);
-                if (response.isSuccessful())
-                {
-                    Realm.getDefaultInstance().executeTransactionAsync(new Realm.Transaction()
-                    {
+                if (response.isSuccessful()) {
+                    Realm.getDefaultInstance().executeTransactionAsync(new Realm.Transaction() {
                         @Override
-                        public void execute(Realm realm)
-                        {
+                        public void execute(Realm realm) {
                             realm.copyToRealmOrUpdate(response.body());
 
                         }
-                    }, new Realm.Transaction.OnSuccess()
-                    {
+                    }, new Realm.Transaction.OnSuccess() {
                         @Override
-                        public void onSuccess()
-                        {
+                        public void onSuccess() {
                             setupTripAlarm(tripId);
                         }
                     });
@@ -443,8 +403,7 @@ public class TransportRequestHandlerService extends Service
 
     }
 
-    private void setupTripAlarm(final String tripId)
-    {
+    private void setupTripAlarm(final String tripId) {
         final Realm realm = Realm.getDefaultInstance();
         final TripDetails tripDetails =
                 realm.where(TripDetails.class)
@@ -454,12 +413,10 @@ public class TransportRequestHandlerService extends Service
 
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
-        try
-        {
+        try {
             Date tripDate = sdf.parse(tripDetails.getTripDatetime());
             final long currentDate = Calendar.getInstance().getTimeInMillis();
-            if (currentDate < tripDate.getTime() - (60 * (60 * 1000)))
-            {
+            if (currentDate < tripDate.getTime() - (60 * (60 * 1000))) {
                 Intent i = new Intent(this, UpcomingTripNotificationReceiver.class);
                 i.putExtra(Constants.INTENT_EXTRA_TRIP_ID, tripId);
                 i.putExtra(Constants.INTENT_EXTRA_TIME, Utils.getDateFromMills(tripDate.getTime()));
@@ -469,8 +426,7 @@ public class TransportRequestHandlerService extends Service
                 alarm.set(AlarmManager.RTC_WAKEUP, tripDate.getTime() - (60 * (60 * 1000)), pintent);
                 //Toast.makeText(this, "Trip Alarm was set!", Toast.LENGTH_SHORT).show();
             }
-        } catch (ParseException e)
-        {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
@@ -478,15 +434,13 @@ public class TransportRequestHandlerService extends Service
     }
 
     @Override
-    public void tripNotConfirmed(String tripId)
-    {
+    public void tripNotConfirmed(String tripId) {
         Utils.showSimpleNotification(this, Integer.valueOf(tripId),
                 getResources().getString(R.string.trip_not_confirm_notification_title),
                 getResources().getString(R.string.trip_not_confirm_notification_message), null);
     }
 
-    private void showAlert(String requestId)
-    {
+    private void showAlert(String requestId) {
         Intent newTripRequestIntent = new Intent(Constants.NEW_TRIP_REQUEST);
         newTripRequestIntent.putExtra("REQUEST_ID", requestId);
         sendBroadcast(newTripRequestIntent);
@@ -496,8 +450,7 @@ public class TransportRequestHandlerService extends Service
         startActivity(i);
     }
 
-    private void showNotification(String requestId)
-    {
+    private void showNotification(String requestId) {
         final int mRequestId = Integer
                 .valueOf(requestId);
 
@@ -546,8 +499,7 @@ public class TransportRequestHandlerService extends Service
 
     }
 
-    public void startCalculatingDistanceIfDriverOnTrip()
-    {
+    public void startCalculatingDistanceIfDriverOnTrip() {
 
 
         Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE");
@@ -558,8 +510,7 @@ public class TransportRequestHandlerService extends Service
         final String tripId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CURRENT_TRIP_ID, "");
 
-        if (tripDistanceDetails == null)
-        {
+        if (tripDistanceDetails == null) {
             //your phone might have turned off and trip details goes null
             // get it form realm
 
@@ -572,35 +523,28 @@ public class TransportRequestHandlerService extends Service
 
         }
 
-        if (isOnTrip)
-        {
+        if (isOnTrip) {
             Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: Motorist ON TRIP");
-            if (mFusedLocation == null)
-            {
+            if (mFusedLocation == null) {
                 Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: CREATING NEW FUSED LOCATION PROVIDER");
-                mFusedLocation = new FusedLocation(this, new FusedLocation.ApiConnectionCallbacks(null)
-                {
+                mFusedLocation = new FusedLocation(this, new FusedLocation.ApiConnectionCallbacks(null) {
                     @Override
-                    public void onConnected(@Nullable Bundle bundle)
-                    {
+                    public void onConnected(@Nullable Bundle bundle) {
                         /**Toast.makeText(TransportRequestHandlerService.this,
                          "Fused Location API CONNECTED", Toast.LENGTH_SHORT).show();*/
                         mFusedLocation.startGettingLocation(TransportRequestHandlerService.this);
                     }
 
                     @Override
-                    public void onConnectionSuspended(int i)
-                    {
+                    public void onConnectionSuspended(int i) {
                         /**Toast.makeText(TransportRequestHandlerService.this,
                          "Fused Location API Connection Suspended", Toast.LENGTH_SHORT).show();*/
                     }
                 }, this);
             }
-        } else
-        {
+        } else {
             Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: Motorist NOT ON TRIP");
-            if (mFusedLocation != null)
-            {
+            if (mFusedLocation != null) {
                 Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: FUSED LOCATION PROVIDER IS NOT NULL");
 
                 Log.i(TAG, "INSIDE START CALCULATING TRIP DISTANCE: STOPPING LOCATION PROVIDER");
@@ -616,29 +560,23 @@ public class TransportRequestHandlerService extends Service
 
             final Realm realm = Realm.getDefaultInstance();
 
-            realm.executeTransactionAsync(new Realm.Transaction()
-            {
+            realm.executeTransactionAsync(new Realm.Transaction() {
                 @Override
-                public void execute(Realm realm)
-                {
+                public void execute(Realm realm) {
                     realm.copyToRealmOrUpdate(tripDistanceDetails);
                 }
-            }, new Realm.Transaction.OnSuccess()
-            {
+            }, new Realm.Transaction.OnSuccess() {
                 @Override
-                public void onSuccess()
-                {
+                public void onSuccess() {
 
                     Log.i(TAG, "TRANSACTION SUCCESSFUL");
                     Bundle b = new Bundle();
                     b.putString(Constants.CURRENT_TRIP_ID, tripId);
                     resultReceiver.send(Constants.ON_TRIP_STOPPED, b);
                 }
-            }, new Realm.Transaction.OnError()
-            {
+            }, new Realm.Transaction.OnError() {
                 @Override
-                public void onError(Throwable error)
-                {
+                public void onError(Throwable error) {
 
                 }
             });
@@ -646,14 +584,12 @@ public class TransportRequestHandlerService extends Service
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
-    {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         //Toast.makeText(this, "Fused Location API FAILED TO CONNECT", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         //Toast.makeText(this, "Location CHANGED!!!", Toast.LENGTH_SHORT).show();
         Log.i(TAG, "******LOCATION CHANGED******");
         Log.i(TAG, "LAT: " + location.getLatitude());
@@ -665,12 +601,39 @@ public class TransportRequestHandlerService extends Service
         Log.i(TAG, "****************************");
         tripDistanceDetails.addLocationData(location.getTime(), location.getLatitude(), location.getLongitude());
 
+        if (driverId != null) {
+            if (updatingLocation != null) {
+                if (!updatingLocation.isCanceled()) {
+                    updatingLocation.cancel();
+                }
+                updatingLocation = null;
+            }
+            final String stringLocation = location.getLatitude() + "," + location.getLongitude();
+            updatingLocation = API.getInstance().updateLocation(driverId, stringLocation, new RetrofitCallbacks<LocationUpdateResponse>() {
+
+                @Override
+                public void onResponse(Call<LocationUpdateResponse> call, Response<LocationUpdateResponse> response) {
+                    super.onResponse(call, response);
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            if (response.body().getResponse().getError().getError_code() == 0) {
+                                //Success
+                            } else {
+                                Crashlytics.log(android.util.Log.ERROR, "API", "RESPONSE: " + response.body().getResponse().getError().getMsg());
+                            }
+                        }
+                    } else {
+                        Crashlytics.log(android.util.Log.ERROR, "API", "RESPONSE CODE: " + response.code());
+                    }
+                }
+
+            });
+        }
+
     }
 
-    public class TransportRequestServiceBinder extends Binder
-    {
-        public TransportRequestHandlerService getService()
-        {
+    public class TransportRequestServiceBinder extends Binder {
+        public TransportRequestHandlerService getService() {
             return TransportRequestHandlerService.this;
         }
 
