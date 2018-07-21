@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
+import io.fusionbit.vcarry.BuildConfig;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -21,33 +22,32 @@ import static io.fusionbit.vcarry.Constants.API_BASE_URL;
  * Created by rutvik on 11/17/2016 at 3:52 PM.
  */
 
-public class ApiClient
-{
+public class ApiClient {
 
     private static Retrofit retrofit = null;
 
-    public static Retrofit getClient()
-    {
+    public static Retrofit getClient() {
 
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(httpLoggingInterceptor)
-                .readTimeout(60, TimeUnit.SECONDS)
+        if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            okHttpClient.addInterceptor(httpLoggingInterceptor);
+        }
+
+        okHttpClient.readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .build();
+                .readTimeout(60, TimeUnit.SECONDS);
 
-        if (retrofit == null)
-        {
+        if (retrofit == null) {
             Gson gson = new GsonBuilder()
                     .setDateFormat("yyyy-MM-dd HH:mm:ss")
                     .create();
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(API_BASE_URL)
-                    .client(okHttpClient)
+                    .client(okHttpClient.build())
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
