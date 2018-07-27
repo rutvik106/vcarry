@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -116,22 +115,22 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
         }
 
         // Choose authentication providers
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
+        /*List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
                 new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build(),
                 new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
                 new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build());
+                new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build());*/
 
         //user not logged in
         //show firebase login methods using firebase auth UI
-        startActivityForResult(
+        /*startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
                         .setTheme(getSelectedTheme())
                         .setTosUrl(getSelectedTosUrl())
                         .setLogo(getSelectedLogo())
                         .setAvailableProviders(providers)
-                        .build(), RC_SIGN_IN);
+                        .build(), RC_SIGN_IN);*/
 
 
     }
@@ -166,7 +165,7 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
     private int getSelectedTheme()
     {
 
-        return R.style.LoginTheme; // AuthUI.getDefaultTheme();
+        return 0; //R.style.LoginTheme; // AuthUI.getDefaultTheme();
 
     }
 
@@ -183,7 +182,7 @@ public class ActivityLogin extends VCarryActivity implements PermissionListener,
     {
         ArrayList<String> selectedProviders = new ArrayList<>();
 
-        selectedProviders.add(AuthUI.GOOGLE_PROVIDER);
+        //selectedProviders.add(AuthUI.GOOGLE_PROVIDER);
 
         return selectedProviders.toArray(new String[selectedProviders.size()]);
     }

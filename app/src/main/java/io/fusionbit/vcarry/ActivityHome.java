@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -76,8 +77,7 @@ import static io.fusionbit.vcarry.Constants.WAS_REALM_DATABASE_CLEARED;
 public class ActivityHome extends FusedLocation.LocationAwareActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         FragmentMap.OnTripStopListener,
-        FragmentCompletedTripDetails.TripStopDataInsertionCallback, OnCompleteListener<Void>, GoogleApiClient.OnConnectionFailedListener
-{
+        FragmentCompletedTripDetails.TripStopDataInsertionCallback, OnCompleteListener<Void>, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = App.APP_TAG + ActivityHome.class.getSimpleName();
 
     //is activity connected to service
@@ -114,23 +114,19 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     private boolean isShowingCompletedTripDetails = false;
     private SimpleCursorAdapter tripSearchResultCursorAdapter;
     private String[] strArrData = {"No Suggestions"};
-    private ServiceConnection mServiceConnection = new ServiceConnection()
-    {
-        public void onServiceConnected(ComponentName className, IBinder service)
-        {
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
             Log.i(TAG, "ACTIVITY CONNECTED TO SERVICE");
             mServiceBound = true;
             //get service instance here
             mService = ((TransportRequestHandlerService.TransportRequestServiceBinder) service).getService();
-            if (mService != null)
-            {
+            if (mService != null) {
                 serviceResultReceiver = new ServiceResultReceiver(null);
                 mService.setResultReceiver(serviceResultReceiver);
             }
         }
 
-        public void onServiceDisconnected(ComponentName className)
-        {
+        public void onServiceDisconnected(ComponentName className) {
             Log.i(TAG, "ACTIVITY DISCONNECTED FROM SERVICE");
             mServiceBound = false;
             mService = null;
@@ -142,8 +138,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     private NavigationView navigationView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "HOME ACTIVITY ON CREATE");
         setContentView(R.layout.activity_home);
@@ -151,11 +146,9 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         LocaleHelper.onCreate(this, LocaleHelper.getLanguage(this));
 
 
-        fusedLocation = new FusedLocation(this, new FusedLocation.ApiConnectionCallbacks(this)
-        {
+        fusedLocation = new FusedLocation(this, new FusedLocation.ApiConnectionCallbacks(this) {
             @Override
-            public void onConnected(@Nullable Bundle bundle)
-            {
+            public void onConnected(@Nullable Bundle bundle) {
                 super.onConnected(bundle);
             }
         }, this);
@@ -195,8 +188,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-        {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
             /*Glide.with(this).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl())
                     .bitmapTransform(new CropCircleTransformation(this))
@@ -232,33 +224,26 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
             getDriverIdByDriverContact();
 
-        } else
-        {
+        } else {
             finish();
         }
 
     }
 
-    private void updateDriverProfilePicture(final String driverId)
-    {
+    private void updateDriverProfilePicture(final String driverId) {
         API.getInstance().updateDriverImage(driverId,
                 FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl() != null ?
                         FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString() :
                         "https://lh3.googleusercontent.com/-Wlkp-_tMv-Y/AAAAAAAAAAI/AAAAAAAAAAA/NbvcGT31kjM/s120-c/photo.jpg",
-                new RetrofitCallbacks<ResponseBody>()
-                {
+                new RetrofitCallbacks<ResponseBody>() {
 
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-                    {
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            try
-                            {
+                        if (response.isSuccessful()) {
+                            try {
                                 Log.i(TAG, response.body().string());
-                            } catch (IOException e)
-                            {
+                            } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -267,16 +252,14 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         Log.i(TAG, "HOME ACTIVITY ON START");
 
         final boolean isBillPending = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(Constants.IS_BILL_PENDING, false);
 
-        if (isBillPending)
-        {
+        if (isBillPending) {
             showCompletedTripDetails();
         }
 
@@ -297,25 +280,18 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
-        ((App) getApplication()).getTripNotifications(new App.TripNotificationListener()
-        {
+        ((App) getApplication()).getTripNotifications(new App.TripNotificationListener() {
             @Override
-            public void onGetTripNotificationList(List<TripDetails> tripDetailsList)
-            {
-                if (tripDetailsList.size() > 0)
-                {
-                    if (notificationMenuItem != null)
-                    {
+            public void onGetTripNotificationList(List<TripDetails> tripDetailsList) {
+                if (tripDetailsList.size() > 0) {
+                    if (notificationMenuItem != null) {
                         notificationCount.setText(tripDetailsList.size() + "");
                         notificationMenuItem.setVisible(true);
                     }
-                } else
-                {
-                    if (notificationMenuItem != null)
-                    {
+                } else {
+                    if (notificationMenuItem != null) {
                         notificationMenuItem.setVisible(false);
                     }
                 }
@@ -324,28 +300,22 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     }
 
-    private void getDriverIdByDriverContact()
-    {
+    private void getDriverIdByDriverContact() {
 
         final String contactNo = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
 
         final RetrofitCallbacks<Integer> onGetDriverIdCallback =
-                new RetrofitCallbacks<Integer>()
-                {
+                new RetrofitCallbacks<Integer>() {
                     @Override
-                    public void onResponse(Call<Integer> call, Response<Integer> response)
-                    {
+                    public void onResponse(Call<Integer> call, Response<Integer> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() == null)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() == null) {
                                 Toast.makeText(ActivityHome.this, "driver ID not found on server RESPONSE:" +
                                         " NULL", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-                            if (response.body() > 0)
-                            {
+                            if (response.body() > 0) {
                                 driverId = String.valueOf(response.body());
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                                         .edit()
@@ -360,8 +330,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                 Toast.makeText(ActivityHome.this, getString(R.string.registered_motorist),
                                         Toast.LENGTH_SHORT).show();
 
-                            } else
-                            {
+                            } else {
                                 PreferenceManager.getDefaultSharedPreferences(ActivityHome.this)
                                         .edit()
                                         .putString(Constants.DRIVER_ID, null)
@@ -370,8 +339,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                                         Toast.LENGTH_SHORT).show();
                                 showDriverNotRegistered();
                             }
-                        } else
-                        {
+                        } else {
                             Toast.makeText(ActivityHome.this, "cannot get DRIVER ID RESPONSE not OK: " +
                                     response.code(), Toast.LENGTH_SHORT).show();
                             showDriverNotRegistered();
@@ -379,8 +347,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                     }
 
                     @Override
-                    public void onFailure(Call<Integer> call, Throwable t)
-                    {
+                    public void onFailure(Call<Integer> call, Throwable t) {
                         super.onFailure(call, t);
                         Toast.makeText(ActivityHome.this, "cannot get driver ID RETROFIT ON" +
                                 " FAILURE", Toast.LENGTH_SHORT).show();
@@ -392,20 +359,15 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     }
 
-    private void getUserDetails(String driverId)
-    {
+    private void getUserDetails(String driverId) {
         Log.i(TAG, "GETTING DRIVER DETAILS FOR DRIVER ID: " + driverId);
         final RetrofitCallbacks<DriverDetails> onGetDriverDetails =
-                new RetrofitCallbacks<DriverDetails>()
-                {
+                new RetrofitCallbacks<DriverDetails>() {
                     @Override
-                    public void onResponse(Call<DriverDetails> call, Response<DriverDetails> response)
-                    {
+                    public void onResponse(Call<DriverDetails> call, Response<DriverDetails> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() instanceof DriverDetails)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() instanceof DriverDetails) {
                                 Log.i(TAG, "SUCCESSFULLY GOT DRIVER DETAILS SAVING TO REALM");
                                 final Realm realm = Realm.getDefaultInstance();
                                 realm.beginTransaction();
@@ -422,17 +384,14 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         API.getInstance().getDriverDetailsByDriverId(driverId, onGetDriverDetails);
     }
 
-    private void setNavDrawerBackground(DriverDetails body)
-    {
-        if (body.getMultiTrip().equals("1"))
-        {
+    private void setNavDrawerBackground(DriverDetails body) {
+        if (body.getMultiTrip().equals("1")) {
             navigationView.getHeaderView(0).findViewById(R.id.ll_navContainer)
                     .setBackground(getResources().getDrawable(R.drawable.side_nav_bar_blue));
         }
     }
 
-    private void updateFcmDeviceToken()
-    {
+    private void updateFcmDeviceToken() {
         final String driverEmail = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.DRIVER_ID, "");
 
@@ -440,74 +399,62 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 .getString(Constants.FCM_DRIVER_INSTANCE_ID, null);
 
         final RetrofitCallbacks<ResponseBody> onUpdateDeviceTokenCallback =
-                new RetrofitCallbacks<ResponseBody>()
-                {
+                new RetrofitCallbacks<ResponseBody>() {
 
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response)
-                    {
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         super.onResponse(call, response);
                     }
                 };
 
-        if (fcmDeviceToken != null)
-        {
+        if (fcmDeviceToken != null) {
             API.getInstance().updateDeviceTokenDriver(driverEmail, fcmDeviceToken, onUpdateDeviceTokenCallback);
-        } else
-        {
+        } else {
             Toast.makeText(this, "FCM Instance ID not found!", Toast.LENGTH_SHORT).show();
         }
 
 
     }
 
-    private void setupFirebaseRemoteConfig()
-    {
+    private void setupFirebaseRemoteConfig() {
+
         remoteConfig = FirebaseRemoteConfig.getInstance();
 
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                //.setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
                 .build();
 
         remoteConfig.setConfigSettings(configSettings);
 
         remoteConfig.setDefaults(Constants.getFirebaseRemoteValuesMap());
 
-        if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled())
-        {
+        if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
             remoteConfig.fetch(0).addOnCompleteListener(this);
-        } else
-        {
-            remoteConfig.fetch(2000).addOnCompleteListener(this);
+        } else {
+            remoteConfig.fetch(0).addOnCompleteListener(this);
         }
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START))
-        {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } /*else if (isShowingCompletedTripDetails)
         {
             hideCompletedTripDetails();
-        }*/ else
-        {
-            if (doubleBackToExitPressedOnce)
-            {
+        }*/ else {
+            if (doubleBackToExitPressedOnce) {
                 super.onBackPressed();
             }
 
             this.doubleBackToExitPressedOnce = true;
             Toast.makeText(this, "Press BACK again to exit", Toast.LENGTH_SHORT).show();
 
-            new Handler().postDelayed(new Runnable()
-            {
+            new Handler().postDelayed(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     doubleBackToExitPressedOnce = false;
                 }
             }, 2000);
@@ -515,8 +462,7 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_home, menu);
 
@@ -526,11 +472,9 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
         notificationCount = (TextView) root.findViewById(R.id.actionbar_notifcation_textview);
 
-        root.findViewById(R.id.rl_tripNotificationContainer).setOnClickListener(new View.OnClickListener()
-        {
+        root.findViewById(R.id.rl_tripNotificationContainer).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 startActivity(new Intent(ActivityHome.this, ActivityTripNotifications.class));
             }
         });
@@ -544,11 +488,9 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setSuggestionsAdapter(tripSearchResultCursorAdapter);
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener()
-        {
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
-            public boolean onSuggestionClick(int position)
-            {
+            public boolean onSuggestionClick(int position) {
                 // Add clicked text to search box
                 CursorAdapter ca = searchView.getSuggestionsAdapter();
                 Cursor cursor = ca.getCursor();
@@ -562,47 +504,36 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
             }
 
             @Override
-            public boolean onSuggestionSelect(int position)
-            {
+            public boolean onSuggestionSelect(int position) {
                 return true;
             }
         });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
-        {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s)
-            {
+            public boolean onQueryTextSubmit(String s) {
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(final String s)
-            {
-                if (tripSearchCall != null)
-                {
+            public boolean onQueryTextChange(final String s) {
+                if (tripSearchCall != null) {
                     tripSearchCall.cancel();
                 }
 
-                tripSearchCall = API.getInstance().getTripNumberLike(s, driverId, new RetrofitCallbacks<List<String>>()
-                {
+                tripSearchCall = API.getInstance().getTripNumberLike(s, driverId, new RetrofitCallbacks<List<String>>() {
 
                     @Override
-                    public void onResponse(Call<List<String>> call, Response<List<String>> response)
-                    {
+                    public void onResponse(Call<List<String>> call, Response<List<String>> response) {
                         super.onResponse(call, response);
-                        if (response.isSuccessful())
-                        {
-                            if (response.body() == null)
-                            {
+                        if (response.isSuccessful()) {
+                            if (response.body() == null) {
                                 return;
                             }
                             strArrData = response.body().toArray(new String[0]);
                             // Filter data
                             final MatrixCursor mc = new MatrixCursor(new String[]{BaseColumns._ID, "tripNumber"});
-                            for (int i = 0; i < strArrData.length; i++)
-                            {
-                                if (strArrData[i].toLowerCase().contains(s.toLowerCase()))
-                                {
+                            for (int i = 0; i < strArrData.length; i++) {
+                                if (strArrData[i].toLowerCase().contains(s.toLowerCase())) {
                                     mc.addRow(new Object[]{i, strArrData[i]});
                                 }
                             }
@@ -619,14 +550,12 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch (id)
-        {
+        switch (id) {
             case R.id.action_settings:
                 startActivityForResult(new Intent(this, ActivitySettings.class), Constants.CHANGE_LANGUAGE);
                 break;
@@ -637,12 +566,10 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item)
-    {
+    public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.nav_home:
                 fragmentMap.checkIfDriverOnTrip();
                 showFragment(fragmentMap);
@@ -701,10 +628,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
 
     @Override
-    protected void onStop()
-    {
-        if (mServiceBound)
-        {
+    protected void onStop() {
+        if (mServiceBound) {
             unbindService(mServiceConnection);
             mServiceBound = false;
         }
@@ -712,36 +637,29 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     }
 
     @Override
-    protected void internetNotAvailable()
-    {
-        if (snackbarNoInternet == null)
-        {
+    protected void internetNotAvailable() {
+        if (snackbarNoInternet == null) {
             snackbarNoInternet = Snackbar.make(clActivityHome, R.string.no_internet, Snackbar.LENGTH_INDEFINITE);
             snackbarNoInternet.show();
         }
     }
 
     @Override
-    protected void internetAvailable()
-    {
-        if (snackbarNoInternet != null)
-        {
-            if (snackbarNoInternet.isShown())
-            {
+    protected void internetAvailable() {
+        if (snackbarNoInternet != null) {
+            if (snackbarNoInternet.isShown()) {
                 snackbarNoInternet.dismiss();
                 snackbarNoInternet = null;
             }
         }
     }
 
-    private void showCompletedTripDetails()
-    {
+    private void showCompletedTripDetails() {
 
         final String tripId = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Constants.CURRENT_TRIP_ID, "");
 
-        if (!isShowingCompletedTripDetails)
-        {
+        if (!isShowingCompletedTripDetails) {
             isShowingCompletedTripDetails = true;
             findViewById(R.id.fl_completedTripDetails).setVisibility(View.VISIBLE);
             fragmentCompletedTripDetails = FragmentCompletedTripDetails.newInstance(this, tripId,
@@ -760,10 +678,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         }
     }
 
-    private void hideCompletedTripDetails()
-    {
-        if (isShowingCompletedTripDetails)
-        {
+    private void hideCompletedTripDetails() {
+        if (isShowingCompletedTripDetails) {
             isShowingCompletedTripDetails = false;
             fragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
@@ -772,11 +688,9 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
             fragmentCompletedTripDetails = null;
 
-            new Handler().postDelayed(new Runnable()
-            {
+            new Handler().postDelayed(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     findViewById(R.id.fl_completedTripDetails).setVisibility(View.GONE);
                 }
             }, 1000);
@@ -784,20 +698,16 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (resultCode == Activity.RESULT_OK)
-        {
-            switch (requestCode)
-            {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
 
 
                 case Constants.CHANGE_LANGUAGE:
                     boolean wasLanguageChanged = data.getExtras().getBoolean(WAS_LANGUAGE_CHANGED, false);
                     boolean wasRealmDatabaseCleared = data.getExtras()
                             .getBoolean(WAS_REALM_DATABASE_CLEARED, false);
-                    if (wasLanguageChanged || wasRealmDatabaseCleared)
-                    {
+                    if (wasLanguageChanged || wasRealmDatabaseCleared) {
                         Intent refresh = new Intent(this, ActivityHome.class);
                         refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(refresh);
@@ -809,16 +719,12 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         }
     }
 
-    private void showFragment(Fragment fragmentToShow)
-    {
+    private void showFragment(Fragment fragmentToShow) {
         FragmentTransaction t = fragmentManager.beginTransaction();
-        for (Fragment fragment : fragmentList)
-        {
-            if (!fragment.equals(fragmentToShow))
-            {
+        for (Fragment fragment : fragmentList) {
+            if (!fragment.equals(fragmentToShow)) {
                 t.hide(fragment);
-            } else
-            {
+            } else {
                 t.show(fragment);
             }
         }
@@ -827,10 +733,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
 
 
     @Override
-    public void onTripStop(String tripId)
-    {
-        if (mService != null)
-        {
+    public void onTripStop(String tripId) {
+        if (mService != null) {
             progressDialog = ProgressDialog
                     .show(this, getResources().getString(R.string.please_wait),
                             getResources().getString(R.string.generating_trip_details), true, false);
@@ -841,10 +745,8 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     }
 
     @Override
-    public void onTripCancel(String tripId)
-    {
-        if (mService != null)
-        {
+    public void onTripCancel(String tripId) {
+        if (mService != null) {
             progressDialog = ProgressDialog
                     .show(this, getResources().getString(R.string.please_wait),
                             getResources().getString(R.string.please_wait), true, false);
@@ -854,57 +756,51 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         }
     }
 
-    private void setActionBarTitle(final String title)
-    {
-        if (getSupportActionBar() != null)
-        {
+    private void setActionBarTitle(final String title) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
         }
     }
 
     @Override
-    public void onComplete(@NonNull Task<Void> task)
-    {
-        if (task.isSuccessful())
-        {
+    public void onComplete(@NonNull Task<Void> task) {
+
+        if (task.isSuccessful()) {
 
             remoteConfig.activateFetched();
 
             final boolean showUrgentNotice = remoteConfig.getBoolean("show_urgent_notice");
 
-            if (showUrgentNotice)
-            {
+            if (showUrgentNotice) {
                 showUrgentNotice();
             }
 
             final boolean isForceUpdate = remoteConfig.getBoolean("force_update");
 
-            if (isForceUpdate)
-            {
+            Log.i(TAG, "force_update: " + isForceUpdate);
+
+            if (isForceUpdate) {
                 forceUserToUpdateApp();
             }
-
 
         }
     }
 
-    private void forceUserToUpdateApp()
-    {
+    private void forceUserToUpdateApp() {
 
         final int versionCode = BuildConfig.VERSION_CODE;
 
         final long newVersionCode = remoteConfig.getLong("version_code");
 
-        if (versionCode < newVersionCode)
-        {
+        if (versionCode < newVersionCode) {
 
-            String updateMessage = "";
+            String updateMessage = "Please Update the App";
 
-            if (LocaleHelper.getLanguage(this).equals("gu"))
-            {
+            final String appPackageName = getPackageName();
+
+            if (LocaleHelper.getLanguage(this).equals("gu")) {
                 updateMessage = remoteConfig.getString("update_message_gujarati");
-            } else
-            {
+            } else {
                 updateMessage = remoteConfig.getString("update_message_english");
             }
 
@@ -912,6 +808,13 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
             builder.setTitle(getResources().getString(R.string.please_update))
                     .setMessage(updateMessage)
                     .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            startActivity(new Intent(Intent.ACTION_VIEW,
+                                    Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                        }
+                    })
                     .setCancelable(false);
             AlertDialog alert = builder.create();
             alert.show();
@@ -920,35 +823,29 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     }
 
     @Override
-    public void locationServiceAlreadyOn()
-    {
+    public void locationServiceAlreadyOn() {
 
     }
 
     @Override
-    public void locationServiceTurnedOn()
-    {
+    public void locationServiceTurnedOn() {
 
     }
 
     @Override
-    public void locationSettingChangeUnavailable()
-    {
+    public void locationSettingChangeUnavailable() {
 
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
-    {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
     @Override
-    public void dataInsertedSuccessfully()
-    {
+    public void dataInsertedSuccessfully() {
         Toast.makeText(this, "TRIP STOP DATA INSERTED SUCCESSFULLY", Toast.LENGTH_SHORT).show();
-        if (isShowingCompletedTripDetails)
-        {
+        if (isShowingCompletedTripDetails) {
             hideCompletedTripDetails();
             PreferenceManager.getDefaultSharedPreferences(this)
                     .edit()
@@ -959,22 +856,18 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
     }
 
     @Override
-    public void failedToInsertTripStopData()
-    {
+    public void failedToInsertTripStopData() {
         Toast.makeText(this, "FAILED TO INSERTED TRIP STOP DATA", Toast.LENGTH_SHORT).show();
     }
 
-    private void showUrgentNotice()
-    {
+    private void showUrgentNotice() {
         String message = "";
         String title = "";
 
-        if (LocaleHelper.getLanguage(this).equals("gu"))
-        {
+        if (LocaleHelper.getLanguage(this).equals("gu")) {
             message = remoteConfig.getString("urgent_notice_gujarati");
             title = remoteConfig.getString("urgent_notice_title_gujarati");
-        } else
-        {
+        } else {
             message = remoteConfig.getString("urgent_notice_english");
             title = remoteConfig.getString("urgent_notice_title_english");
         }
@@ -985,22 +878,18 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
                 .setCancelable(false)
                 .setPositiveButton(getResources().getString(R.string.ok), null);
         AlertDialog alert = builder.create();
-        if (!isFinishing())
-        {
+        if (!isFinishing()) {
             alert.show();
-        } else
-        {
+        } else {
             alert.dismiss();
         }
     }
 
-    public void showDriverNotRegistered()
-    {
+    public void showDriverNotRegistered() {
         driverId = PreferenceManager
                 .getDefaultSharedPreferences(ActivityHome.this)
                 .getString(Constants.DRIVER_ID, null);
-        if (driverId == null)
-        {
+        if (driverId == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.unauthorized)
                     .setMessage(R.string.not_registered)
@@ -1011,45 +900,34 @@ public class ActivityHome extends FusedLocation.LocationAwareActivity
         }
     }
 
-    public class ServiceResultReceiver extends ResultReceiver
-    {
-        public ServiceResultReceiver(Handler handler)
-        {
+    public class ServiceResultReceiver extends ResultReceiver {
+        public ServiceResultReceiver(Handler handler) {
             super(handler);
         }
 
         @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData)
-        {
-            switch (resultCode)
-            {
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            switch (resultCode) {
 
                 case ON_TRIP_STOPPED:
-                    if (progressDialog != null)
-                    {
-                        if (progressDialog.isShowing())
-                        {
+                    if (progressDialog != null) {
+                        if (progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
                     }
-                    if (resultData != null)
-                    {
+                    if (resultData != null) {
                         final String tripId = resultData.getString(Constants.CURRENT_TRIP_ID);
-                        if (tripId != null)
-                        {
+                        if (tripId != null) {
                             showCompletedTripDetails();
                         }
-                    } else
-                    {
+                    } else {
 
                     }
                     break;
 
                 case ON_TRIP_CANCELED:
-                    if (progressDialog != null)
-                    {
-                        if (progressDialog.isShowing())
-                        {
+                    if (progressDialog != null) {
+                        if (progressDialog.isShowing()) {
                             progressDialog.dismiss();
                         }
                     }

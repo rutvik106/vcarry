@@ -30,7 +30,7 @@ public class ApiClient {
 
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
 
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG && false) {
             HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             okHttpClient.addInterceptor(httpLoggingInterceptor);
