@@ -21,14 +21,18 @@
 -dontobfuscate
 -optimizations !code/allocation/variable
 
-# FOR VALIDATION
--keep class com.mobsandgeeks.saripaar.** {*;}
--keep @com.mobsandgeeks.saripaar.annotation.ValidateUsing class * {*;}
+-keepattributes Signature
+-keepattributes Annotation
+
+-ignorewarnings
+-keep class * {
+    public private *;
+}
 
 
 # FOR BUTTERKNIFE
 # Retain generated class which implement Unbinder.
--keep public class * implements butterknife.Unbinder { public <init>(...); }
+-keep public class * implements butterknife.Unbinder { public <init>(**, android.view.View); }
 
 # Prevent obfuscation of types which use ButterKnife annotations since the simple name
 # is used to reflectively look up the generated ViewBinding.
@@ -40,18 +44,31 @@
 
 # FOR GLIDE
 -keep public class * implements com.bumptech.glide.module.GlideModule
--keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
   **[] $VALUES;
   public *;
 }
 
+# Uncomment for DexGuard only
+#-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+
 # FOR RETROFIT
 # Retrofit 2.X
 ## https://square.github.io/retrofit/ ##
--dontwarn retrofit2.Platform$Java8
--dontwarn com.squareup.okhttp.**
+
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
 
 #FOR OKHTTP3
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
 -dontwarn okio.**
 
@@ -65,7 +82,7 @@
 -keepattributes *Annotation*
 
 # Gson specific classes
--keep class sun.misc.Unsafe { *; }
+-dontwarn sun.misc.**
 #-keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
@@ -80,7 +97,13 @@
 ##---------------End: proguard configuration for Gson  ----------
 
 
-# FOR REALM
+
+# Proguard Configuration for Realm (http://realm.io)
+# For detailed discussion see: https://groups.google.com/forum/#!topic/realm-java/umqKCc50JGU
+# Additionally you need to keep your Realm Model classes as well
+# For example:
+# -keep class com.yourcompany.realm.** { *; }
+
 -keep class io.realm.annotations.RealmModule
 -keep @io.realm.annotations.RealmModule class *
 -keep class io.realm.internal.Keep
