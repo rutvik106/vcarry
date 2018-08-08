@@ -13,17 +13,17 @@ android {
         applicationId "io.fusionbit.vcarry"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 24
-        versionName "2.7"
+        versionCode 27
+        versionName "2.7.3"
 
-        /*splits {
+        splits {
             abi {
                 enable true
                 reset()
                 include 'x86_64', 'x86', 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'mips'
                 universalApk false
             }
-        }*/
+        }
 
     }
 
@@ -64,7 +64,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.3.1'
     implementation 'jp.wasabeef:glide-transformations:3.0.1'
 
-    implementation 'gun0912.ted:tedpermission:2.1.0'
+    implementation 'gun0912.ted:tedpermission:2.2.0'
 
     implementation 'com.google.code.gson:gson:2.8.4'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
@@ -87,7 +87,7 @@ dependencies {
 }
 
 // map for the version code that gives each ABI a value. make sure to list all ABIs mentioned in splits block, an keep the order.
-/*ext.versionCodes = ['armeabi': 3, 'armeabi-v7a': 4, 'arm64-v8a': 5, mips: 6, 'x86': 7, 'x86_64': 8]
+ext.versionCodes = ['armeabi': 3, 'armeabi-v7a': 4, 'arm64-v8a': 5, mips: 6, 'x86': 7, 'x86_64': 8]
 import com.android.build.OutputFile
 
 // For each APK output variant, override versionCode with a combination of
@@ -98,7 +98,7 @@ android.applicationVariants.all { variant ->
         output.versionCodeOverride =
                 project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) * 1000 + android.defaultConfig.versionCode
     }
-}*/
+}
 
 
 apply plugin: 'com.google.gms.google-services'
